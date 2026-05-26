@@ -1,0 +1,104 @@
+-- P-Market CSDL theo CONTEXT_FOR_AI.md (H2 compatible)
+
+CREATE TABLE IF NOT EXISTS tblAccount (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fullName VARCHAR(200) NOT NULL,
+    email VARCHAR(200) NOT NULL UNIQUE,
+    "password" VARCHAR(200) NOT NULL,
+    phone VARCHAR(50),
+    address VARCHAR(500),
+    "role" VARCHAR(20) NOT NULL,
+    "status" VARCHAR(20) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    avatarUrl VARCHAR(500),
+    banReason VARCHAR(500)
+);
+
+CREATE TABLE IF NOT EXISTS tblCategory (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    parentId INT,
+    name VARCHAR(200) NOT NULL,
+    FOREIGN KEY (parentId) REFERENCES tblCategory(id)
+);
+
+CREATE TABLE IF NOT EXISTS tblPost (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    accountId INT NOT NULL,
+    categoryId INT NOT NULL,
+    title VARCHAR(300) NOT NULL,
+    description CLOB,
+    price DOUBLE NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) NOT NULL,
+    FOREIGN KEY (accountId) REFERENCES tblAccount(id),
+    FOREIGN KEY (categoryId) REFERENCES tblCategory(id)
+);
+
+CREATE TABLE IF NOT EXISTS tblImage (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    postId INT NOT NULL,
+    imageUrl VARCHAR(500) NOT NULL,
+    FOREIGN KEY (postId) REFERENCES tblPost(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS tblReport (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    accountId INT NOT NULL,
+    targetType VARCHAR(20) NOT NULL,
+    targetId INT NOT NULL,
+    reason VARCHAR(500) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (accountId) REFERENCES tblAccount(id)
+);
+
+CREATE TABLE IF NOT EXISTS tblReportEvidence (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reportId INT NOT NULL,
+    imageUrl VARCHAR(500) NOT NULL,
+    FOREIGN KEY (reportId) REFERENCES tblReport(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS tblNotification (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(300) NOT NULL,
+    content CLOB NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tblUserNotification (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    notificationId INT NOT NULL,
+    accountId INT NOT NULL,
+    isRead BOOLEAN DEFAULT FALSE,
+    readAt TIMESTAMP,
+    FOREIGN KEY (notificationId) REFERENCES tblNotification(id) ON DELETE CASCADE,
+    FOREIGN KEY (accountId) REFERENCES tblAccount(id)
+);
+
+CREATE TABLE IF NOT EXISTS tblChatRoom (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tblChatRoomMember (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    chatRoomId INT NOT NULL,
+    accountId INT NOT NULL,
+    joinedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (chatRoomId) REFERENCES tblChatRoom(id) ON DELETE CASCADE,
+    FOREIGN KEY (accountId) REFERENCES tblAccount(id)
+);
+
+CREATE TABLE IF NOT EXISTS tblMessage (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    chatRoomId INT NOT NULL,
+    accountId INT NOT NULL,
+    content VARCHAR(2000),
+    imageUrl VARCHAR(500),
+    sentAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (chatRoomId) REFERENCES tblChatRoom(id) ON DELETE CASCADE,
+    FOREIGN KEY (accountId) REFERENCES tblAccount(id)
+);
