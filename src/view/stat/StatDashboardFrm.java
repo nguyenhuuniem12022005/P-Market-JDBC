@@ -17,17 +17,17 @@ import java.time.LocalDate;
 public class StatDashboardFrm extends JFrame implements ActionListener {
 
     private final JComboBox<String> inPeriod = new JComboBox<>(new String[]{
-            "7 ngay gan nhat", "30 ngay gan nhat", "Tat ca"
+            "7 ngày gần nhất", "30 ngày gần nhất", "Tất cả"
     });
     private final JTextArea outAccount = new JTextArea(6, 40);
     private final JTextArea outPost = new JTextArea(6, 40);
-    private final JButton btnRefresh = new JButton("Cap nhat");
-    private final JButton btnExport = new JButton("Xuat bao cao");
+    private final JButton btnRefresh = new JButton("Cập nhật");
+    private final JButton btnExport = new JButton("Xuất báo cáo");
     private final AccountStatDAO accountStatDAO = new AccountStatDAO();
     private final PostStatDAO postStatDAO = new PostStatDAO();
 
     public StatDashboardFrm() {
-        super("Thong ke he thong");
+        super("Thống kê hệ thống");
         setSize(560, 420);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -36,7 +36,7 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
         outPost.setEditable(false);
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.add(new JLabel("Ky thong ke:"));
+        top.add(new JLabel("Kỳ thống kê:"));
         top.add(inPeriod);
         btnRefresh.addActionListener(this);
         btnExport.addActionListener(this);
@@ -46,8 +46,8 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
 
         JPanel center = new JPanel(new GridLayout(2, 1, 8, 8));
         center.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-        center.add(titled("Thong ke tai khoan", outAccount));
-        center.add(titled("Thong ke bai dang", outPost));
+        center.add(titled("Thống kê tài khoản", outAccount));
+        center.add(titled("Thống kê bài đăng", outPost));
 
         add(top, BorderLayout.NORTH);
         add(center, BorderLayout.CENTER);
@@ -85,10 +85,10 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
 
     private String formatAccountStat(AccountStat s) {
         return String.format("""
-                Tu %s den %s
-                Tai khoan moi: %d
-                Tai khoan bi khoa (tong): %d
-                Tong sinh vien: %d
+                Từ %s đến %s
+                Tài khoản mới: %d
+                Tài khoản bị khóa (tổng): %d
+                Tổng sinh viên: %d
                 """,
                 s.getStartDate(), s.getEndDate(),
                 s.getNewAccounts(), s.getBannedAccounts(), s.getTotalAccounts());
@@ -96,10 +96,10 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
 
     private String formatPostStat(PostStat s) {
         return String.format("""
-                Tu %s den %s
-                Bai dang moi: %d
-                Bai da ban (tong): %d
-                Tong bai dang: %d
+                Từ %s đến %s
+                Bài đăng mới: %d
+                Bài đã bán (tổng): %d
+                Tổng bài đăng: %d
                 """,
                 s.getStartDate(), s.getEndDate(),
                 s.getNewPosts(), s.getSoldPosts(), s.getTotalPosts());

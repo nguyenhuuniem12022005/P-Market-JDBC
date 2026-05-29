@@ -1,7 +1,5 @@
 package view.user;
 
-import view.user.UiHelper;
-
 import model.SessionManager;
 import view.category.CategoryListFrm;
 import view.notification.NotificationFrm;
@@ -14,29 +12,30 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Trang chu Admin — AdminHomeFrm */
+/** Trang chủ Admin. */
 public class AdminHomeFrm extends JFrame implements ActionListener {
 
-    private final JButton btnManageAccount = UiHelper.createMenuButton("Quan ly tai khoan (b)");
-    private final JButton btnManageCategory = UiHelper.createMenuButton("Quan ly danh muc (d)");
-    private final JButton btnManageReport = UiHelper.createMenuButton("Duyet bao cao (h)");
-    private final JButton btnStats = UiHelper.createMenuButton("Xem thong ke (i)");
-    private final JButton btnNotification = UiHelper.createMenuButton("Gui thong bao (k)");
-    private final JButton btnSearch = UiHelper.createMenuButton("Tim kiem bai dang (d)");
-    private final JButton btnLogout = UiHelper.createMenuButton("Dang xuat");
+    private final JButton btnManageAccount = UiHelper.createMenuButton("Quản lý tài khoản");
+    private final JButton btnManageCategory = UiHelper.createMenuButton("Quản lý danh mục");
+    private final JButton btnManageReport = UiHelper.createMenuButton("Duyệt báo cáo");
+    private final JButton btnStats = UiHelper.createMenuButton("Xem thống kê");
+    private final JButton btnNotification = UiHelper.createMenuButton("Gửi thông báo");
+    private final JButton btnSearch = UiHelper.createMenuButton("Tìm kiếm bài đăng");
+    private final JButton btnLogout = UiHelper.createMenuButton("Đăng xuất");
 
     public AdminHomeFrm() {
-        super("P-Market — Admin");
+        super("P-Market - Admin");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 460);
+        setSize(430, 500);
         setLocationRelativeTo(null);
 
         var user = SessionManager.getCurrentAccount();
-        JLabel lblWelcome = new JLabel("Xin chao, " + (user != null ? user.getFullName() : "Admin"));
-        lblWelcome.setFont(lblWelcome.getFont().deriveFont(Font.BOLD, 16f));
+        JLabel lblWelcome = new JLabel("Xin chào, " + (user != null ? user.getFullName() : "Admin"));
+        lblWelcome.setFont(lblWelcome.getFont().deriveFont(Font.BOLD, 18f));
+        lblWelcome.setBorder(BorderFactory.createEmptyBorder(18, 28, 4, 28));
 
-        JPanel menu = new JPanel(new GridLayout(0, 1, 8, 8));
-        menu.setBorder(BorderFactory.createEmptyBorder(16, 40, 16, 40));
+        JPanel menu = new JPanel(new GridLayout(0, 1, 10, 10));
+        menu.setBorder(BorderFactory.createEmptyBorder(18, 48, 24, 48));
         for (JButton b : new JButton[]{btnManageAccount, btnManageCategory, btnManageReport,
                 btnStats, btnNotification, btnSearch, btnLogout}) {
             b.addActionListener(this);

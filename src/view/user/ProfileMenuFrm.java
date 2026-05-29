@@ -11,11 +11,11 @@ import java.awt.event.ActionListener;
 public class ProfileMenuFrm extends JDialog implements ActionListener {
 
     private final JFrame home;
-    private final JButton btnProfile = new JButton("Ho so ca nhan");
-    private final JButton btnLogout = new JButton("Dang xuat");
+    private final JButton btnProfile = new JButton("Hồ sơ cá nhân");
+    private final JButton btnLogout = new JButton("Đăng xuất");
 
     public ProfileMenuFrm(JFrame home) {
-        super(home, "Tai khoan", true);
+        super(home, "Tài khoản", true);
         this.home = home;
         setSize(220, 140);
         setLocationRelativeTo(home);

@@ -16,13 +16,13 @@ public class CategoryTransferFrm extends JDialog implements ActionListener {
     private final Category deleting;
     private final Runnable onDone;
     private final JComboBox<Category> inTarget = new JComboBox<>();
-    private final JButton btnConfirm = new JButton("Xac nhan");
-    private final JButton btnCancel = new JButton("Huy");
+    private final JButton btnConfirm = new JButton("Xác nhận");
+    private final JButton btnCancel = new JButton("Hủy");
     private final CategoryDAO categoryDAO = new CategoryDAO();
     private final PostDAO postDAO = new PostDAO();
 
     public CategoryTransferFrm(JFrame parent, Category deleting, int postCount, Runnable onDone) {
-        super(parent, "Chuyen bai dang truoc khi xoa", true);
+        super(parent, "Chuyển bài đăng trước khi xóa", true);
         this.deleting = deleting;
         this.onDone = onDone;
         setSize(440, 200);
@@ -30,8 +30,8 @@ public class CategoryTransferFrm extends JDialog implements ActionListener {
 
         JPanel info = new JPanel(new GridLayout(0, 1, 6, 6));
         info.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        info.add(new JLabel("Danh muc \"" + deleting.getName() + "\" con " + postCount + " bai dang."));
-        info.add(new JLabel("Chon danh muc thay the:"));
+        info.add(new JLabel("Danh mục \"" + deleting.getName() + "\" còn " + postCount + " bài đăng."));
+        info.add(new JLabel("Chọn danh mục thay thế:"));
         info.add(inTarget);
 
         btnConfirm.addActionListener(this);
@@ -62,13 +62,13 @@ public class CategoryTransferFrm extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Category target = (Category) inTarget.getSelectedItem();
         if (target == null) {
-            UiHelper.showError(this, "Vui long chon danh muc thay the.");
+            UiHelper.showError(this, "Vui lòng chọn danh mục thay thế.");
             return;
         }
         try {
             postDAO.transferPostsToCategory(deleting.getId(), target.getId());
             categoryDAO.deleteCategory(deleting.getId());
-            UiHelper.showInfo(this, "Xoa danh muc thanh cong");
+            UiHelper.showInfo(this, "Xóa danh mục thành công.");
             dispose();
             if (onDone != null) onDone.run();
         } catch (Exception ex) {

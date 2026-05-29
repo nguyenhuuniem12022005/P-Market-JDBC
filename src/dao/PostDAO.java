@@ -21,7 +21,7 @@ public class PostDAO extends DAO {
     public Post createPost(Post post) throws SQLException {
         String sql = """
                 INSERT INTO tblPost (accountId, categoryId, title, description, price, quantity, status, updatedAt)
-                VALUES (?, ?, ?, ?, ?, ?, 'available', CURRENT_TIMESTAMP)
+                VALUES (?, ?, ?, ?, ?, ?, 'AVAILABLE', CURRENT_TIMESTAMP)
                 """;
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, post.getAccount().getId());
@@ -37,7 +37,7 @@ public class PostDAO extends DAO {
                 }
             }
         }
-        post.setStatus("available");
+        post.setStatus("AVAILABLE");
         return post;
     }
 
@@ -48,7 +48,7 @@ public class PostDAO extends DAO {
                 FROM tblPost p
                 JOIN tblAccount a ON p.accountId = a.id
                 JOIN tblCategory c ON p.categoryId = c.id
-                WHERE p.status IN ('available','sold')
+                WHERE p.status IN ('AVAILABLE','SOLD')
                 """);
         List<Object> params = new ArrayList<>();
         if (keyword != null && !keyword.isBlank()) {
@@ -117,7 +117,7 @@ public class PostDAO extends DAO {
                 FROM tblPost p
                 JOIN tblAccount a ON p.accountId = a.id
                 JOIN tblCategory c ON p.categoryId = c.id
-                WHERE p.accountId=? AND p.status != 'deleted'
+                WHERE p.accountId=? AND p.status != 'DELETE'
                 ORDER BY p.createdAt DESC
                 """;
         List<Post> list = new ArrayList<>();
@@ -136,7 +136,7 @@ public class PostDAO extends DAO {
 
     /** Module g: kiem tra bai dang con ton tai truoc khi tao bao cao */
     public Post findActivePostById(int id) throws SQLException {
-        String sql = "SELECT id FROM tblPost WHERE id=? AND status != 'deleted'";
+        String sql = "SELECT id FROM tblPost WHERE id=? AND status != 'DELETE'";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -168,7 +168,7 @@ public class PostDAO extends DAO {
 
     /** Module b & h: xoa bai dang (chuyen trang thai sang da xoa) */
     public boolean deletePost(int postId) throws SQLException {
-        String sql = "UPDATE tblPost SET status='deleted', updatedAt=CURRENT_TIMESTAMP WHERE id=?";
+        String sql = "UPDATE tblPost SET status='DELETE', updatedAt=CURRENT_TIMESTAMP WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, postId);
             return ps.executeUpdate() > 0;
@@ -177,7 +177,7 @@ public class PostDAO extends DAO {
 
     /** Module d (quan ly danh muc): dem so bai dang thuoc mot danh muc */
     public int countPostByCategory(int categoryId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM tblPost WHERE categoryId=? AND status != 'deleted'";
+        String sql = "SELECT COUNT(*) FROM tblPost WHERE categoryId=? AND status != 'DELETE'";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, categoryId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -200,7 +200,7 @@ public class PostDAO extends DAO {
     }
 
     public boolean markSold(int postId) throws SQLException {
-        String sql = "UPDATE tblPost SET status='sold', updatedAt=CURRENT_TIMESTAMP WHERE id=?";
+        String sql = "UPDATE tblPost SET status='SOLD', updatedAt=CURRENT_TIMESTAMP WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, postId);
             return ps.executeUpdate() > 0;

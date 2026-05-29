@@ -1,7 +1,5 @@
 package view.user;
 
-import view.user.UiHelper;
-
 import dao.AccountDAO;
 import model.Account;
 
@@ -12,35 +10,37 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-/** Module b — Quan ly tai khoan (Admin) — AccountManageFrm */
+/** Module b - Quản lý tài khoản. */
 public class AccountManageFrm extends JFrame implements ActionListener {
 
     private final JTextField inKeyword = new JTextField(20);
-    private final JButton btnSearch = new JButton("Tim kiem");
+    private final JButton btnSearch = new JButton("Tìm kiếm");
     private final JTable tblAccounts = new JTable();
     private final DefaultTableModel tableModel;
     private final AccountDAO accountDAO = new AccountDAO();
     private List<Account> currentList = List.of();
 
     public AccountManageFrm() {
-        super("Quan ly tai khoan");
-        setSize(700, 400);
+        super("Quản lý tài khoản");
+        setSize(760, 430);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         tableModel = new DefaultTableModel(
-                new String[]{"ID", "Ten", "Email", "Trang thai", "Hanh dong"}, 0) {
+                new String[]{"ID", "Tên", "Email", "Trạng thái", "Hành động"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 4;
             }
         };
         tblAccounts.setModel(tableModel);
-        tblAccounts.getColumn("Hanh dong").setCellRenderer(new ButtonRenderer());
-        tblAccounts.getColumn("Hanh dong").setCellEditor(new ButtonEditor(new JCheckBox()));
+        tblAccounts.setRowHeight(30);
+        tblAccounts.getColumn("Hành động").setCellRenderer(new ButtonRenderer());
+        tblAccounts.getColumn("Hành động").setCellEditor(new ButtonEditor(new JCheckBox()));
 
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.add(new JLabel("Tim (ten/email):"));
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        top.setBorder(BorderFactory.createEmptyBorder(6, 8, 2, 8));
+        top.add(new JLabel("Tìm (tên/email):"));
         top.add(inKeyword);
         btnSearch.addActionListener(this);
         top.add(btnSearch);
@@ -56,7 +56,7 @@ public class AccountManageFrm extends JFrame implements ActionListener {
             currentList = accountDAO.searchAccounts(keyword);
             tableModel.setRowCount(0);
             for (Account a : currentList) {
-                String action = "banned".equalsIgnoreCase(a.getStatus()) ? "Mo khoa" : "Khoa tai khoan";
+                String action = "LOCKED".equalsIgnoreCase(a.getStatus()) ? "Mở khóa" : "Khóa tài khoản";
                 tableModel.addRow(new Object[]{
                         a.getId(),
                         a.getFullName(),
@@ -80,14 +80,14 @@ public class AccountManageFrm extends JFrame implements ActionListener {
     private void handleRowAction(int row) {
         if (row < 0 || row >= currentList.size()) return;
         Account acc = currentList.get(row);
-        if ("banned".equalsIgnoreCase(acc.getStatus())) {
+        if ("LOCKED".equalsIgnoreCase(acc.getStatus())) {
             int ok = JOptionPane.showConfirmDialog(this,
-                    "Mo khoa tai khoan " + acc.getFullName() + "?",
-                    "Xac nhan", JOptionPane.YES_NO_OPTION);
+                    "Mở khóa tài khoản " + acc.getFullName() + "?",
+                    "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.YES_OPTION) {
                 try {
                     accountDAO.unlockAccount(acc.getId());
-                    UiHelper.showInfo(this, "Mo khoa tai khoan thanh cong.");
+                    UiHelper.showInfo(this, "Mở khóa tài khoản thành công.");
                     loadAccounts(inKeyword.getText());
                 } catch (Exception ex) {
                     UiHelper.showError(this, ex.getMessage());

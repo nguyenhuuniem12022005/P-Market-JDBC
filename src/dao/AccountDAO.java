@@ -54,7 +54,7 @@ public class AccountDAO extends DAO {
 
     /** Module k */
     public List<Account> getAllStudentIds() throws SQLException {
-        String sql = "SELECT * FROM tblAccount WHERE role='student' AND status='active'";
+        String sql = "SELECT * FROM tblAccount WHERE role='student' AND status='ACTIVE'";
         List<Account> list = new ArrayList<>();
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -112,7 +112,7 @@ public class AccountDAO extends DAO {
 
     /** Module g: kiem tra tai khoan con ton tai (con hoat dong) truoc khi tao bao cao */
     public Account findActiveAccountById(int id) throws SQLException {
-        String sql = "SELECT * FROM tblAccount WHERE id=? AND status='active'";
+        String sql = "SELECT * FROM tblAccount WHERE id=? AND status='ACTIVE'";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -126,7 +126,7 @@ public class AccountDAO extends DAO {
 
     /** Module b: khoa tai khoan vi pham */
     public boolean lockAccount(int accountId, String banReason) throws SQLException {
-        String sql = "UPDATE tblAccount SET status='banned', banReason=? WHERE id=?";
+        String sql = "UPDATE tblAccount SET status='LOCKED', banReason=? WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, banReason);
             ps.setInt(2, accountId);
@@ -136,7 +136,7 @@ public class AccountDAO extends DAO {
 
     /** Module b: mo khoa tai khoan */
     public boolean unlockAccount(int accountId) throws SQLException {
-        String sql = "UPDATE tblAccount SET status='active', banReason=NULL WHERE id=?";
+        String sql = "UPDATE tblAccount SET status='ACTIVE', banReason=NULL WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, accountId);
             return ps.executeUpdate() > 0;

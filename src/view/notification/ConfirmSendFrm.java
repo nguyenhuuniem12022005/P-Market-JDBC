@@ -24,20 +24,20 @@ public class ConfirmSendFrm extends JDialog implements ActionListener {
     private final UserNotificationDAO userNotificationDAO = new UserNotificationDAO();
 
     public ConfirmSendFrm(JFrame parent, Notification notification, Runnable onSuccess) {
-        super(parent, "Xac nhan gui thong bao", true);
+        super(parent, "Xác nhận gửi thông báo", true);
         this.notification = notification;
         this.onSuccess = onSuccess;
         setSize(450, 280);
         setLocationRelativeTo(parent);
 
-        JLabel warning = new JLabel("<html><font color=red>Hanh dong nay se gui thong bao den "
-                + "TAT CA tai khoan sinh vien dang hoat dong.<br>Ban co chac chan muon gui?</font></html>");
+        JLabel warning = new JLabel("<html><font color=red>Hành động này sẽ gửi thông báo đến "
+                + "TẤT CẢ tài khoản sinh viên đang hoạt động.<br>Bạn có chắc chắn muốn gửi?</font></html>");
         JTextArea summary = new JTextArea();
         summary.setEditable(false);
-        summary.setText("Tieu de: " + notification.getTitle() + "\n\n" + notification.getContent());
+        summary.setText("Tiêu đề: " + notification.getTitle() + "\n\n" + notification.getContent());
 
-        JButton btnConfirm = new JButton("Xac nhan gui");
-        JButton btnCancel = new JButton("Huy");
+        JButton btnConfirm = new JButton("Xác nhận gửi");
+        JButton btnCancel = new JButton("Hủy");
         btnConfirm.addActionListener(this);
         btnCancel.addActionListener(e -> dispose());
 
@@ -60,10 +60,10 @@ public class ConfirmSendFrm extends JDialog implements ActionListener {
                     notification.getTitle(), notification.getContent());
             List<Account> students = accountDAO.getAllStudentIds();
             if (students.isEmpty()) {
-                UiHelper.showInfo(this, "Da luu thong bao nhung chua co sinh vien nhan.");
+                UiHelper.showInfo(this, "Đã lưu thông báo nhưng chưa có sinh viên nhận.");
             } else {
                 userNotificationDAO.broadcastToAll(saved.getId(), students);
-                UiHelper.showInfo(this, "Da gui thong bao thanh cong den " + students.size() + " sinh vien.");
+                UiHelper.showInfo(this, "Đã gửi thông báo thành công đến " + students.size() + " sinh viên.");
             }
             dispose();
             if (onSuccess != null) onSuccess.run();

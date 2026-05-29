@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/** Module f — Phong chat / gui tin nhan */
+/** Module f - Phòng chat / gửi tin nhắn. */
 public class ChatRoomFrm extends JFrame implements ActionListener {
 
     private final ChatRoomDAO chatRoomDAO = new ChatRoomDAO();
@@ -23,17 +23,17 @@ public class ChatRoomFrm extends JFrame implements ActionListener {
     private ChatRoom chatRoom;
     private final JTextArea outMessages = new JTextArea();
     private final JTextField inContent = new JTextField(30);
-    private final JButton btnSend = new JButton("Gui");
+    private final JButton btnSend = new JButton("Gửi");
 
-    /** Mo chat tu chi tiet bai dang */
+    /** Mở chat từ chi tiết bài đăng. */
     public ChatRoomFrm(int otherAccountId, String title) {
-        super("Chat — " + title);
+        super("Chat - " + title);
         initRoom(otherAccountId);
     }
 
-    /** Mo phong da co */
+    /** Mở phòng đã có. */
     public ChatRoomFrm(ChatRoom room, String title) {
-        super("Chat — " + title);
+        super("Chat - " + title);
         this.chatRoom = room;
         buildUi();
         loadMessages();
@@ -52,16 +52,18 @@ public class ChatRoomFrm extends JFrame implements ActionListener {
     }
 
     private void buildUi() {
-        setSize(480, 400);
+        setSize(520, 420);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         outMessages.setEditable(false);
+        outMessages.setLineWrap(true);
+        outMessages.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         inContent.addActionListener(this);
         btnSend.addActionListener(this);
 
         JPanel bottom = new JPanel(new BorderLayout(8, 8));
-        bottom.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        bottom.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         bottom.add(inContent, BorderLayout.CENTER);
         bottom.add(btnSend, BorderLayout.EAST);
 
@@ -76,7 +78,7 @@ public class ChatRoomFrm extends JFrame implements ActionListener {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM HH:mm");
             int myId = SessionManager.getCurrentAccount().getId();
             for (Message m : msgs) {
-                String who = m.getAccount().getId() == myId ? "Toi" : m.getAccount().getFullName();
+                String who = m.getAccount().getId() == myId ? "Tôi" : m.getAccount().getFullName();
                 String time = m.getSentAt() != null ? m.getSentAt().format(fmt) : "";
                 sb.append("[").append(time).append("] ").append(who).append(": ")
                         .append(m.getContent()).append("\n");

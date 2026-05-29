@@ -3,7 +3,6 @@ package dao;
 import model.Account;
 import model.Post;
 import model.Report;
-import model.ReportEvidence;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,19 +13,18 @@ import java.util.List;
 
 public class ReportDAO extends DAO {
 
-    private final ReportEvidenceDAO evidenceDAO = new ReportEvidenceDAO();
     private final PostDAO postDAO = new PostDAO();
 
     /** Module g: luu bao cao vao CSDL, tra ve reportId vua tao */
     public int addReport(Report report) throws SQLException {
         String sql = """
-                INSERT INTO tblReport (accountId, targetType, targetId, reason, status)
-                VALUES (?, ?, ?, ?, 'pending')
+                INSERT INTO tblReport (reporterId, postId, accountId, reason, status)
+                VALUES (?, ?, ?, ?, 'PENDING')
                 """;
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, report.getAccount().getId());
-            ps.setString(2, report.getTargetType());
-            ps.setInt(3, report.getTargetId());
+            ps.setInt(1, report.getReporterId());
+            setNullableInt(ps, 2, report.getPostId());
+            setNullableInt(ps, 3, report.getAccountId());
             ps.setString(4, report.getReason());
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -35,20 +33,30 @@ public class ReportDAO extends DAO {
                 }
             }
         }
-        report.setStatus("pending");
+        report.setStatus("PENDING");
         return report.getId();
+    }
+
+    /** Alias theo ten trong mot so so do tuan tu. */
+    public int createReport(Report report) throws SQLException {
+        return addReport(report);
     }
 
     /** Module h: danh sach cho xu ly */
     public List<Report> getPendingReports() throws SQLException {
-        return getReportsByStatus("pending");
+        return getReportsByStatus("PENDING");
     }
 
     public List<Report> getReportsByStatus(String status) throws SQLException {
         String sql = """
-                SELECT r.*, a.fullName AS reporterName, a.email AS reporterEmail
+                SELECT r.*,
+                       reporter.fullName AS reporterName,
+                       reporter.email AS reporterEmail,
+                       reported.fullName AS reportedName,
+                       reported.email AS reportedEmail
                 FROM tblReport r
-                JOIN tblAccount a ON r.accountId = a.id
+                JOIN tblAccount reporter ON r.reporterId = reporter.id
+                LEFT JOIN tblAccount reported ON r.accountId = reported.id
                 WHERE r.status=?
                 ORDER BY r.createdAt DESC
                 """;
@@ -66,9 +74,14 @@ public class ReportDAO extends DAO {
 
     public Report getReportById(int id) throws SQLException {
         String sql = """
-                SELECT r.*, a.fullName AS reporterName, a.email AS reporterEmail
+                SELECT r.*,
+                       reporter.fullName AS reporterName,
+                       reporter.email AS reporterEmail,
+                       reported.fullName AS reportedName,
+                       reported.email AS reportedEmail
                 FROM tblReport r
-                JOIN tblAccount a ON r.accountId = a.id
+                JOIN tblAccount reporter ON r.reporterId = reporter.id
+                LEFT JOIN tblAccount reported ON r.accountId = reported.id
                 WHERE r.id=?
                 """;
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -76,9 +89,8 @@ public class ReportDAO extends DAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Report r = mapRow(rs);
-                    r.setListEvidence(evidenceDAO.getEvidenceByReportId(id));
-                    if ("post".equalsIgnoreCase(r.getTargetType())) {
-                        r.setPost(postDAO.getPostById(r.getTargetId()));
+                    if (r.getPostId() != null) {
+                        r.setPost(postDAO.getPostById(r.getPostId()));
                     }
                     return r;
                 }
@@ -99,19 +111,45 @@ public class ReportDAO extends DAO {
     private Report mapRow(ResultSet rs) throws SQLException {
         Report r = new Report();
         r.setId(rs.getInt("id"));
-        r.setTargetType(rs.getString("targetType"));
-        r.setTargetId(rs.getInt("targetId"));
+        r.setReporterId(rs.getInt("reporterId"));
+        r.setPostId(getNullableInt(rs, "postId"));
+        r.setAccountId(getNullableInt(rs, "accountId"));
         r.setReason(rs.getString("reason"));
         r.setStatus(rs.getString("status"));
         r.setCreatedAt(toLocalDateTime(rs.getTimestamp("createdAt")));
+
         Account reporter = new Account();
-        reporter.setId(rs.getInt("accountId"));
+        reporter.setId(rs.getInt("reporterId"));
         try {
             reporter.setFullName(rs.getString("reporterName"));
             reporter.setEmail(rs.getString("reporterEmail"));
         } catch (SQLException ignored) {
         }
-        r.setAccount(reporter);
+        r.setReporter(reporter);
+
+        if (r.getAccountId() != null) {
+            Account account = new Account();
+            account.setId(r.getAccountId());
+            try {
+                account.setFullName(rs.getString("reportedName"));
+                account.setEmail(rs.getString("reportedEmail"));
+            } catch (SQLException ignored) {
+            }
+            r.setAccount(account);
+        }
         return r;
+    }
+
+    private void setNullableInt(PreparedStatement ps, int index, Integer value) throws SQLException {
+        if (value == null) {
+            ps.setNull(index, java.sql.Types.INTEGER);
+        } else {
+            ps.setInt(index, value);
+        }
+    }
+
+    private Integer getNullableInt(ResultSet rs, String column) throws SQLException {
+        int value = rs.getInt(column);
+        return rs.wasNull() ? null : value;
     }
 }

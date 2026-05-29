@@ -21,12 +21,12 @@ public class ListRoomFrm extends JFrame {
     private List<ChatRoom> rooms = List.of();
 
     public ListRoomFrm() {
-        super("Hop thu noi bo");
+        super("Hộp thư nội bộ");
         setSize(500, 350);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        DefaultTableModel model = new DefaultTableModel(new String[]{"Phong", "Doi tac"}, 0);
+        DefaultTableModel model = new DefaultTableModel(new String[]{"Phòng", "Đối tác"}, 0);
         JTable table = new JTable(model);
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -43,7 +43,7 @@ public class ListRoomFrm extends JFrame {
             rooms = chatRoomDAO.getRoomsByAccount(myId);
             for (ChatRoom room : rooms) {
                 Account other = chatRoomDAO.getOtherMember(room, myId);
-                String name = other != null ? other.getFullName() : "Phong #" + room.getId();
+                String name = other != null ? other.getFullName() : "Phòng #" + room.getId();
                 model.addRow(new Object[]{"#" + room.getId(), name});
             }
         } catch (Exception ex) {
@@ -51,7 +51,7 @@ public class ListRoomFrm extends JFrame {
         }
 
         add(new JScrollPane(table), BorderLayout.CENTER);
-        JLabel hint = new JLabel("Double-click de mo phong chat");
+        JLabel hint = new JLabel("Double-click để mở phòng chat");
         hint.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         add(hint, BorderLayout.SOUTH);
     }

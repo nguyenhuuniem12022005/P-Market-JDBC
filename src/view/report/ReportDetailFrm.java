@@ -2,6 +2,7 @@ package view.report;
 
 import view.user.UiHelper;
 
+import dao.ReportEvidenceDAO;
 import dao.ReportDAO;
 import model.Report;
 import model.ReportEvidence;
@@ -18,13 +19,14 @@ public class ReportDetailFrm extends JDialog implements ActionListener {
     private final Runnable onDone;
     private Report report;
     private final ReportDAO reportDAO = new ReportDAO();
+    private final ReportEvidenceDAO evidenceDAO = new ReportEvidenceDAO();
     private final JTextArea outInfo = new JTextArea();
-    private final JButton btnDeletePost = new JButton("Xoa bai vi pham");
-    private final JButton btnLockAccount = new JButton("Khoa tai khoan vi pham");
-    private final JButton btnReject = new JButton("Bac bo bao cao");
+    private final JButton btnDeletePost = new JButton("Xóa bài vi phạm");
+    private final JButton btnLockAccount = new JButton("Khóa tài khoản vi phạm");
+    private final JButton btnReject = new JButton("Bác bỏ báo cáo");
 
     public ReportDetailFrm(int reportId, Runnable onDone) {
-        super((Frame) null, "Chi tiet bao cao #" + reportId, true);
+        super((Frame) null, "Chi tiết báo cáo #" + reportId, true);
         this.reportId = reportId;
         this.onDone = onDone;
         setSize(520, 480);
@@ -48,29 +50,42 @@ public class ReportDetailFrm extends JDialog implements ActionListener {
         loadReport();
     }
 
+    public ReportDetailFrm(Report report, Runnable onDone) {
+        this(report.getId(), onDone);
+    }
+
     private void loadReport() {
         try {
             report = reportDAO.getReportById(reportId);
             if (report == null) {
-                UiHelper.showError(this, "Khong tim thay bao cao.");
+                UiHelper.showError(this, "Không tìm thấy báo cáo.");
                 dispose();
                 return;
             }
+            report.setListEvidence(evidenceDAO.getEvidenceByReportId(reportId));
             StringBuilder sb = new StringBuilder();
-            sb.append("Ma bao cao: #").append(report.getId()).append("\n");
-            sb.append("Nguoi gui: ").append(report.getAccount().getFullName()).append("\n");
-            sb.append("Ly do: ").append(report.getReason()).append("\n");
-            sb.append("Loai: ").append(report.getTargetType()).append(" #").append(report.getTargetId()).append("\n");
+            sb.append("Mã báo cáo: #").append(report.getId()).append("\n");
+            sb.append("Người gửi: ").append(report.getReporter().getFullName()).append("\n");
+            sb.append("Lý do: ").append(report.getReason()).append("\n");
+            if (report.getPostId() != null) {
+                sb.append("Đối tượng: Bài đăng #").append(report.getPostId()).append("\n");
+            } else {
+                sb.append("Đối tượng: Tài khoản #").append(report.getAccountId()).append("\n");
+            }
             if (report.getPost() != null) {
-                sb.append("\nNoi dung bai dang:\n").append(report.getPost().getTitle()).append("\n");
+                sb.append("\nNội dung bài đăng:\n").append(report.getPost().getTitle()).append("\n");
                 sb.append(report.getPost().getDescription()).append("\n");
             }
-            sb.append("\nBang chung:\n");
+            if (report.getAccount() != null) {
+                sb.append("\nTài khoản bị báo cáo:\n").append(report.getAccount().getFullName())
+                        .append(" (").append(report.getAccount().getEmail()).append(")\n");
+            }
+            sb.append("\nBằng chứng:\n");
             for (ReportEvidence ev : report.getListEvidence()) {
                 sb.append(" - ").append(ev.getImageUrl()).append("\n");
             }
             outInfo.setText(sb.toString());
-            btnDeletePost.setEnabled("post".equalsIgnoreCase(report.getTargetType()));
+            btnDeletePost.setEnabled(report.getPostId() != null);
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }

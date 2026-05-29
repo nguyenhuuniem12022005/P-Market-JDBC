@@ -26,14 +26,14 @@ public class EditPostFrm extends JFrame implements ActionListener {
     private final JTextField inQuantity = new JTextField(5);
     private final JComboBox<Category> inCategory = new JComboBox<>();
     private final JTextField inImagePath = new JTextField(25);
-    private final JButton btnBrowse = new JButton("Chon anh");
-    private final JButton btnSave = new JButton("Luu thay doi");
+    private final JButton btnBrowse = new JButton("Chọn ảnh");
+    private final JButton btnSave = new JButton("Lưu thay đổi");
     private final PostDAO postDAO = new PostDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
     private final ImageDAO imageDAO = new ImageDAO();
 
     public EditPostFrm(int postId, Runnable onSaved) {
-        super("Sua bai dang #" + postId);
+        super("Sửa bài đăng #" + postId);
         this.postId = postId;
         this.onSaved = onSaved;
         setSize(520, 440);
@@ -47,21 +47,21 @@ public class EditPostFrm extends JFrame implements ActionListener {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         int row = 0;
-        addRow(form, gbc, row++, "Tieu de:", inTitle);
+        addRow(form, gbc, row++, "Tiêu đề:", inTitle);
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 1;
-        form.add(new JLabel("Mo ta:"), gbc);
+        form.add(new JLabel("Mô tả:"), gbc);
         gbc.gridx = 1;
         form.add(new JScrollPane(inDescription), gbc);
         row++;
-        addRow(form, gbc, row++, "Gia (VND):", inPrice);
-        addRow(form, gbc, row++, "So luong:", inQuantity);
-        addRow(form, gbc, row++, "Danh muc:", inCategory);
+        addRow(form, gbc, row++, "Giá (VND):", inPrice);
+        addRow(form, gbc, row++, "Số lượng:", inQuantity);
+        addRow(form, gbc, row++, "Danh mục:", inCategory);
 
         gbc.gridy = row;
         gbc.gridx = 0;
-        form.add(new JLabel("Anh moi:"), gbc);
+        form.add(new JLabel("Ảnh mới:"), gbc);
         JPanel imgPanel = new JPanel(new BorderLayout());
         imgPanel.add(inImagePath, BorderLayout.CENTER);
         btnBrowse.addActionListener(this);
@@ -96,7 +96,7 @@ public class EditPostFrm extends JFrame implements ActionListener {
             }
             post = postDAO.getPostDetails(postId);
             if (post == null) {
-                UiHelper.showError(this, "Khong tim thay bai dang.");
+                UiHelper.showError(this, "Không tìm thấy bài đăng.");
                 dispose();
                 return;
             }
@@ -131,7 +131,7 @@ public class EditPostFrm extends JFrame implements ActionListener {
         String title = inTitle.getText().trim();
         Category cat = (Category) inCategory.getSelectedItem();
         if (title.isEmpty() || cat == null) {
-            UiHelper.showError(this, "Vui long nhap tieu de va chon danh muc.");
+            UiHelper.showError(this, "Vui lòng nhập tiêu đề và chọn danh mục.");
             return;
         }
         try {
@@ -150,11 +150,11 @@ public class EditPostFrm extends JFrame implements ActionListener {
                 List<String> urls = imageDAO.uploadImages(sources);
                 imageDAO.saveImages(postId, urls);
             }
-            UiHelper.showInfo(this, "Cap nhat bai dang thanh cong");
+            UiHelper.showInfo(this, "Cập nhật bài đăng thành công.");
             dispose();
             if (onSaved != null) onSaved.run();
         } catch (NumberFormatException ex) {
-            UiHelper.showError(this, "Gia va so luong phai la so hop le.");
+            UiHelper.showError(this, "Giá và số lượng phải là số hợp lệ.");
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }

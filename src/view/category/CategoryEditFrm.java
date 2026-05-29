@@ -16,13 +16,13 @@ public class CategoryEditFrm extends JFrame implements ActionListener {
     private final Runnable onSaved;
     private final JTextField inName = new JTextField(20);
     private final JComboBox<Category> inParent = new JComboBox<>();
-    private final JButton btnSave = new JButton("Luu");
-    private final JButton btnCancel = new JButton("Huy");
+    private final JButton btnSave = new JButton("Lưu");
+    private final JButton btnCancel = new JButton("Hủy");
     private final CategoryDAO categoryDAO = new CategoryDAO();
 
     /** Them moi: editing = null. Sua: truyen category co du lieu. */
     public CategoryEditFrm(Category editing, Runnable onSaved) {
-        super(editing == null ? "Them danh muc moi" : "Sua danh muc");
+        super(editing == null ? "Thêm danh mục mới" : "Sửa danh mục");
         this.editing = editing;
         this.onSaved = onSaved;
         setSize(420, 200);
@@ -34,11 +34,11 @@ public class CategoryEditFrm extends JFrame implements ActionListener {
         gbc.insets = new Insets(6, 6, 6, 6);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0; gbc.gridy = 0;
-        form.add(new JLabel("Ten danh muc (*):"), gbc);
+        form.add(new JLabel("Tên danh mục (*):"), gbc);
         gbc.gridx = 1;
         form.add(inName, gbc);
         gbc.gridx = 0; gbc.gridy = 1;
-        form.add(new JLabel("Danh muc cha:"), gbc);
+        form.add(new JLabel("Danh mục cha:"), gbc);
         gbc.gridx = 1;
         form.add(inParent, gbc);
 
@@ -87,25 +87,26 @@ public class CategoryEditFrm extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String name = inName.getText().trim();
         if (!validateCategory(name)) {
-            UiHelper.showError(this, "Ten danh muc khong duoc rong.");
+            UiHelper.showError(this, "Tên danh mục không được rỗng.");
             return;
         }
         try {
             int excludeId = editing != null ? editing.getId() : -1;
             if (categoryDAO.existsByName(name, excludeId)) {
-                UiHelper.showError(this, "Ten danh muc da ton tai.");
+                UiHelper.showError(this, "Tên danh mục đã tồn tại.");
                 return;
             }
             Category parent = (Category) inParent.getSelectedItem();
             Category c = editing != null ? editing : new Category();
             c.setName(name);
             c.setParent(parent);
+            c.setStatus(editing == null ? "ACTIVE" : editing.getStatus());
             if (editing == null) {
                 categoryDAO.addCategory(c);
-                UiHelper.showInfo(this, "Them danh muc moi thanh cong");
+                UiHelper.showInfo(this, "Thêm danh mục mới thành công.");
             } else {
                 categoryDAO.updateCategory(c);
-                UiHelper.showInfo(this, "Cap nhat danh muc thanh cong");
+                UiHelper.showInfo(this, "Cập nhật danh mục thành công.");
             }
             dispose();
             if (onSaved != null) onSaved.run();

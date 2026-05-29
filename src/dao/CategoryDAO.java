@@ -12,7 +12,7 @@ import java.util.List;
 public class CategoryDAO extends DAO {
 
     public List<Category> getAllCategories() throws SQLException {
-        String sql = "SELECT * FROM tblCategory ORDER BY name";
+        String sql = "SELECT * FROM tblCategory WHERE status='ACTIVE' ORDER BY name";
         List<Category> list = new ArrayList<>();
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -64,10 +64,11 @@ public class CategoryDAO extends DAO {
 
     /** Module d: them danh muc moi */
     public Category addCategory(Category category) throws SQLException {
-        String sql = "INSERT INTO tblCategory (parentId, name) VALUES (?, ?)";
+        String sql = "INSERT INTO tblCategory (parentId, name, status) VALUES (?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             setParentId(ps, 1, category);
             ps.setString(2, category.getName());
+            ps.setString(3, normalizeStatus(category.getStatus()));
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
@@ -80,7 +81,7 @@ public class CategoryDAO extends DAO {
 
     /** Module d: cap nhat danh muc */
     public boolean updateCategory(Category category) throws SQLException {
-        String sql = "UPDATE tblCategory SET name=?, parentId=? WHERE id=?";
+        String sql = "UPDATE tblCategory SET name=?, parentId=?, status=? WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, category.getName());
             if (category.getParent() != null && category.getParent().getId() > 0) {
@@ -88,7 +89,8 @@ public class CategoryDAO extends DAO {
             } else {
                 ps.setNull(2, java.sql.Types.INTEGER);
             }
-            ps.setInt(3, category.getId());
+            ps.setString(3, normalizeStatus(category.getStatus()));
+            ps.setInt(4, category.getId());
             return ps.executeUpdate() > 0;
         }
     }
@@ -114,6 +116,7 @@ public class CategoryDAO extends DAO {
         Category c = new Category();
         c.setId(rs.getInt("id"));
         c.setName(rs.getString("name"));
+        c.setStatus(rs.getString("status"));
         int parentId = rs.getInt("parentId");
         if (!rs.wasNull()) {
             Category parent = new Category();
@@ -121,5 +124,9 @@ public class CategoryDAO extends DAO {
             c.setParent(parent);
         }
         return c;
+    }
+
+    private String normalizeStatus(String status) {
+        return status == null || status.isBlank() ? "ACTIVE" : status;
     }
 }

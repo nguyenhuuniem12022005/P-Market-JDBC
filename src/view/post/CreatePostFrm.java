@@ -25,8 +25,8 @@ public class CreatePostFrm extends JFrame implements ActionListener {
     private final JTextField inQuantity = new JTextField(5);
     private final JComboBox<Category> inCategory = new JComboBox<>();
     private final JTextField inImagePath = new JTextField(25);
-    private final JButton btnBrowse = new JButton("Chon anh");
-    private final JButton btnSubmit = new JButton("Dang bai");
+    private final JButton btnBrowse = new JButton("Chọn ảnh");
+    private final JButton btnSubmit = new JButton("Đăng bài");
     private final PostDAO postDAO = new PostDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
     private final ImageDAO imageDAO = new ImageDAO();
@@ -37,7 +37,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
     }
 
     public CreatePostFrm(Runnable onSaved) {
-        super("Dang bai ban hang");
+        super("Đăng bài bán hàng");
         this.onSaved = onSaved;
         setSize(520, 420);
         setLocationRelativeTo(null);
@@ -50,20 +50,20 @@ public class CreatePostFrm extends JFrame implements ActionListener {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         int row = 0;
-        addRow(form, gbc, row++, "Tieu de:", inTitle);
+        addRow(form, gbc, row++, "Tiêu đề:", inTitle);
         gbc.gridy = row;
-        form.add(new JLabel("Mo ta:"), gbc);
+        form.add(new JLabel("Mô tả:"), gbc);
         gbc.gridx = 1;
         form.add(new JScrollPane(inDescription), gbc);
         row++;
-        addRow(form, gbc, row++, "Gia (VND):", inPrice);
-        addRow(form, gbc, row++, "So luong:", inQuantity);
+        addRow(form, gbc, row++, "Giá (VND):", inPrice);
+        addRow(form, gbc, row++, "Số lượng:", inQuantity);
         inQuantity.setText("1");
-        addRow(form, gbc, row++, "Danh muc:", inCategory);
+        addRow(form, gbc, row++, "Danh mục:", inCategory);
 
         gbc.gridy = row;
         gbc.gridx = 0;
-        form.add(new JLabel("Anh:"), gbc);
+        form.add(new JLabel("Ảnh:"), gbc);
         JPanel imgPanel = new JPanel(new BorderLayout());
         imgPanel.add(inImagePath, BorderLayout.CENTER);
         btnBrowse.addActionListener(this);
@@ -117,7 +117,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
         String desc = inDescription.getText().trim();
         Category cat = (Category) inCategory.getSelectedItem();
         if (title.isEmpty() || cat == null) {
-            UiHelper.showError(this, "Vui long nhap tieu de va chon danh muc.");
+            UiHelper.showError(this, "Vui lòng nhập tiêu đề và chọn danh mục.");
             return;
         }
         double price;
@@ -126,7 +126,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
             price = Double.parseDouble(inPrice.getText().trim());
             qty = Integer.parseInt(inQuantity.getText().trim());
         } catch (NumberFormatException ex) {
-            UiHelper.showError(this, "Gia va so luong phai la so hop le.");
+            UiHelper.showError(this, "Giá và số lượng phải là số hợp lệ.");
             return;
         }
 
@@ -151,7 +151,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
             }
             postDAO.createPost(post);
             imageDAO.saveImages(post.getId(), urls);
-            UiHelper.showInfo(this, "Dang bai thanh cong!");
+            UiHelper.showInfo(this, "Đăng bài thành công!");
             dispose();
             if (onSaved != null) onSaved.run();
         } catch (Exception ex) {

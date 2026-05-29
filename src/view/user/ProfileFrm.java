@@ -9,23 +9,24 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Module a — Hien thi ho so ca nhan */
+/** Module a - Hiển thị hồ sơ cá nhân. */
 public class ProfileFrm extends JFrame implements ActionListener {
 
     private final JTextArea outInfo = new JTextArea();
-    private final JButton btnEdit = new JButton("Chinh sua");
-    private final JButton btnChangePassword = new JButton("Doi mat khau");
-    private final JButton btnChangeAvatar = new JButton("Doi anh dai dien");
+    private final JButton btnEdit = new JButton("Chỉnh sửa");
+    private final JButton btnChangePassword = new JButton("Đổi mật khẩu");
+    private final JButton btnChangeAvatar = new JButton("Đổi ảnh đại diện");
     private final AccountDAO accountDAO = new AccountDAO();
 
     public ProfileFrm() {
-        super("Ho so ca nhan");
-        setSize(460, 360);
+        super("Hồ sơ cá nhân");
+        setSize(500, 380);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         outInfo.setEditable(false);
-        outInfo.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
+        outInfo.setFont(new Font("Consolas", Font.PLAIN, 13));
+        outInfo.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
         btnEdit.addActionListener(this);
         btnChangePassword.addActionListener(this);
@@ -45,12 +46,12 @@ public class ProfileFrm extends JFrame implements ActionListener {
             Account me = accountDAO.getProfile(SessionManager.getCurrentAccount().getId());
             SessionManager.setCurrentAccount(me);
             outInfo.setText(String.format("""
-                    Ho ten   : %s
-                    Email    : %s
-                    So dien thoai : %s
-                    Dia chi  : %s
-                    Vai tro  : %s
-                    Trang thai : %s
+                    Họ tên        : %s
+                    Email         : %s
+                    Số điện thoại : %s
+                    Địa chỉ       : %s
+                    Vai trò       : %s
+                    Trạng thái    : %s
                     """,
                     me.getFullName(), me.getEmail(),
                     nv(me.getPhone()), nv(me.getAddress()),
@@ -79,23 +80,23 @@ public class ProfileFrm extends JFrame implements ActionListener {
     private void changePassword(Account me) {
         JPasswordField oldPass = new JPasswordField();
         JPasswordField newPass = new JPasswordField();
-        Object[] msg = {"Mat khau cu:", oldPass, "Mat khau moi:", newPass};
-        int ok = JOptionPane.showConfirmDialog(this, msg, "Doi mat khau", JOptionPane.OK_CANCEL_OPTION);
+        Object[] msg = {"Mật khẩu cũ:", oldPass, "Mật khẩu mới:", newPass};
+        int ok = JOptionPane.showConfirmDialog(this, msg, "Đổi mật khẩu", JOptionPane.OK_CANCEL_OPTION);
         if (ok != JOptionPane.OK_OPTION) return;
         String oldP = new String(oldPass.getPassword());
         String newP = new String(newPass.getPassword());
         if (!oldP.equals(me.getPassword())) {
-            UiHelper.showError(this, "Mat khau cu khong dung.");
+            UiHelper.showError(this, "Mật khẩu cũ không đúng.");
             return;
         }
         if (newP.isBlank()) {
-            UiHelper.showError(this, "Mat khau moi khong duoc rong.");
+            UiHelper.showError(this, "Mật khẩu mới không được rỗng.");
             return;
         }
         try {
             accountDAO.updatePassword(me.getId(), newP);
             me.setPassword(newP);
-            UiHelper.showInfo(this, "Doi mat khau thanh cong.");
+            UiHelper.showInfo(this, "Đổi mật khẩu thành công.");
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }
@@ -108,7 +109,7 @@ public class ProfileFrm extends JFrame implements ActionListener {
             String url = "uploads/" + chooser.getSelectedFile().getName();
             me.setAvatarUrl(url);
             accountDAO.updateProfile(me);
-            UiHelper.showInfo(this, "Cap nhat anh dai dien thanh cong.");
+            UiHelper.showInfo(this, "Cập nhật ảnh đại diện thành công.");
             loadProfile();
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());

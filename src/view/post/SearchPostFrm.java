@@ -20,7 +20,7 @@ public class SearchPostFrm extends JFrame implements ActionListener {
 
     private final JTextField inKeyword = new JTextField(20);
     private final JComboBox<Category> inCategory = new JComboBox<>();
-    private final JButton btnSearch = new JButton("Tim kiem");
+    private final JButton btnSearch = new JButton("Tìm kiếm");
     private final JTable tblPosts = new JTable();
     private final DefaultTableModel tableModel;
     private final PostDAO postDAO = new PostDAO();
@@ -29,14 +29,14 @@ public class SearchPostFrm extends JFrame implements ActionListener {
     private List<Post> results = List.of();
 
     public SearchPostFrm(boolean adminMode) {
-        super("Tim kiem bai dang");
+        super("Tìm kiếm bài đăng");
         this.adminMode = adminMode;
         setSize(750, 420);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         tableModel = new DefaultTableModel(
-                new String[]{"ID", "Tieu de", "Gia", "Nguoi ban", "Trang thai"}, 0) {
+                new String[]{"ID", "Tiêu đề", "Giá", "Người bán", "Trạng thái"}, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
         };
@@ -54,15 +54,15 @@ public class SearchPostFrm extends JFrame implements ActionListener {
         });
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.add(new JLabel("Tu khoa:"));
+        top.add(new JLabel("Từ khóa:"));
         top.add(inKeyword);
-        top.add(new JLabel("Danh muc:"));
+        top.add(new JLabel("Danh mục:"));
         inCategory.addItem(null);
         loadCategories();
         top.add(inCategory);
         btnSearch.addActionListener(this);
         top.add(btnSearch);
-        top.add(new JLabel("(Double-click xem chi tiet)"));
+        top.add(new JLabel("(Double-click để xem chi tiết)"));
 
         add(top, BorderLayout.NORTH);
         add(new JScrollPane(tblPosts), BorderLayout.CENTER);

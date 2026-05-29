@@ -22,13 +22,13 @@ public class PostDetailFrm extends JFrame implements ActionListener {
     private Post post;
     private final PostDAO postDAO = new PostDAO();
     private final JTextArea outDetail = new JTextArea();
-    private final JButton btnChat = new JButton("Nhan tin nguoi ban");
-    private final JButton btnSellerProfile = new JButton("Ho so nguoi ban");
-    private final JButton btnReport = new JButton("Bao cao vi pham");
-    private final JButton btnClose = new JButton("Dong");
+    private final JButton btnChat = new JButton("Nhắn tin người bán");
+    private final JButton btnSellerProfile = new JButton("Hồ sơ người bán");
+    private final JButton btnReport = new JButton("Báo cáo vi phạm");
+    private final JButton btnClose = new JButton("Đóng");
 
     public PostDetailFrm(int postId, boolean adminMode) {
-        super("Chi tiet bai dang #" + postId);
+        super("Chi tiết bài đăng #" + postId);
         this.postId = postId;
         this.adminMode = adminMode;
         setSize(520, 480);
@@ -60,24 +60,24 @@ public class PostDetailFrm extends JFrame implements ActionListener {
         try {
             post = postDAO.getPostById(postId);
             if (post == null) {
-                UiHelper.showError(this, "Khong tim thay bai dang.");
+                UiHelper.showError(this, "Không tìm thấy bài đăng.");
                 dispose();
                 return;
             }
             StringBuilder sb = new StringBuilder();
-            sb.append("TIEU DE: ").append(post.getTitle()).append("\n\n");
-            sb.append("MO TA:\n").append(post.getDescription()).append("\n\n");
-            sb.append("GIA: ").append(String.format("%,.0f VND", post.getPrice())).append("\n");
-            sb.append("SO LUONG: ").append(post.getQuantity()).append("\n");
-            sb.append("TRANG THAI: ").append(UiHelper.statusLabel(post.getStatus())).append("\n");
+            sb.append("TIÊU ĐỀ: ").append(post.getTitle()).append("\n\n");
+            sb.append("MÔ TẢ:\n").append(post.getDescription()).append("\n\n");
+            sb.append("GIÁ: ").append(String.format("%,.0f VND", post.getPrice())).append("\n");
+            sb.append("SỐ LƯỢNG: ").append(post.getQuantity()).append("\n");
+            sb.append("TRẠNG THÁI: ").append(UiHelper.statusLabel(post.getStatus())).append("\n");
             if (post.getCategory() != null) {
-                sb.append("DANH MUC: ").append(post.getCategory().getName()).append("\n");
+                sb.append("DANH MỤC: ").append(post.getCategory().getName()).append("\n");
             }
             if (post.getAccount() != null) {
-                sb.append("NGUOI BAN: ").append(post.getAccount().getFullName())
+                sb.append("NGƯỜI BÁN: ").append(post.getAccount().getFullName())
                         .append(" (").append(post.getAccount().getEmail()).append(")\n");
             }
-            sb.append("\nANH:\n");
+            sb.append("\nẢNH:\n");
             for (Image img : post.getListImage()) {
                 sb.append(" - ").append(img.getImageUrl()).append("\n");
             }
@@ -99,7 +99,7 @@ public class PostDetailFrm extends JFrame implements ActionListener {
             int sellerId = post.getAccount().getId();
             int myId = SessionManager.getCurrentAccount().getId();
             if (sellerId == myId) {
-                UiHelper.showError(this, "Khong the nhan tin voi chinh minh.");
+                UiHelper.showError(this, "Không thể nhắn tin với chính mình.");
                 return;
             }
             new ChatRoomFrm(sellerId, post.getTitle()).setVisible(true);

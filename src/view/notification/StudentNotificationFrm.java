@@ -18,13 +18,13 @@ import java.util.List;
 public class StudentNotificationFrm extends JFrame {
 
     public StudentNotificationFrm() {
-        super("Thong bao cua toi");
+        super("Thông báo của tôi");
         setSize(600, 350);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         DefaultTableModel model = new DefaultTableModel(
-                new String[]{"ID", "Tieu de", "Da doc", "Thoi gian"}, 0);
+                new String[]{"ID", "Tiêu đề", "Đã đọc", "Thời gian"}, 0);
         JTable table = new JTable(model);
         UserNotificationDAO dao = new UserNotificationDAO();
 
@@ -35,7 +35,7 @@ public class StudentNotificationFrm extends JFrame {
                 String title = un.getNotification() != null ? un.getNotification().getTitle() : "";
                 String time = un.getNotification() != null && un.getNotification().getCreatedAt() != null
                         ? un.getNotification().getCreatedAt().format(fmt) : "";
-                model.addRow(new Object[]{un.getId(), title, un.isRead() ? "Da doc" : "Chua doc", time});
+                model.addRow(new Object[]{un.getId(), title, un.isRead() ? "Đã đọc" : "Chưa đọc", time});
             }
             table.addMouseListener(new MouseAdapter() {
                 @Override

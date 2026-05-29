@@ -19,7 +19,7 @@ public class LockConfirmFrm extends JDialog implements ActionListener {
     private final AccountDAO accountDAO = new AccountDAO();
 
     public LockConfirmFrm(JFrame parent, Account account, Runnable onSuccess) {
-        super(parent, "Xac nhan khoa tai khoan", true);
+        super(parent, "Xác nhận khóa tài khoản", true);
         this.account = account;
         this.onSuccess = onSuccess;
         setSize(450, 320);
@@ -27,18 +27,18 @@ public class LockConfirmFrm extends JDialog implements ActionListener {
 
         JPanel info = new JPanel(new GridLayout(4, 2, 8, 8));
         info.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        info.add(new JLabel("Tai khoan:"));
+        info.add(new JLabel("Tài khoản:"));
         info.add(new JLabel(account.getFullName() + " (ID: " + account.getId() + ")"));
         info.add(new JLabel("Email:"));
         info.add(new JLabel(account.getEmail()));
-        info.add(new JLabel("Trang thai:"));
+        info.add(new JLabel("Trạng thái:"));
         info.add(new JLabel(UiHelper.statusLabel(account.getStatus())));
-        info.add(new JLabel("Ly do khoa (*):"));
+        info.add(new JLabel("Lý do khóa (*):"));
         inReason.setLineWrap(true);
         info.add(new JScrollPane(inReason));
 
-        JButton btnConfirm = new JButton("Xac nhan khoa");
-        JButton btnCancel = new JButton("Quay lai");
+        JButton btnConfirm = new JButton("Xác nhận khóa");
+        JButton btnCancel = new JButton("Quay lại");
         btnConfirm.addActionListener(this);
         btnCancel.addActionListener(this);
 
@@ -54,18 +54,18 @@ public class LockConfirmFrm extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton src = (JButton) e.getSource();
-        if ("Quay lai".equals(src.getText())) {
+        if ("Quay lại".equals(src.getText())) {
             dispose();
             return;
         }
         String reason = inReason.getText().trim();
         if (reason.isEmpty()) {
-            UiHelper.showError(this, "Vui long nhap ly do khoa tai khoan.");
+            UiHelper.showError(this, "Vui lòng nhập lý do khóa tài khoản.");
             return;
         }
         try {
             accountDAO.lockAccount(account.getId(), reason);
-            UiHelper.showInfo(this, "Khoa tai khoan thanh cong.");
+            UiHelper.showInfo(this, "Khóa tài khoản thành công.");
             dispose();
             if (onSuccess != null) onSuccess.run();
         } catch (Exception ex) {

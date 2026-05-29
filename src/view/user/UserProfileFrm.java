@@ -17,11 +17,11 @@ public class UserProfileFrm extends JFrame implements ActionListener {
     private Account account;
     private final AccountDAO accountDAO = new AccountDAO();
     private final JTextArea outInfo = new JTextArea();
-    private final JButton btnReport = new JButton("Bao cao tai khoan");
-    private final JButton btnClose = new JButton("Dong");
+    private final JButton btnReport = new JButton("Báo cáo tài khoản");
+    private final JButton btnClose = new JButton("Đóng");
 
     public UserProfileFrm(int accountId) {
-        super("Ho so nguoi dung #" + accountId);
+        super("Hồ sơ người dùng #" + accountId);
         this.accountId = accountId;
         setSize(420, 300);
         setLocationRelativeTo(null);
@@ -47,14 +47,14 @@ public class UserProfileFrm extends JFrame implements ActionListener {
         try {
             account = accountDAO.getAccountDetails(accountId);
             if (account == null) {
-                UiHelper.showError(this, "Khong tim thay tai khoan.");
+                UiHelper.showError(this, "Không tìm thấy tài khoản.");
                 dispose();
                 return;
             }
             outInfo.setText(String.format("""
-                    Ho ten : %s
+                    Họ tên : %s
                     Email  : %s
-                    Trang thai : %s
+                    Trạng thái : %s
                     """,
                     account.getFullName(), account.getEmail(),
                     UiHelper.statusLabel(account.getStatus())));
@@ -70,7 +70,7 @@ public class UserProfileFrm extends JFrame implements ActionListener {
         } else if (e.getSource() == btnReport && account != null) {
             int myId = SessionManager.getCurrentAccount().getId();
             if (account.getId() == myId) {
-                UiHelper.showError(this, "Khong the bao cao chinh minh.");
+                UiHelper.showError(this, "Không thể báo cáo chính mình.");
                 return;
             }
             new ReportFormFrm(account).setVisible(true);

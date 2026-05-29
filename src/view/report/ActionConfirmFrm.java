@@ -27,18 +27,18 @@ public class ActionConfirmFrm extends JDialog implements ActionListener {
     private final AccountDAO accountDAO = new AccountDAO();
 
     public ActionConfirmFrm(JDialog parent, Report report, String actionType, Runnable onDone) {
-        super(parent, "Xac nhan xu ly", true);
+        super(parent, "Xác nhận xử lý", true);
         this.report = report;
         this.actionType = actionType;
         this.onDone = onDone;
         setSize(420, 200);
         setLocationRelativeTo(parent);
 
-        JLabel msg = new JLabel("<html>" + describe() + "<br>Ban co chac chan?</html>");
+        JLabel msg = new JLabel("<html>" + describe() + "<br>Bạn có chắc chắn?</html>");
         msg.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 
-        JButton btnConfirm = new JButton("Xac nhan");
-        JButton btnCancel = new JButton("Huy");
+        JButton btnConfirm = new JButton("Xác nhận");
+        JButton btnCancel = new JButton("Hủy");
         btnConfirm.addActionListener(this);
         btnCancel.addActionListener(e -> dispose());
         JPanel bottom = new JPanel();
@@ -52,9 +52,9 @@ public class ActionConfirmFrm extends JDialog implements ActionListener {
 
     private String describe() {
         return switch (actionType) {
-            case DELETE_POST -> "Xoa bai vi pham #" + report.getTargetId() + " va danh dau bao cao da xu ly.";
-            case LOCK_ACCOUNT -> "Khoa tai khoan vi pham va danh dau bao cao da xu ly.";
-            default -> "Bac bo bao cao #" + report.getId() + ".";
+            case DELETE_POST -> "Xóa bài vi phạm #" + report.getPostId() + " và đánh dấu báo cáo đã xử lý.";
+            case LOCK_ACCOUNT -> "Khóa tài khoản vi phạm và đánh dấu báo cáo đã xử lý.";
+            default -> "Bác bỏ báo cáo #" + report.getId() + ".";
         };
     }
 
@@ -63,23 +63,23 @@ public class ActionConfirmFrm extends JDialog implements ActionListener {
         try {
             switch (actionType) {
                 case DELETE_POST -> {
-                    if ("post".equalsIgnoreCase(report.getTargetType())) {
-                        postDAO.deletePost(report.getTargetId());
+                    if (report.getPostId() != null) {
+                        postDAO.deletePost(report.getPostId());
                     }
-                    reportDAO.updateStatus(report.getId(), "resolved");
-                    UiHelper.showInfo(this, "Xu ly bao cao thanh cong.");
+                    reportDAO.updateStatus(report.getId(), "PROCESSED");
+                    UiHelper.showInfo(this, "Xử lý báo cáo thành công.");
                 }
                 case LOCK_ACCOUNT -> {
                     int accId = resolveAccountId();
                     if (accId > 0) {
-                        accountDAO.lockAccount(accId, "Vi pham tu bao cao #" + report.getId());
+                        accountDAO.lockAccount(accId, "Vi phạm từ báo cáo #" + report.getId());
                     }
-                    reportDAO.updateStatus(report.getId(), "resolved");
-                    UiHelper.showInfo(this, "Xu ly bao cao thanh cong.");
+                    reportDAO.updateStatus(report.getId(), "PROCESSED");
+                    UiHelper.showInfo(this, "Xử lý báo cáo thành công.");
                 }
                 default -> {
-                    reportDAO.updateStatus(report.getId(), "rejected");
-                    UiHelper.showInfo(this, "Da bac bo bao cao.");
+                    reportDAO.updateStatus(report.getId(), "REJECTED");
+                    UiHelper.showInfo(this, "Đã bác bỏ báo cáo.");
                 }
             }
             dispose();
@@ -90,8 +90,8 @@ public class ActionConfirmFrm extends JDialog implements ActionListener {
     }
 
     private int resolveAccountId() {
-        if ("account".equalsIgnoreCase(report.getTargetType())) {
-            return report.getTargetId();
+        if (report.getAccountId() != null) {
+            return report.getAccountId();
         }
         if (report.getPost() != null && report.getPost().getAccount() != null) {
             return report.getPost().getAccount().getId();

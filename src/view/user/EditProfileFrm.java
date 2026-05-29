@@ -16,12 +16,12 @@ public class EditProfileFrm extends JFrame implements ActionListener {
     private final Runnable onSaved;
     private final JTextField inPhone = new JTextField(20);
     private final JTextField inAddress = new JTextField(20);
-    private final JButton btnSave = new JButton("Luu thay doi");
-    private final JButton btnCancel = new JButton("Huy");
+    private final JButton btnSave = new JButton("Lưu thay đổi");
+    private final JButton btnCancel = new JButton("Hủy");
     private final AccountDAO accountDAO = new AccountDAO();
 
     public EditProfileFrm(Account account, Runnable onSaved) {
-        super("Chinh sua ho so");
+        super("Chỉnh sửa hồ sơ");
         this.account = account;
         this.onSaved = onSaved;
         setSize(420, 220);
@@ -36,11 +36,11 @@ public class EditProfileFrm extends JFrame implements ActionListener {
         gbc.insets = new Insets(6, 6, 6, 6);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0; gbc.gridy = 0;
-        form.add(new JLabel("So dien thoai:"), gbc);
+        form.add(new JLabel("Số điện thoại:"), gbc);
         gbc.gridx = 1;
         form.add(inPhone, gbc);
         gbc.gridx = 0; gbc.gridy = 1;
-        form.add(new JLabel("Dia chi:"), gbc);
+        form.add(new JLabel("Địa chỉ:"), gbc);
         gbc.gridx = 1;
         form.add(inAddress, gbc);
 
@@ -58,7 +58,7 @@ public class EditProfileFrm extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String phone = inPhone.getText().trim();
         if (phone.isEmpty()) {
-            UiHelper.showError(this, "Vui long nhap so dien thoai.");
+            UiHelper.showError(this, "Vui lòng nhập số điện thoại.");
             return;
         }
         try {
@@ -66,7 +66,7 @@ public class EditProfileFrm extends JFrame implements ActionListener {
             account.setAddress(inAddress.getText().trim());
             accountDAO.updateProfile(account);
             SessionManager.setCurrentAccount(account);
-            UiHelper.showInfo(this, "Cap nhat ho so thanh cong");
+            UiHelper.showInfo(this, "Cập nhật hồ sơ thành công.");
             dispose();
             if (onSaved != null) onSaved.run();
         } catch (Exception ex) {

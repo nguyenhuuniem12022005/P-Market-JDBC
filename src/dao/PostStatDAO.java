@@ -29,7 +29,7 @@ public class PostStatDAO extends DAO {
             }
         }
 
-        String soldSql = "SELECT COUNT(*) FROM tblPost WHERE status='sold'";
+        String soldSql = "SELECT COUNT(*) FROM tblPost WHERE status='SOLD'";
         try (PreparedStatement ps = con.prepareStatement(soldSql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
@@ -37,7 +37,7 @@ public class PostStatDAO extends DAO {
             }
         }
 
-        String totalSql = "SELECT COUNT(*) FROM tblPost WHERE status != 'deleted'";
+        String totalSql = "SELECT COUNT(*) FROM tblPost WHERE status != 'DELETE'";
         try (PreparedStatement ps = con.prepareStatement(totalSql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {

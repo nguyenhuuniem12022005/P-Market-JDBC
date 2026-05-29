@@ -18,19 +18,19 @@ public class NotificationFrm extends JFrame implements ActionListener {
 
     private final JTextField inTitle = new JTextField(30);
     private final JTextArea inContent = new JTextArea(6, 30);
-    private final JButton btnSend = new JButton("Gui thong bao");
-    private final JButton btnHistory = new JButton("Lich su da gui");
+    private final JButton btnSend = new JButton("Gửi thông báo");
+    private final JButton btnHistory = new JButton("Lịch sử đã gửi");
     private final JTable tblHistory = new JTable();
     private final DefaultTableModel historyModel;
     private final NotificationDAO notificationDAO = new NotificationDAO();
 
     public NotificationFrm() {
-        super("Gui thong bao he thong");
+        super("Gửi thông báo hệ thống");
         setSize(620, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        historyModel = new DefaultTableModel(new String[]{"ID", "Tieu de", "Thoi gian"}, 0);
+        historyModel = new DefaultTableModel(new String[]{"ID", "Tiêu đề", "Thời gian"}, 0);
         tblHistory.setModel(historyModel);
 
         JPanel compose = new JPanel(new GridBagLayout());
@@ -39,11 +39,11 @@ public class NotificationFrm extends JFrame implements ActionListener {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0; gbc.gridy = 0;
-        compose.add(new JLabel("Tieu de:"), gbc);
+        compose.add(new JLabel("Tiêu đề:"), gbc);
         gbc.gridx = 1;
         compose.add(inTitle, gbc);
         gbc.gridx = 0; gbc.gridy = 1;
-        compose.add(new JLabel("Noi dung:"), gbc);
+        compose.add(new JLabel("Nội dung:"), gbc);
         gbc.gridx = 1;
         compose.add(new JScrollPane(inContent), gbc);
         gbc.gridy = 2; gbc.gridx = 0; gbc.gridwidth = 2;
@@ -65,7 +65,7 @@ public class NotificationFrm extends JFrame implements ActionListener {
             String title = inTitle.getText().trim();
             String content = inContent.getText().trim();
             if (title.isEmpty() || content.isEmpty()) {
-                UiHelper.showError(this, "Vui long nhap day du tieu de va noi dung.");
+                UiHelper.showError(this, "Vui lòng nhập đầy đủ tiêu đề và nội dung.");
                 return;
             }
             Notification n = new Notification(title, content);

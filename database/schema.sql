@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS tblCategory (
     id INT AUTO_INCREMENT PRIMARY KEY,
     parentId INT,
     name VARCHAR(200) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY (parentId) REFERENCES tblCategory(id)
 );
 
@@ -45,12 +46,14 @@ CREATE TABLE IF NOT EXISTS tblImage (
 
 CREATE TABLE IF NOT EXISTS tblReport (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    accountId INT NOT NULL,
-    targetType VARCHAR(20) NOT NULL,
-    targetId INT NOT NULL,
+    reporterId INT NOT NULL,
+    postId INT,
+    accountId INT,
     reason VARCHAR(500) NOT NULL,
     status VARCHAR(20) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (reporterId) REFERENCES tblAccount(id),
+    FOREIGN KEY (postId) REFERENCES tblPost(id),
     FOREIGN KEY (accountId) REFERENCES tblAccount(id)
 );
 
