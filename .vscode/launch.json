@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run P-Market",
+      "request": "launch",
+      "mainClass": "Main",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "compile pmarket"
+    },
+    {
+      "type": "java",
+      "name": "Run DAO Smoke Test",
+      "request": "launch",
+      "mainClass": "test.unit.DbSmokeTest",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "compile pmarket"
+    }
+  ]
+}

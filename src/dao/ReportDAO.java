@@ -17,10 +17,10 @@ public class ReportDAO extends DAO {
     private final ReportEvidenceDAO evidenceDAO = new ReportEvidenceDAO();
     private final PostDAO postDAO = new PostDAO();
 
-    /** Module g: gui bao cao */
-    public Report createReport(Report report, List<String> evidenceUrls) throws SQLException {
+    /** Module g: luu bao cao vao CSDL, tra ve reportId vua tao */
+    public int addReport(Report report) throws SQLException {
         String sql = """
-                INSERT INTO tblReport (accountId, targetType, targetId, reason, reportStatus)
+                INSERT INTO tblReport (accountId, targetType, targetId, reason, status)
                 VALUES (?, ?, ?, ?, 'pending')
                 """;
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -36,12 +36,7 @@ public class ReportDAO extends DAO {
             }
         }
         report.setStatus("pending");
-        if (evidenceUrls != null) {
-            for (String url : evidenceUrls) {
-                evidenceDAO.insertEvidence(report.getId(), url);
-            }
-        }
-        return report;
+        return report.getId();
     }
 
     /** Module h: danh sach cho xu ly */
@@ -54,7 +49,7 @@ public class ReportDAO extends DAO {
                 SELECT r.*, a.fullName AS reporterName, a.email AS reporterEmail
                 FROM tblReport r
                 JOIN tblAccount a ON r.accountId = a.id
-                WHERE r.reportStatus=?
+                WHERE r.status=?
                 ORDER BY r.createdAt DESC
                 """;
         List<Report> list = new ArrayList<>();
@@ -81,7 +76,7 @@ public class ReportDAO extends DAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Report r = mapRow(rs);
-                    r.setListEvidence(evidenceDAO.getByReportId(id));
+                    r.setListEvidence(evidenceDAO.getEvidenceByReportId(id));
                     if ("post".equalsIgnoreCase(r.getTargetType())) {
                         r.setPost(postDAO.getPostById(r.getTargetId()));
                     }
@@ -93,7 +88,7 @@ public class ReportDAO extends DAO {
     }
 
     public boolean updateStatus(int reportId, String status) throws SQLException {
-        String sql = "UPDATE tblReport SET reportStatus=? WHERE id=?";
+        String sql = "UPDATE tblReport SET status=? WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, status);
             ps.setInt(2, reportId);
@@ -107,7 +102,7 @@ public class ReportDAO extends DAO {
         r.setTargetType(rs.getString("targetType"));
         r.setTargetId(rs.getInt("targetId"));
         r.setReason(rs.getString("reason"));
-        r.setStatus(rs.getString("reportStatus"));
+        r.setStatus(rs.getString("status"));
         r.setCreatedAt(toLocalDateTime(rs.getTimestamp("createdAt")));
         Account reporter = new Account();
         reporter.setId(rs.getInt("accountId"));

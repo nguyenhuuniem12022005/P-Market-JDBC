@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "compile pmarket",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "if (!(Test-Path 'lib/h2.jar')) { New-Item -ItemType Directory -Force -Path 'lib' | Out-Null; Invoke-WebRequest -Uri 'https://repo1.maven.org/maven2/com/h2database/h2/2.2.224/h2-2.2.224.jar' -OutFile 'lib/h2.jar' }; New-Item -ItemType Directory -Force -Path 'target/classes' | Out-Null; Get-ChildItem -Path 'src' -Recurse -Filter '*.java' | ForEach-Object { $_.FullName } | Set-Content -Encoding ASCII 'target/sources.txt'; javac -encoding UTF-8 -d 'target/classes' -cp 'lib/h2.jar' '@target/sources.txt'"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$javac"
+    }
+  ]
+}

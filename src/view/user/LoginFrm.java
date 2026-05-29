@@ -85,9 +85,9 @@ public class LoginFrm extends JFrame implements ActionListener {
             SessionManager.setCurrentAccount(account);
             dispose();
             if ("admin".equalsIgnoreCase(account.getRole())) {
-                new HomeAdminFrm().setVisible(true);
+                new AdminHomeFrm().setVisible(true);
             } else {
-                new HomeStudentFrm().setVisible(true);
+                new StudentHomeFrm().setVisible(true);
             }
         } catch (Exception ex) {
             UiHelper.showError(this, "Loi ket noi CSDL: " + ex.getMessage());

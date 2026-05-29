@@ -42,7 +42,7 @@ public class ChatRoomFrm extends JFrame implements ActionListener {
     private void initRoom(int otherAccountId) {
         try {
             int myId = SessionManager.getCurrentAccount().getId();
-            chatRoom = chatRoomDAO.findOrCreateRoom(myId, otherAccountId);
+            chatRoom = chatRoomDAO.getOrCreateRoom(myId, otherAccountId);
             buildUi();
             loadMessages();
         } catch (Exception ex) {

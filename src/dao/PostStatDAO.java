@@ -17,11 +17,11 @@ public class PostStatDAO extends DAO {
 
         String newSql = """
                 SELECT COUNT(*) FROM tblPost
-                WHERE createdAt >= ? AND createdAt < DATEADD('DAY', 1, ?)
+                WHERE createdAt >= ? AND createdAt < ?
                 """;
         try (PreparedStatement ps = con.prepareStatement(newSql)) {
             ps.setDate(1, java.sql.Date.valueOf(startDate));
-            ps.setDate(2, java.sql.Date.valueOf(endDate));
+            ps.setDate(2, java.sql.Date.valueOf(endDate.plusDays(1)));
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     stat.setNewPosts(rs.getInt(1));
@@ -29,7 +29,7 @@ public class PostStatDAO extends DAO {
             }
         }
 
-        String soldSql = "SELECT COUNT(*) FROM tblPost WHERE postStatus='sold'";
+        String soldSql = "SELECT COUNT(*) FROM tblPost WHERE status='sold'";
         try (PreparedStatement ps = con.prepareStatement(soldSql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
@@ -37,7 +37,7 @@ public class PostStatDAO extends DAO {
             }
         }
 
-        String totalSql = "SELECT COUNT(*) FROM tblPost WHERE postStatus != 'hidden'";
+        String totalSql = "SELECT COUNT(*) FROM tblPost WHERE status != 'deleted'";
         try (PreparedStatement ps = con.prepareStatement(totalSql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {

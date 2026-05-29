@@ -5,8 +5,9 @@ import model.Image;
 import model.Post;
 import model.SessionManager;
 import view.chat.ChatRoomFrm;
-import view.report.ReportFrm;
+import view.report.ReportFormFrm;
 import view.user.UiHelper;
+import view.user.UserProfileFrm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +23,7 @@ public class PostDetailFrm extends JFrame implements ActionListener {
     private final PostDAO postDAO = new PostDAO();
     private final JTextArea outDetail = new JTextArea();
     private final JButton btnChat = new JButton("Nhan tin nguoi ban");
+    private final JButton btnSellerProfile = new JButton("Ho so nguoi ban");
     private final JButton btnReport = new JButton("Bao cao vi pham");
     private final JButton btnClose = new JButton("Dong");
 
@@ -40,8 +42,10 @@ public class PostDetailFrm extends JFrame implements ActionListener {
         JPanel actions = new JPanel(new FlowLayout());
         if (!adminMode && SessionManager.isStudent()) {
             btnChat.addActionListener(this);
+            btnSellerProfile.addActionListener(this);
             btnReport.addActionListener(this);
             actions.add(btnChat);
+            actions.add(btnSellerProfile);
             actions.add(btnReport);
         }
         btnClose.addActionListener(this);
@@ -88,7 +92,9 @@ public class PostDetailFrm extends JFrame implements ActionListener {
         if (e.getSource() == btnClose) {
             dispose();
         } else if (e.getSource() == btnReport && post != null) {
-            new ReportFrm(post).setVisible(true);
+            new ReportFormFrm(post).setVisible(true);
+        } else if (e.getSource() == btnSellerProfile && post != null && post.getAccount() != null) {
+            new UserProfileFrm(post.getAccount().getId()).setVisible(true);
         } else if (e.getSource() == btnChat && post != null && post.getAccount() != null) {
             int sellerId = post.getAccount().getId();
             int myId = SessionManager.getCurrentAccount().getId();

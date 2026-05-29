@@ -30,6 +30,7 @@ public final class UiHelper {
             case "available" -> "Dang ban";
             case "sold" -> "Da ban";
             case "hidden" -> "Da an";
+            case "deleted" -> "Da xoa";
             case "pending" -> "Cho xu ly";
             case "resolved" -> "Da xu ly";
             case "rejected" -> "Bi bac bo";

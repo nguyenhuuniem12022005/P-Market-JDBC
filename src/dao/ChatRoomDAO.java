@@ -16,7 +16,7 @@ public class ChatRoomDAO extends DAO {
     private final ChatRoomMemberDAO memberDAO = new ChatRoomMemberDAO();
 
     /** Module f: tim hoac tao phong chat 1-1 */
-    public ChatRoom findOrCreateRoom(int accountId1, int accountId2) throws SQLException {
+    public ChatRoom getOrCreateRoom(int accountId1, int accountId2) throws SQLException {
         String sql = """
                 SELECT cr.id FROM tblChatRoom cr
                 JOIN tblChatRoomMember m1 ON cr.id = m1.chatRoomId AND m1.accountId = ?
@@ -50,7 +50,25 @@ public class ChatRoomDAO extends DAO {
         return room;
     }
 
-    public List<ChatRoom> getRoomsForAccount(int accountId) throws SQLException {
+    /** Module f: lay chi tiet mot phong chat theo id */
+    public ChatRoom getRoomById(int roomId) throws SQLException {
+        String sql = "SELECT id, createdAt FROM tblChatRoom WHERE id=?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    ChatRoom room = new ChatRoom();
+                    room.setId(rs.getInt("id"));
+                    room.setCreatedAt(toLocalDateTime(rs.getTimestamp("createdAt")));
+                    room.setListMember(memberDAO.getMembersByRoomId(room.getId()));
+                    return room;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<ChatRoom> getRoomsByAccount(int accountId) throws SQLException {
         String sql = """
                 SELECT DISTINCT cr.id, cr.createdAt
                 FROM tblChatRoom cr

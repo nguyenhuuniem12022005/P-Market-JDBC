@@ -1,6 +1,6 @@
 -- Du lieu mau de test cac module a -> k
 
-INSERT INTO tblAccount (fullName, email, "password", phone, address, "role", "status", avatarUrl) VALUES
+INSERT INTO tblAccount (fullName, email, password, phone, address, role, status, avatarUrl) VALUES
 ('Quan tri vien', 'admin@ptit.edu.vn', 'admin123', '0900000001', 'PTIT', 'admin', 'active', ''),
 ('Nguyen Van Anh', 'anhnv.b21ce009@stu.ptit.edu.vn', 'student123', '0912345678', 'Ha Noi', 'student', 'active', ''),
 ('Tran Thi Binh', 'binhtt.b22ce001@stu.ptit.edu.vn', 'student123', '0923456789', 'Ha Noi', 'student', 'active', ''),

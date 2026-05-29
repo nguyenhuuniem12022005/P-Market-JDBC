@@ -1,0 +1,24 @@
+# Build outputs
+/build/
+/target/
+
+# Runtime database files
+/data/*.mv.db
+/data/*.trace.db
+/data/*.lock.db
+
+# Exported reports created while testing
+/reports/
+
+# Local uploads created while testing
+/uploads/*
+!/uploads/.gitkeep
+
+# IDE and OS files
+/.classpath
+/.project
+/.settings/
+/.idea/
+*.iml
+Thumbs.db
+.DS_Store

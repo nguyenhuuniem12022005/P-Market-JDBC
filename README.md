@@ -1,63 +1,79 @@
-# P-Market — Java Desktop (Swing MVC)
+# P-Market - Java Swing MVC
 
-Cau truc thu muc **theo Hinh 9.5 giao trinh CNPM** (giong du an `hotel`):
+Ung dung desktop Java Swing quan ly cho mua ban do dung sinh vien. Project dang duoc to chuc theo kieu package trong giao trinh: `dao`, `model`, `view.<module>`, `test.unit`.
 
-```
-pmarket/
-├── src/
-│   ├── dao/                    ← Controller (ke thua DAO.java)
-│   │   ├── DAO.java
-│   │   ├── AccountDAO.java
-│   │   ├── PostDAO.java
-│   │   ├── ReportDAO.java
-│   │   ├── ChatRoomDAO.java
-│   │   ├── NotificationDAO.java
-│   │   ├── AccountStatDAO.java
-│   │   ├── DatabaseUtil.java
-│   │   └── ...
-│   ├── model/                  ← Entity
-│   │   ├── Account.java
-│   │   ├── Post.java
-│   │   ├── Report.java
-│   │   ├── SessionManager.java
-│   │   └── ...
-│   ├── test/
-│   │   └── unit/               ← Kiem thu DAO (mau giao trinh)
-│   │       └── DbSmokeTest.java
-│   ├── view/
-│   │   ├── user/               ← Module a, b (dang nhap, quan ly TK)
-│   │   │   ├── LoginFrm.java
-│   │   │   ├── HomeAdminFrm.java
-│   │   │   ├── ManageAccountFrm.java
-│   │   │   └── ...
-│   │   ├── post/               ← Module c, d, e
-│   │   ├── chat/               ← Module f
-│   │   ├── report/             ← Module g, h
-│   │   ├── stat/               ← Module i
-│   │   └── notification/       ← Module k
-│   └── Main.java
-├── database/                   ← schema.sql tham khao bao cao
-├── lib/h2.jar
-└── run.bat
+## Cau truc project
+
+```text
+cnpm/
+|-- src/
+|   |-- Main.java
+|   |-- dao/                 # Lop truy cap CSDL va khoi tao schema
+|   |-- model/               # Entity/model
+|   |-- test/unit/           # Test smoke don gian cho DAO
+|   `-- view/
+|       |-- category/
+|       |-- chat/
+|       |-- notification/
+|       |-- post/
+|       |-- report/
+|       |-- stat/
+|       `-- user/
+|-- database/                # SQL tham khao cho bao cao
+|-- lib/h2.jar               # Driver H2 dung khi chay bang run.bat
+|-- uploads/                 # Anh upload khi test
+|-- pom.xml                  # Cau hinh Maven
+`-- run.bat                  # Build va chay nhanh tren Windows
 ```
 
-## Chenh lech so voi lan dau
+Thu muc `build/`, `target/` va cac file database trong `data/` la file sinh ra khi build/chay, khong can dua vao source.
 
-| Truoc (sai format) | Sau (dung giao trinh) |
-|--------------------|------------------------|
-| `com.ptit.pmarket.view.*` (1 package) | `view.user`, `view.post`, `view.chat`, ... |
-| `src/main/java/...` (Maven chuan) | `src/` (Eclipse chuan) |
-| `util/` rieng | `DatabaseUtil` trong `dao/` |
+## Yeu cau
 
-## Chay
+- JDK 17 tro len
+- Maven 3.x neu muon chay bang Maven
+- Windows PowerShell de `run.bat` tu tai `lib/h2.jar` khi may chua co file nay
+
+Kiem tra Java:
+
+```bat
+java -version
+javac -version
+```
+
+## Cach chay nhanh tren Windows
 
 ```bat
 run.bat
 ```
 
-Hoac import thu muc `pmarket-swing-java` vao **Eclipse** → New Java Project → source folder `src`.
+Script se:
+
+1. Tai H2 driver vao `lib/h2.jar` neu chua co.
+2. Compile lai toan bo file `.java` trong `src`.
+3. Chay class `Main`.
+
+## Chay smoke test DAO
+
+```bat
+run.bat test
+```
+
+Lenh nay compile source va chay `test.unit.DbSmokeTest` de thu dang nhap tai khoan admin.
+
+## Chay bang Maven
+
+```bat
+mvn clean compile exec:java
+```
 
 ## Tai khoan demo
 
-- Admin: `admin@ptit.edu.vn` / `admin123`
-- SV: `anhnv.b21ce009@stu.ptit.edu.vn` / `student123`
+```text
+Admin: admin@ptit.edu.vn / admin123
+Sinh vien: anhnv.b21ce009@stu.ptit.edu.vn / student123
+```
+
+## Ghi chu ve CSDL
+
+Ung dung dung H2 file database tai `data/pmarket.mv.db`. Neu file database chua ton tai, chuong trinh se tu tao schema va seed du lieu mau trong lan chay dau tien.

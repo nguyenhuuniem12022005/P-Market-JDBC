@@ -2,8 +2,6 @@ package view.report;
 
 import view.user.UiHelper;
 
-import dao.AccountDAO;
-import dao.PostDAO;
 import dao.ReportDAO;
 import model.Report;
 import model.ReportEvidence;
@@ -20,14 +18,10 @@ public class ReportDetailFrm extends JDialog implements ActionListener {
     private final Runnable onDone;
     private Report report;
     private final ReportDAO reportDAO = new ReportDAO();
-    private final PostDAO postDAO = new PostDAO();
-    private final AccountDAO accountDAO = new AccountDAO();
     private final JTextArea outInfo = new JTextArea();
-    private final JComboBox<String> inDeleteReason = new JComboBox<>(new String[]{
-            "Hang cam / Noi dung nhay cam",
-            "Tin rac / Spam",
-            "Lua dao / Sai mo ta"
-    });
+    private final JButton btnDeletePost = new JButton("Xoa bai vi pham");
+    private final JButton btnLockAccount = new JButton("Khoa tai khoan vi pham");
+    private final JButton btnReject = new JButton("Bac bo bao cao");
 
     public ReportDetailFrm(int reportId, Runnable onDone) {
         super((Frame) null, "Chi tiet bao cao #" + reportId, true);
@@ -39,19 +33,14 @@ public class ReportDetailFrm extends JDialog implements ActionListener {
         outInfo.setEditable(false);
         outInfo.setLineWrap(true);
 
-        JButton btnDeletePost = new JButton("Xoa bai vi pham");
-        JButton btnBanUser = new JButton("Khoa tai khoan vi pham");
-        JButton btnReject = new JButton("Bac bo bao cao");
         btnDeletePost.addActionListener(this);
-        btnBanUser.addActionListener(this);
+        btnLockAccount.addActionListener(this);
         btnReject.addActionListener(this);
 
-        JPanel actions = new JPanel(new GridLayout(2, 2, 8, 8));
+        JPanel actions = new JPanel(new GridLayout(1, 3, 8, 8));
         actions.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-        actions.add(new JLabel("Ly do xoa (neu xoa bai):"));
-        actions.add(inDeleteReason);
         actions.add(btnDeletePost);
-        actions.add(btnBanUser);
+        actions.add(btnLockAccount);
         actions.add(btnReject);
 
         add(new JScrollPane(outInfo), BorderLayout.CENTER);
@@ -81,45 +70,27 @@ public class ReportDetailFrm extends JDialog implements ActionListener {
                 sb.append(" - ").append(ev.getImageUrl()).append("\n");
             }
             outInfo.setText(sb.toString());
+            btnDeletePost.setEnabled("post".equalsIgnoreCase(report.getTargetType()));
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }
-    }
-
-    private void markResolved() throws Exception {
-        reportDAO.updateStatus(reportId, "resolved");
-        UiHelper.showInfo(this, "Xu ly bao cao thanh cong.");
-        dispose();
-        if (onDone != null) onDone.run();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        try {
-            JButton src = (JButton) e.getSource();
-            if (src.getText().contains("Xoa bai")) {
-                if (inDeleteReason.getSelectedItem() == null) {
-                    UiHelper.showError(this, "Vui long chon ly do vi pham truoc khi xoa.");
-                    return;
-                }
-                if (report != null && "post".equalsIgnoreCase(report.getTargetType())) {
-                    postDAO.hidePost(report.getTargetId());
-                }
-                markResolved();
-            } else if (src.getText().contains("Khoa")) {
-                if (report != null && report.getPost() != null && report.getPost().getAccount() != null) {
-                    int accId = report.getPost().getAccount().getId();
-                    accountDAO.banAccount(accId, "Vi pham tu bao cao #" + reportId);
-                }
-                markResolved();
-            } else if (src.getText().contains("Bac bo")) {
-                reportDAO.updateStatus(reportId, "rejected");
-                UiHelper.showInfo(this, "Da bac bo bao cao.");
-                dispose();
-                if (onDone != null) onDone.run();
-            }
-        } catch (Exception ex) {
-            UiHelper.showError(this, ex.getMessage());
+        if (report == null) return;
+        Object src = e.getSource();
+        String actionType;
+        if (src == btnDeletePost) {
+            actionType = ActionConfirmFrm.DELETE_POST;
+        } else if (src == btnLockAccount) {
+            actionType = ActionConfirmFrm.LOCK_ACCOUNT;
+        } else {
+            actionType = ActionConfirmFrm.REJECT;
         }
+        new ActionConfirmFrm(this, report, actionType, () -> {
+            dispose();
+            if (onDone != null) onDone.run();
+        }).setVisible(true);
     }
 }

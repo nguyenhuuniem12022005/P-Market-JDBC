@@ -4,10 +4,8 @@ import view.user.UiHelper;
 import dao.CategoryDAO;
 import dao.ImageDAO;
 import dao.PostDAO;
-import model.Account;
 import model.Category;
 import model.Post;
-import model.SessionManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,9 +14,12 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Module c — Dang bai */
-public class CreatePostFrm extends JFrame implements ActionListener {
+/** Module b — Sua bai dang */
+public class EditPostFrm extends JFrame implements ActionListener {
 
+    private final int postId;
+    private final Runnable onSaved;
+    private Post post;
     private final JTextField inTitle = new JTextField(30);
     private final JTextArea inDescription = new JTextArea(5, 30);
     private final JTextField inPrice = new JTextField(10);
@@ -26,20 +27,16 @@ public class CreatePostFrm extends JFrame implements ActionListener {
     private final JComboBox<Category> inCategory = new JComboBox<>();
     private final JTextField inImagePath = new JTextField(25);
     private final JButton btnBrowse = new JButton("Chon anh");
-    private final JButton btnSubmit = new JButton("Dang bai");
+    private final JButton btnSave = new JButton("Luu thay doi");
     private final PostDAO postDAO = new PostDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
     private final ImageDAO imageDAO = new ImageDAO();
-    private final Runnable onSaved;
 
-    public CreatePostFrm() {
-        this(null);
-    }
-
-    public CreatePostFrm(Runnable onSaved) {
-        super("Dang bai ban hang");
+    public EditPostFrm(int postId, Runnable onSaved) {
+        super("Sua bai dang #" + postId);
+        this.postId = postId;
         this.onSaved = onSaved;
-        setSize(520, 420);
+        setSize(520, 440);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -52,18 +49,19 @@ public class CreatePostFrm extends JFrame implements ActionListener {
         int row = 0;
         addRow(form, gbc, row++, "Tieu de:", inTitle);
         gbc.gridy = row;
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
         form.add(new JLabel("Mo ta:"), gbc);
         gbc.gridx = 1;
         form.add(new JScrollPane(inDescription), gbc);
         row++;
         addRow(form, gbc, row++, "Gia (VND):", inPrice);
         addRow(form, gbc, row++, "So luong:", inQuantity);
-        inQuantity.setText("1");
         addRow(form, gbc, row++, "Danh muc:", inCategory);
 
         gbc.gridy = row;
         gbc.gridx = 0;
-        form.add(new JLabel("Anh:"), gbc);
+        form.add(new JLabel("Anh moi:"), gbc);
         JPanel imgPanel = new JPanel(new BorderLayout());
         imgPanel.add(inImagePath, BorderLayout.CENTER);
         btnBrowse.addActionListener(this);
@@ -75,11 +73,11 @@ public class CreatePostFrm extends JFrame implements ActionListener {
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
-        btnSubmit.addActionListener(this);
-        form.add(btnSubmit, gbc);
+        btnSave.addActionListener(this);
+        form.add(btnSave, gbc);
 
         add(form, BorderLayout.CENTER);
-        loadCategories();
+        loadData();
     }
 
     private void addRow(JPanel p, GridBagConstraints gbc, int row, String label, JComponent field) {
@@ -91,11 +89,28 @@ public class CreatePostFrm extends JFrame implements ActionListener {
         p.add(field, gbc);
     }
 
-    private void loadCategories() {
+    private void loadData() {
         try {
-            inCategory.removeAllItems();
             for (Category c : categoryDAO.getAllCategories()) {
                 inCategory.addItem(c);
+            }
+            post = postDAO.getPostDetails(postId);
+            if (post == null) {
+                UiHelper.showError(this, "Khong tim thay bai dang.");
+                dispose();
+                return;
+            }
+            inTitle.setText(post.getTitle());
+            inDescription.setText(post.getDescription());
+            inPrice.setText(String.valueOf(post.getPrice()));
+            inQuantity.setText(String.valueOf(post.getQuantity()));
+            if (post.getCategory() != null) {
+                for (int i = 0; i < inCategory.getItemCount(); i++) {
+                    if (inCategory.getItemAt(i).getId() == post.getCategory().getId()) {
+                        inCategory.setSelectedIndex(i);
+                        break;
+                    }
+                }
             }
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
@@ -111,49 +126,35 @@ public class CreatePostFrm extends JFrame implements ActionListener {
             }
             return;
         }
-        if (e.getSource() != btnSubmit) return;
+        if (e.getSource() != btnSave) return;
 
         String title = inTitle.getText().trim();
-        String desc = inDescription.getText().trim();
         Category cat = (Category) inCategory.getSelectedItem();
         if (title.isEmpty() || cat == null) {
             UiHelper.showError(this, "Vui long nhap tieu de va chon danh muc.");
             return;
         }
-        double price;
-        int qty;
         try {
-            price = Double.parseDouble(inPrice.getText().trim());
-            qty = Integer.parseInt(inQuantity.getText().trim());
-        } catch (NumberFormatException ex) {
-            UiHelper.showError(this, "Gia va so luong phai la so hop le.");
-            return;
-        }
+            post.setTitle(title);
+            post.setDescription(inDescription.getText().trim());
+            post.setPrice(Double.parseDouble(inPrice.getText().trim()));
+            post.setQuantity(Integer.parseInt(inQuantity.getText().trim()));
+            post.setCategory(cat);
 
-        Account me = SessionManager.getCurrentAccount();
-        Post post = new Post();
-        post.setTitle(title);
-        post.setDescription(desc);
-        post.setPrice(price);
-        post.setQuantity(qty);
-        post.setAccount(me);
-        post.setCategory(cat);
+            postDAO.updatePost(post);
 
-        try {
-            List<String> sources = new ArrayList<>();
             String path = inImagePath.getText().trim();
             if (!path.isEmpty()) {
+                List<String> sources = new ArrayList<>();
                 sources.add(path);
+                List<String> urls = imageDAO.uploadImages(sources);
+                imageDAO.saveImages(postId, urls);
             }
-            List<String> urls = imageDAO.uploadImages(sources);
-            if (urls.isEmpty()) {
-                urls.add("uploads/default.png");
-            }
-            postDAO.createPost(post);
-            imageDAO.saveImages(post.getId(), urls);
-            UiHelper.showInfo(this, "Dang bai thanh cong!");
+            UiHelper.showInfo(this, "Cap nhat bai dang thanh cong");
             dispose();
             if (onSaved != null) onSaved.run();
+        } catch (NumberFormatException ex) {
+            UiHelper.showError(this, "Gia va so luong phai la so hop le.");
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }

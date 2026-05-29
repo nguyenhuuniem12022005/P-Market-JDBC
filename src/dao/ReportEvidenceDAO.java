@@ -10,16 +10,25 @@ import java.util.List;
 
 public class ReportEvidenceDAO extends DAO {
 
-    public void insertEvidence(int reportId, String imageUrl) throws SQLException {
+    /** Module g: luu danh sach anh bang chung cho mot bao cao */
+    public boolean addEvidenceList(int reportId, List<String> imageUrls) throws SQLException {
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            return true;
+        }
         String sql = "INSERT INTO tblReportEvidence (reportId, imageUrl) VALUES (?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, reportId);
-            ps.setString(2, imageUrl);
-            ps.executeUpdate();
+            for (String url : imageUrls) {
+                ps.setInt(1, reportId);
+                ps.setString(2, url);
+                ps.addBatch();
+            }
+            ps.executeBatch();
         }
+        return true;
     }
 
-    public List<ReportEvidence> getByReportId(int reportId) throws SQLException {
+    /** Module h: lay danh sach anh bang chung theo bao cao */
+    public List<ReportEvidence> getEvidenceByReportId(int reportId) throws SQLException {
         String sql = "SELECT * FROM tblReportEvidence WHERE reportId=?";
         List<ReportEvidence> list = new ArrayList<>();
         try (PreparedStatement ps = con.prepareStatement(sql)) {

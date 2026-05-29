@@ -17,11 +17,11 @@ public class AccountStatDAO extends DAO {
 
         String newSql = """
                 SELECT COUNT(*) FROM tblAccount
-                WHERE userRole='student' AND createdAt >= ? AND createdAt < DATEADD('DAY', 1, ?)
+                WHERE role='student' AND createdAt >= ? AND createdAt < ?
                 """;
         try (PreparedStatement ps = con.prepareStatement(newSql)) {
             ps.setDate(1, java.sql.Date.valueOf(startDate));
-            ps.setDate(2, java.sql.Date.valueOf(endDate));
+            ps.setDate(2, java.sql.Date.valueOf(endDate.plusDays(1)));
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     stat.setNewAccounts(rs.getInt(1));
@@ -29,7 +29,7 @@ public class AccountStatDAO extends DAO {
             }
         }
 
-        String bannedSql = "SELECT COUNT(*) FROM tblAccount WHERE userStatus='banned'";
+        String bannedSql = "SELECT COUNT(*) FROM tblAccount WHERE status='banned'";
         try (PreparedStatement ps = con.prepareStatement(bannedSql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
@@ -37,7 +37,7 @@ public class AccountStatDAO extends DAO {
             }
         }
 
-        String totalSql = "SELECT COUNT(*) FROM tblAccount WHERE userRole='student'";
+        String totalSql = "SELECT COUNT(*) FROM tblAccount WHERE role='student'";
         try (PreparedStatement ps = con.prepareStatement(totalSql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {

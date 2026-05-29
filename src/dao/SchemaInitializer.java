@@ -16,11 +16,11 @@ public final class SchemaInitializer {
                   id INT AUTO_INCREMENT PRIMARY KEY,
                   fullName VARCHAR(200) NOT NULL,
                   email VARCHAR(200) NOT NULL UNIQUE,
-                  pwd VARCHAR(200) NOT NULL,
+                  password VARCHAR(200) NOT NULL,
                   phone VARCHAR(50),
                   address VARCHAR(500),
-                  userRole VARCHAR(20) NOT NULL,
-                  userStatus VARCHAR(20) NOT NULL,
+                  role VARCHAR(20) NOT NULL,
+                  status VARCHAR(20) NOT NULL,
                   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                   avatarUrl VARCHAR(500),
                   banReason VARCHAR(500)
@@ -45,7 +45,7 @@ public final class SchemaInitializer {
                   quantity INT NOT NULL DEFAULT 1,
                   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                  postStatus VARCHAR(20) NOT NULL,
+                  status VARCHAR(20) NOT NULL,
                   FOREIGN KEY (accountId) REFERENCES tblAccount(id),
                   FOREIGN KEY (categoryId) REFERENCES tblCategory(id)
                 )
@@ -65,7 +65,7 @@ public final class SchemaInitializer {
                   targetType VARCHAR(20) NOT NULL,
                   targetId INT NOT NULL,
                   reason VARCHAR(500) NOT NULL,
-                  reportStatus VARCHAR(20) NOT NULL,
+                  status VARCHAR(20) NOT NULL,
                   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                   FOREIGN KEY (accountId) REFERENCES tblAccount(id)
                 )
@@ -138,7 +138,7 @@ public final class SchemaInitializer {
         }
         try (Statement st = con.createStatement()) {
             st.execute("""
-                INSERT INTO tblAccount (fullName, email, pwd, phone, address, userRole, userStatus, avatarUrl) VALUES
+                INSERT INTO tblAccount (fullName, email, password, phone, address, role, status, avatarUrl) VALUES
                 ('Quan tri vien', 'admin@ptit.edu.vn', 'admin123', '0900000001', 'PTIT', 'admin', 'active', ''),
                 ('Nguyen Van Anh', 'anhnv.b21ce009@stu.ptit.edu.vn', 'student123', '0912345678', 'Ha Noi', 'student', 'active', ''),
                 ('Tran Thi Binh', 'binhtt.b22ce001@stu.ptit.edu.vn', 'student123', '0923456789', 'Ha Noi', 'student', 'active', ''),
@@ -150,7 +150,7 @@ public final class SchemaInitializer {
                 (NULL, 'Hoc tap'), (1, 'Giao trinh'), (1, 'Do dung hoc tap'), (NULL, 'Dien tu')
                 """);
             st.execute("""
-                INSERT INTO tblPost (accountId, categoryId, title, description, price, quantity, postStatus) VALUES
+                INSERT INTO tblPost (accountId, categoryId, title, description, price, quantity, status) VALUES
                 (2, 2, 'Giao trinh Giai tich 1', 'Sach moi 90%', 85000, 1, 'available'),
                 (2, 3, 'Ban phim co Logitech', 'Dung tot', 250000, 1, 'available'),
                 (3, 2, 'De thi lap - Noi dung cam', 'Ban de thi cu', 50000, 1, 'available')
@@ -160,7 +160,7 @@ public final class SchemaInitializer {
                 (1, 'uploads/sample_book.png'), (2, 'uploads/sample_keyboard.png'), (3, 'uploads/sample_exam.png')
                 """);
             st.execute("""
-                INSERT INTO tblReport (accountId, targetType, targetId, reason, reportStatus) VALUES
+                INSERT INTO tblReport (accountId, targetType, targetId, reason, status) VALUES
                 (2, 'post', 3, 'Noi dung cam', 'pending')
                 """);
             st.execute("INSERT INTO tblReportEvidence (reportId, imageUrl) VALUES (1, 'uploads/evidence1.png')");
