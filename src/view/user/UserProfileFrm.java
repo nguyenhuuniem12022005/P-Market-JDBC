@@ -17,7 +17,7 @@ public class UserProfileFrm extends JFrame implements ActionListener {
     private Account account;
     private final AccountDAO accountDAO = new AccountDAO();
     private final JTextArea outInfo = new JTextArea();
-    private final JButton btnReport = new JButton("Báo cáo tài khoản");
+    private final JButton btnReport = new JButton("⚑ Báo cáo tài khoản");
     private final JButton btnClose = new JButton("Đóng");
 
     public UserProfileFrm(int accountId) {

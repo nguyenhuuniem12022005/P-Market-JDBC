@@ -24,7 +24,7 @@ public class PostDetailFrm extends JFrame implements ActionListener {
     private final JTextArea outDetail = new JTextArea();
     private final JButton btnChat = new JButton("Nhắn tin người bán");
     private final JButton btnSellerProfile = new JButton("Hồ sơ người bán");
-    private final JButton btnReport = new JButton("Báo cáo vi phạm");
+    private final JButton btnReport = new JButton("⚑ Báo cáo vi phạm");
     private final JButton btnClose = new JButton("Đóng");
 
     public PostDetailFrm(int postId, boolean adminMode) {

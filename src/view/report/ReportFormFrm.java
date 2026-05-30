@@ -54,13 +54,13 @@ public class ReportFormFrm extends JDialog implements ActionListener {
         super((Frame) null, "Báo cáo vi phạm", true);
         this.targetPost = targetPost;
         this.targetAccount = targetAccount;
-        setSize(440, 360);
+        setSize(500, 430);
         setLocationRelativeTo(null);
         inEvidence.setEditable(false);
 
         JPanel p = new JPanel(new BorderLayout(8, 8));
         p.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        p.add(new JLabel(header), BorderLayout.NORTH);
+        p.add(buildTargetInfo(header), BorderLayout.NORTH);
 
         JPanel center = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -103,6 +103,36 @@ public class ReportFormFrm extends JDialog implements ActionListener {
         bottom.add(btnCancel);
         p.add(bottom, BorderLayout.SOUTH);
         add(p);
+    }
+
+    private JPanel buildTargetInfo(String header) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(header));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(2, 4, 2, 4);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        if (targetPost != null) {
+            addInfoRow(panel, gbc, 0, "Bài đăng bị báo cáo:", targetPost.getTitle());
+            String seller = targetPost.getAccount() != null
+                    ? targetPost.getAccount().getFullName() : "";
+            addInfoRow(panel, gbc, 1, "Người đăng bài:", seller);
+        } else {
+            addInfoRow(panel, gbc, 0, "Tài khoản bị báo cáo:", targetAccount.getFullName());
+            addInfoRow(panel, gbc, 1, "Email:", targetAccount.getEmail());
+        }
+        return panel;
+    }
+
+    private void addInfoRow(JPanel panel, GridBagConstraints gbc, int row, String label, String value) {
+        gbc.gridy = row;
+        gbc.gridx = 0;
+        gbc.weightx = 0;
+        panel.add(new JLabel(label), gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1;
+        panel.add(new JLabel(value == null ? "" : value), gbc);
     }
 
     @Override
