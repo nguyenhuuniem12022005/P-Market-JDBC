@@ -53,6 +53,27 @@ Script se:
 2. Compile lai toan bo file `.java` trong `src`.
 3. Chay class `Main`.
 
+## Cach chay tren macOS/Linux
+
+```bash
+bash run.sh
+```
+
+Hoac cap quyen chay mot lan roi chay truc tiep:
+
+```bash
+chmod +x run.sh
+./run.sh
+```
+
+Script ho tro cac tham so tuong tu Windows:
+
+```bash
+bash run.sh initdb
+bash run.sh test
+bash run.sh junit ReportDaoTest
+```
+
 ## Chay smoke test DAO
 
 ```bat

@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Post {
+    public static final String STATUS_AVAILABLE = "AVAILABLE";
+    public static final String STATUS_SOLD = "SOLD";
+    public static final String STATUS_HIDDEN = "HIDDEN";
+    public static final String STATUS_DELETE = "DELETE";
+
     private int id;
     private String title;
     private String description;

@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS tblPost (
     quantity INT NOT NULL DEFAULT 1,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('AVAILABLE', 'SOLD', 'HIDDEN', 'DELETE')),
     FOREIGN KEY (accountId) REFERENCES tblAccount(id),
     FOREIGN KEY (categoryId) REFERENCES tblCategory(id)
 );
@@ -50,7 +50,8 @@ CREATE TABLE IF NOT EXISTS tblReport (
     postId INT,
     accountId INT,
     reason VARCHAR(500) NOT NULL,
-    status VARCHAR(20) NOT NULL,
+    detail CLOB,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'PROCESSED', 'REJECTED')),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (reporterId) REFERENCES tblAccount(id),
     FOREIGN KEY (postId) REFERENCES tblPost(id),

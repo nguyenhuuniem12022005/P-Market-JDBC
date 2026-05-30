@@ -85,17 +85,17 @@ public class ProfileFrm extends JFrame implements ActionListener {
         if (ok != JOptionPane.OK_OPTION) return;
         String oldP = new String(oldPass.getPassword());
         String newP = new String(newPass.getPassword());
-        if (!oldP.equals(me.getPassword())) {
-            UiHelper.showError(this, "Mật khẩu cũ không đúng.");
-            return;
-        }
         if (newP.isBlank()) {
             UiHelper.showError(this, "Mật khẩu mới không được rỗng.");
             return;
         }
         try {
+            if (!accountDAO.verifyPassword(me.getId(), oldP)) {
+                UiHelper.showError(this, "Mật khẩu cũ không đúng.");
+                return;
+            }
             accountDAO.updatePassword(me.getId(), newP);
-            me.setPassword(newP);
+            SessionManager.setCurrentAccount(accountDAO.getProfile(me.getId()));
             UiHelper.showInfo(this, "Đổi mật khẩu thành công.");
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());

@@ -66,7 +66,7 @@ public class ActionConfirmFrm extends JDialog implements ActionListener {
                     if (report.getPostId() != null) {
                         postDAO.deletePost(report.getPostId());
                     }
-                    reportDAO.updateStatus(report.getId(), "PROCESSED");
+                    reportDAO.updateStatus(report.getId(), Report.STATUS_PROCESSED);
                     UiHelper.showInfo(this, "Xử lý báo cáo thành công.");
                 }
                 case LOCK_ACCOUNT -> {
@@ -74,12 +74,12 @@ public class ActionConfirmFrm extends JDialog implements ActionListener {
                     if (accId > 0) {
                         accountDAO.lockAccount(accId, "Vi phạm từ báo cáo #" + report.getId());
                     }
-                    reportDAO.updateStatus(report.getId(), "PROCESSED");
+                    reportDAO.updateStatus(report.getId(), Report.STATUS_PROCESSED);
                     UiHelper.showInfo(this, "Xử lý báo cáo thành công.");
                 }
                 default -> {
-                    reportDAO.updateStatus(report.getId(), "REJECTED");
-                    UiHelper.showInfo(this, "Đã bác bỏ báo cáo.");
+                    reportDAO.updateStatus(report.getId(), Report.STATUS_PROCESSED);
+                    UiHelper.showInfo(this, "Đã bác bỏ và đánh dấu báo cáo đã xử lý.");
                 }
             }
             dispose();

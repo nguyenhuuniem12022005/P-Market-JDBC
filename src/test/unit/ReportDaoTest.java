@@ -25,6 +25,7 @@ public class ReportDaoTest {
         report.setPostId(postId);
         report.setAccountId(null);
         report.setReason("JUnit reason");
+        report.setDetail("JUnit report detail");
 
         int reportId = reportDAO.addReport(report);
         Assert.assertTrue(reportId > 0);
@@ -32,7 +33,8 @@ public class ReportDaoTest {
         Report saved = reportDAO.getReportById(reportId);
         Assert.assertNotNull(saved);
         Assert.assertEquals(Integer.valueOf(postId), saved.getPostId());
-        Assert.assertEquals("PENDING", saved.getStatus());
+        Assert.assertEquals("JUnit report detail", saved.getDetail());
+        Assert.assertEquals(Report.STATUS_PENDING, saved.getStatus());
     }
 
     @Test
@@ -40,7 +42,7 @@ public class ReportDaoTest {
         List<Report> reports = reportDAO.getPendingReports();
         Assert.assertNotNull(reports);
         for (Report r : reports) {
-            Assert.assertEquals("PENDING", r.getStatus());
+            Assert.assertEquals(Report.STATUS_PENDING, r.getStatus());
         }
     }
 
@@ -56,8 +58,68 @@ public class ReportDaoTest {
         report.setReason("JUnit process reason");
         int reportId = reportDAO.createReport(report);
 
-        Assert.assertTrue(reportDAO.updateStatus(reportId, "PROCESSED"));
-        Assert.assertEquals("PROCESSED", reportDAO.getReportById(reportId).getStatus());
+        Assert.assertTrue(reportDAO.updateStatus(reportId, Report.STATUS_PROCESSED));
+        Assert.assertEquals(Report.STATUS_PROCESSED, reportDAO.getReportById(reportId).getStatus());
+
+        try {
+            reportDAO.updateStatus(reportId, Report.STATUS_REJECTED);
+            Assert.fail("Expected processed report status to be terminal");
+        } catch (Exception ex) {
+            Assert.assertTrue(ex.getMessage().contains("Khong the chuyen trang thai"));
+        }
+    }
+
+    @Test
+    public void testDuplicatePendingReportForPostIsRejected() throws Exception {
+        int reporterId = DbTestUtil.firstActiveStudentId();
+        int categoryId = DbTestUtil.firstCategoryId();
+        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("JUnit duplicate report post"), "AVAILABLE");
+
+        Report first = new Report();
+        first.setReporterId(reporterId);
+        first.setPostId(postId);
+        first.setReason("JUnit duplicate reason");
+        int firstReportId = reportDAO.addReport(first);
+
+        Report duplicate = new Report();
+        duplicate.setReporterId(reporterId);
+        duplicate.setPostId(postId);
+        duplicate.setReason("JUnit duplicate reason again");
+
+        try {
+            reportDAO.addReport(duplicate);
+            Assert.fail("Expected duplicate pending report to be rejected");
+        } catch (Exception ex) {
+            Assert.assertTrue(ex.getMessage().contains("dang cho xu ly"));
+        }
+
+        Assert.assertTrue(reportDAO.updateStatus(firstReportId, Report.STATUS_REJECTED));
+        int newReportId = reportDAO.addReport(duplicate);
+        Assert.assertTrue(newReportId > 0);
+    }
+
+    @Test
+    public void testDuplicatePendingReportForAccountIsRejected() throws Exception {
+        int reporterId = DbTestUtil.firstActiveStudentId();
+        int targetAccountId = DbTestUtil.insertStudent(DbTestUtil.unique("duplicate_report_account"));
+
+        Report first = new Report();
+        first.setReporterId(reporterId);
+        first.setAccountId(targetAccountId);
+        first.setReason("JUnit duplicate account reason");
+        reportDAO.addReport(first);
+
+        Report duplicate = new Report();
+        duplicate.setReporterId(reporterId);
+        duplicate.setAccountId(targetAccountId);
+        duplicate.setReason("JUnit duplicate account reason again");
+
+        try {
+            reportDAO.addReport(duplicate);
+            Assert.fail("Expected duplicate pending account report to be rejected");
+        } catch (Exception ex) {
+            Assert.assertTrue(ex.getMessage().contains("dang cho xu ly"));
+        }
     }
 
     @Test

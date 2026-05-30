@@ -42,6 +42,22 @@ public class PostDaoTest {
         Post detail = postDAO.getPostById(saved.getId());
         Assert.assertNotNull(detail);
         Assert.assertEquals(saved.getTitle(), detail.getTitle());
+        Assert.assertFalse(detail.getListImage().isEmpty());
+    }
+
+    @Test
+    public void testCreatePostRequiresImage() throws Exception {
+        int accountId = DbTestUtil.firstActiveStudentId();
+        int categoryId = DbTestUtil.firstCategoryId();
+        Post post = DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("JUnit no image post"));
+        post.getListImage().clear();
+
+        try {
+            postDAO.createPost(post);
+            Assert.fail("Expected createPost to reject a post without images");
+        } catch (Exception ex) {
+            Assert.assertTrue(ex.getMessage().contains("anh"));
+        }
     }
 
     @Test
@@ -68,6 +84,33 @@ public class PostDaoTest {
         Assert.assertTrue(postDAO.deletePost(post.getId()));
         Assert.assertNull(postDAO.findActivePostById(post.getId()));
         Assert.assertEquals("DELETE", postDAO.getPostById(post.getId()).getStatus());
+    }
+
+    @Test
+    public void testPostStatusLifecycle() throws Exception {
+        int accountId = DbTestUtil.firstActiveStudentId();
+        int categoryId = DbTestUtil.firstCategoryId();
+        Post post = postDAO.createPost(DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("JUnit lifecycle post")));
+
+        Assert.assertTrue(postDAO.markSold(post.getId()));
+        Assert.assertEquals(Post.STATUS_SOLD, postDAO.getPostById(post.getId()).getStatus());
+
+        Assert.assertTrue(postDAO.markAvailable(post.getId()));
+        Assert.assertEquals(Post.STATUS_AVAILABLE, postDAO.getPostById(post.getId()).getStatus());
+
+        Assert.assertTrue(postDAO.hidePost(post.getId()));
+        Assert.assertEquals(Post.STATUS_HIDDEN, postDAO.getPostById(post.getId()).getStatus());
+
+        Assert.assertTrue(postDAO.markAvailable(post.getId()));
+        Assert.assertTrue(postDAO.deletePost(post.getId()));
+        Assert.assertEquals(Post.STATUS_DELETE, postDAO.getPostById(post.getId()).getStatus());
+
+        try {
+            postDAO.markAvailable(post.getId());
+            Assert.fail("Expected deleted posts to be terminal");
+        } catch (Exception ex) {
+            Assert.assertTrue(ex.getMessage().contains("Khong the chuyen trang thai"));
+        }
     }
 
     @Test

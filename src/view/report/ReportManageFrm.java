@@ -20,6 +20,9 @@ public class ReportManageFrm extends JFrame implements ActionListener {
     private final ReportDAO reportDAO = new ReportDAO();
     private final DefaultTableModel model;
     private final JTable table;
+    private final JComboBox<String> inStatus = new JComboBox<>(new String[]{
+            "Chờ xử lý", "Đã xử lý", "Bị bác bỏ", "Tất cả"
+    });
     private final JButton btnDetail = new JButton("Xem chi tiết");
     private List<Report> reports = List.of();
 
@@ -30,7 +33,12 @@ public class ReportManageFrm extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         model = new DefaultTableModel(
-                new String[]{"ID", "Người gửi", "Loại", "Đối tượng ID", "Lý do", "Trạng thái"}, 0);
+                new String[]{"ID", "Người gửi", "Loại", "Đối tượng ID", "Lý do", "Trạng thái"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         table = new JTable(model);
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -42,10 +50,16 @@ public class ReportManageFrm extends JFrame implements ActionListener {
         });
 
         btnDetail.addActionListener(this);
+        inStatus.addActionListener(this);
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        top.add(new JLabel("Trạng thái:"));
+        top.add(inStatus);
+
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bottom.add(btnDetail);
         bottom.add(new JLabel("Chọn dòng báo cáo rồi bấm Xem chi tiết"));
 
+        add(top, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
         loadTable();
@@ -55,12 +69,19 @@ public class ReportManageFrm extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnDetail) {
             openSelectedReport();
+        } else if (e.getSource() == inStatus) {
+            loadTable();
         }
     }
 
     private void loadTable() {
         try {
-            reports = reportDAO.getPendingReports();
+            reports = switch (inStatus.getSelectedIndex()) {
+                case 1 -> reportDAO.getReportsByStatus(Report.STATUS_PROCESSED);
+                case 2 -> reportDAO.getReportsByStatus(Report.STATUS_REJECTED);
+                case 3 -> reportDAO.getAllReports();
+                default -> reportDAO.getPendingReports();
+            };
             model.setRowCount(0);
             for (Report r : reports) {
                 model.addRow(new Object[]{

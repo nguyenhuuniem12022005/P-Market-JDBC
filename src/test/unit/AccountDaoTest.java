@@ -58,4 +58,20 @@ public class AccountDaoTest {
         Assert.assertEquals("ACTIVE", active.getStatus());
         Assert.assertNull(active.getBanReason());
     }
+
+    @Test
+    public void testUpdatePasswordStoresHashAndLoginStillWorks() throws Exception {
+        String token = DbTestUtil.unique("password_account");
+        int accountId = DbTestUtil.insertStudent(token);
+        String email = token + "@stu.ptit.edu.vn";
+        String newPassword = "newPassword123";
+
+        Assert.assertTrue(accountDAO.updatePassword(accountId, newPassword));
+        Account updated = accountDAO.findById(accountId);
+        Assert.assertNotEquals(newPassword, updated.getPassword());
+        Assert.assertTrue(updated.getPassword().startsWith("pbkdf2$"));
+
+        Assert.assertNotNull(accountDAO.login(email, newPassword));
+        Assert.assertNull(accountDAO.login(email, "student123"));
+    }
 }

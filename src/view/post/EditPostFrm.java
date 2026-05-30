@@ -8,6 +8,7 @@ import model.Category;
 import model.Post;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +40,7 @@ public class EditPostFrm extends JFrame implements ActionListener {
         setSize(520, 440);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        inImagePath.setEditable(false);
 
         JPanel form = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -121,6 +123,8 @@ public class EditPostFrm extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnBrowse) {
             JFileChooser chooser = new JFileChooser();
+            chooser.setFileFilter(new FileNameExtensionFilter(
+                    "Ảnh (*.png, *.jpg, *.jpeg, *.gif)", "png", "jpg", "jpeg", "gif"));
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 inImagePath.setText(chooser.getSelectedFile().getAbsolutePath());
             }
@@ -134,6 +138,12 @@ public class EditPostFrm extends JFrame implements ActionListener {
             UiHelper.showError(this, "Vui lòng nhập tiêu đề và chọn danh mục.");
             return;
         }
+        String path = inImagePath.getText().trim();
+        boolean hasExistingImage = post.getListImage() != null && !post.getListImage().isEmpty();
+        if (!hasExistingImage && path.isEmpty()) {
+            UiHelper.showError(this, "Bài đăng phải có ít nhất một ảnh.");
+            return;
+        }
         try {
             post.setTitle(title);
             post.setDescription(inDescription.getText().trim());
@@ -143,7 +153,6 @@ public class EditPostFrm extends JFrame implements ActionListener {
 
             postDAO.updatePost(post);
 
-            String path = inImagePath.getText().trim();
             if (!path.isEmpty()) {
                 List<String> sources = new ArrayList<>();
                 sources.add(path);

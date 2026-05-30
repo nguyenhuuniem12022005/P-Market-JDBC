@@ -3,6 +3,7 @@ package test.unit;
 import dao.DatabaseUtil;
 import model.Account;
 import model.Category;
+import model.Image;
 import model.Post;
 
 import java.sql.Connection;
@@ -116,6 +117,9 @@ final class DbTestUtil {
         p.setDescription("Mo ta test " + title);
         p.setPrice(123000);
         p.setQuantity(2);
+        Image image = new Image();
+        image.setImageUrl("uploads/junit_post.png");
+        p.getListImage().add(image);
         return p;
     }
 }

@@ -14,17 +14,22 @@ public class MessageDAO extends DAO {
 
     /** Module f: gui tin nhan */
     public Message sendMessage(int chatRoomId, int accountId, String content, String imageUrl) throws SQLException {
+        boolean hasContent = content != null && !content.isBlank();
+        boolean hasImage = imageUrl != null && !imageUrl.isBlank();
+        if (!hasContent && !hasImage) {
+            throw new SQLException("Tin nhan phai co noi dung hoac anh dinh kem.");
+        }
         String sql = "INSERT INTO tblMessage (chatRoomId, accountId, content, imageUrl) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, chatRoomId);
             ps.setInt(2, accountId);
-            ps.setString(3, content);
-            ps.setString(4, imageUrl);
+            ps.setString(3, hasContent ? content.trim() : null);
+            ps.setString(4, hasImage ? imageUrl.trim() : null);
             ps.executeUpdate();
         }
         Message m = new Message();
-        m.setContent(content);
-        m.setImageUrl(imageUrl);
+        m.setContent(hasContent ? content.trim() : null);
+        m.setImageUrl(hasImage ? imageUrl.trim() : null);
         Account a = new Account();
         a.setId(accountId);
         m.setAccount(a);

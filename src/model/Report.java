@@ -5,11 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Report {
+    public static final String STATUS_PENDING = "PENDING";
+    public static final String STATUS_PROCESSED = "PROCESSED";
+    public static final String STATUS_REJECTED = "REJECTED";
+
     private int id;
     private int reporterId;
     private Integer postId;
     private Integer accountId;
     private String reason;
+    private String detail;
     private String status;
     private LocalDateTime createdAt;
     private Account reporter;
@@ -29,6 +34,8 @@ public class Report {
     public void setAccountId(Integer accountId) { this.accountId = accountId; }
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
+    public String getDetail() { return detail; }
+    public void setDetail(String detail) { this.detail = detail; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
     public LocalDateTime getCreatedAt() { return createdAt; }

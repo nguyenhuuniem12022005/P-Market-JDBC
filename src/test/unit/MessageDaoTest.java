@@ -27,4 +27,19 @@ public class MessageDaoTest {
         List<Message> messages = messageDAO.getMessagesByRoom(room.getId());
         Assert.assertTrue(messages.stream().anyMatch(m -> content.equals(m.getContent())));
     }
+
+    @Test
+    public void testSendImageOnlyMessage() throws Exception {
+        int accountId1 = DbTestUtil.insertStudent(DbTestUtil.unique("message_img_a"));
+        int accountId2 = DbTestUtil.insertStudent(DbTestUtil.unique("message_img_b"));
+        ChatRoom room = chatRoomDAO.getOrCreateRoom(accountId1, accountId2);
+        String imageUrl = "uploads/junit_chat.png";
+
+        Message sent = messageDAO.sendMessage(room.getId(), accountId1, null, imageUrl);
+        Assert.assertNull(sent.getContent());
+        Assert.assertEquals(imageUrl, sent.getImageUrl());
+
+        List<Message> messages = messageDAO.getMessagesByRoom(room.getId());
+        Assert.assertTrue(messages.stream().anyMatch(m -> imageUrl.equals(m.getImageUrl())));
+    }
 }

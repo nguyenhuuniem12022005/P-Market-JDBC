@@ -12,17 +12,46 @@ public class AccountDAO extends DAO {
 
     /** Module a: dang nhap */
     public Account login(String email, String password) throws SQLException {
-        String sql = "SELECT * FROM tblAccount WHERE LOWER(email)=LOWER(?) AND password=?";
+        String sql = "SELECT * FROM tblAccount WHERE LOWER(email)=LOWER(?)";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email.trim());
-            ps.setString(2, password);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapRow(rs);
+                    Account account = mapRow(rs);
+                    if (!PasswordUtil.verify(password, account.getPassword())) {
+                        return null;
+                    }
+                    if (!PasswordUtil.isHashed(account.getPassword())) {
+                        String hashed = PasswordUtil.hash(password);
+                        updatePasswordHash(account.getId(), hashed);
+                        account.setPassword(hashed);
+                    }
+                    return account;
                 }
             }
         }
         return null;
+    }
+
+    /** Hash cac mat khau plain text con ton tai trong CSDL cu. */
+    public int upgradeLegacyPlainTextPasswords() throws SQLException {
+        String sql = "SELECT id, password FROM tblAccount";
+        List<Integer> accountIds = new ArrayList<>();
+        List<String> passwordHashes = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String storedPassword = rs.getString("password");
+                if (storedPassword != null && !PasswordUtil.isHashed(storedPassword)) {
+                    accountIds.add(rs.getInt("id"));
+                    passwordHashes.add(PasswordUtil.hash(storedPassword));
+                }
+            }
+        }
+        for (int i = 0; i < accountIds.size(); i++) {
+            updatePasswordHash(accountIds.get(i), passwordHashes.get(i));
+        }
+        return accountIds.size();
     }
 
     /** Module b: tim kiem tai khoan */
@@ -97,9 +126,24 @@ public class AccountDAO extends DAO {
 
     /** Module a: doi mat khau */
     public boolean updatePassword(int id, String newPassword) throws SQLException {
+        return updatePasswordHash(id, PasswordUtil.hash(newPassword));
+    }
+
+    public boolean verifyPassword(int id, String rawPassword) throws SQLException {
+        Account account = findById(id);
+        if (account == null || !PasswordUtil.verify(rawPassword, account.getPassword())) {
+            return false;
+        }
+        if (!PasswordUtil.isHashed(account.getPassword())) {
+            updatePasswordHash(id, PasswordUtil.hash(rawPassword));
+        }
+        return true;
+    }
+
+    private boolean updatePasswordHash(int id, String passwordHash) throws SQLException {
         String sql = "UPDATE tblAccount SET password=? WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, newPassword);
+            ps.setString(1, passwordHash);
             ps.setInt(2, id);
             return ps.executeUpdate() > 0;
         }

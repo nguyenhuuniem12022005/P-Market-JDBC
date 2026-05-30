@@ -2,14 +2,13 @@ package dao;
 
 import model.Account;
 import model.Category;
+import model.Image;
 import model.Post;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +16,33 @@ public class PostDAO extends DAO {
 
     private final ImageDAO imageDAO = new ImageDAO();
 
-    /** Module c: dang bai (luu bai dang, anh duoc luu rieng qua ImageDAO.saveImages) */
+    /** Module c: dang bai, bat buoc co it nhat mot anh. */
     public Post createPost(Post post) throws SQLException {
+        return createPost(post, imageUrlsFromPost(post));
+    }
+
+    public Post createPost(Post post, List<String> imageUrls) throws SQLException {
+        List<String> requiredImages = requireImageUrls(imageUrls);
+        boolean oldAutoCommit = con.getAutoCommit();
+        try {
+            con.setAutoCommit(false);
+            insertPost(post);
+            saveImagesForPost(post.getId(), requiredImages);
+            con.commit();
+            post.setStatus(Post.STATUS_AVAILABLE);
+            return post;
+        } catch (Exception ex) {
+            con.rollback();
+            if (ex instanceof SQLException sqlEx) {
+                throw sqlEx;
+            }
+            throw new SQLException("Khong tao duoc bai dang: " + ex.getMessage(), ex);
+        } finally {
+            con.setAutoCommit(oldAutoCommit);
+        }
+    }
+
+    private void insertPost(Post post) throws SQLException {
         String sql = """
                 INSERT INTO tblPost (accountId, categoryId, title, description, price, quantity, status, updatedAt)
                 VALUES (?, ?, ?, ?, ?, ?, 'AVAILABLE', CURRENT_TIMESTAMP)
@@ -37,8 +61,6 @@ public class PostDAO extends DAO {
                 }
             }
         }
-        post.setStatus("AVAILABLE");
-        return post;
     }
 
     /** Module d: tim kiem */
@@ -153,7 +175,7 @@ public class PostDAO extends DAO {
         String sql = """
                 UPDATE tblPost
                 SET title=?, description=?, price=?, quantity=?, categoryId=?, updatedAt=CURRENT_TIMESTAMP
-                WHERE id=?
+                WHERE id=? AND status != 'DELETE'
                 """;
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, post.getTitle());
@@ -168,11 +190,7 @@ public class PostDAO extends DAO {
 
     /** Module b & h: xoa bai dang (chuyen trang thai sang da xoa) */
     public boolean deletePost(int postId) throws SQLException {
-        String sql = "UPDATE tblPost SET status='DELETE', updatedAt=CURRENT_TIMESTAMP WHERE id=?";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, postId);
-            return ps.executeUpdate() > 0;
-        }
+        return updateStatus(postId, Post.STATUS_DELETE);
     }
 
     /** Module d (quan ly danh muc): dem so bai dang thuoc mot danh muc */
@@ -200,10 +218,117 @@ public class PostDAO extends DAO {
     }
 
     public boolean markSold(int postId) throws SQLException {
-        String sql = "UPDATE tblPost SET status='SOLD', updatedAt=CURRENT_TIMESTAMP WHERE id=?";
+        return updateStatus(postId, Post.STATUS_SOLD);
+    }
+
+    public boolean markAvailable(int postId) throws SQLException {
+        return updateStatus(postId, Post.STATUS_AVAILABLE);
+    }
+
+    public boolean hidePost(int postId) throws SQLException {
+        return updateStatus(postId, Post.STATUS_HIDDEN);
+    }
+
+    public boolean updateStatus(int postId, String newStatus) throws SQLException {
+        String currentStatus = getPostStatus(postId);
+        if (currentStatus == null) {
+            return false;
+        }
+        String normalizedStatus = normalizeStatus(newStatus);
+        if (!canTransition(currentStatus, normalizedStatus)) {
+            throw new SQLException("Khong the chuyen trang thai bai dang tu "
+                    + currentStatus + " sang " + normalizedStatus + ".");
+        }
+        String sql = "UPDATE tblPost SET status=?, updatedAt=CURRENT_TIMESTAMP WHERE id=?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, normalizedStatus);
+            ps.setInt(2, postId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    private String getPostStatus(int postId) throws SQLException {
+        String sql = "SELECT status FROM tblPost WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, postId);
-            return ps.executeUpdate() > 0;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("status");
+                }
+            }
+        }
+        return null;
+    }
+
+    private String normalizeStatus(String status) throws SQLException {
+        if (status == null || status.isBlank()) {
+            throw new SQLException("Trang thai bai dang khong hop le.");
+        }
+        String normalized = status.trim().toUpperCase();
+        return switch (normalized) {
+            case Post.STATUS_AVAILABLE, Post.STATUS_SOLD, Post.STATUS_HIDDEN, Post.STATUS_DELETE -> normalized;
+            default -> throw new SQLException("Trang thai bai dang khong hop le: " + status);
+        };
+    }
+
+    private boolean canTransition(String currentStatus, String newStatus) throws SQLException {
+        String current = normalizeStatus(currentStatus);
+        if (current.equals(newStatus)) {
+            return true;
+        }
+        return switch (current) {
+            case Post.STATUS_AVAILABLE ->
+                    Post.STATUS_SOLD.equals(newStatus)
+                            || Post.STATUS_HIDDEN.equals(newStatus)
+                            || Post.STATUS_DELETE.equals(newStatus);
+            case Post.STATUS_SOLD ->
+                    Post.STATUS_AVAILABLE.equals(newStatus)
+                            || Post.STATUS_DELETE.equals(newStatus);
+            case Post.STATUS_HIDDEN ->
+                    Post.STATUS_AVAILABLE.equals(newStatus)
+                            || Post.STATUS_DELETE.equals(newStatus);
+            case Post.STATUS_DELETE -> false;
+            default -> false;
+        };
+    }
+
+    private List<String> imageUrlsFromPost(Post post) {
+        List<String> imageUrls = new ArrayList<>();
+        if (post.getListImage() == null) {
+            return imageUrls;
+        }
+        for (Image image : post.getListImage()) {
+            if (image != null) {
+                imageUrls.add(image.getImageUrl());
+            }
+        }
+        return imageUrls;
+    }
+
+    private List<String> requireImageUrls(List<String> imageUrls) throws SQLException {
+        List<String> cleaned = new ArrayList<>();
+        if (imageUrls != null) {
+            for (String imageUrl : imageUrls) {
+                if (imageUrl != null && !imageUrl.isBlank()) {
+                    cleaned.add(imageUrl.trim());
+                }
+            }
+        }
+        if (cleaned.isEmpty()) {
+            throw new SQLException("Bai dang phai co it nhat mot anh.");
+        }
+        return cleaned;
+    }
+
+    private void saveImagesForPost(int postId, List<String> imageUrls) throws SQLException {
+        String sql = "INSERT INTO tblImage (postId, imageUrl) VALUES (?, ?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            for (String url : imageUrls) {
+                ps.setInt(1, postId);
+                ps.setString(2, url);
+                ps.addBatch();
+            }
+            ps.executeBatch();
         }
     }
 

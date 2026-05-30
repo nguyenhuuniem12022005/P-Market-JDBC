@@ -10,6 +10,7 @@ import model.Post;
 import model.SessionManager;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +43,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
         setSize(520, 420);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        inImagePath.setEditable(false);
 
         JPanel form = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -63,7 +65,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
 
         gbc.gridy = row;
         gbc.gridx = 0;
-        form.add(new JLabel("Ảnh:"), gbc);
+        form.add(new JLabel("Ảnh (*):"), gbc);
         JPanel imgPanel = new JPanel(new BorderLayout());
         imgPanel.add(inImagePath, BorderLayout.CENTER);
         btnBrowse.addActionListener(this);
@@ -106,6 +108,8 @@ public class CreatePostFrm extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnBrowse) {
             JFileChooser chooser = new JFileChooser();
+            chooser.setFileFilter(new FileNameExtensionFilter(
+                    "Ảnh (*.png, *.jpg, *.jpeg, *.gif)", "png", "jpg", "jpeg", "gif"));
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 inImagePath.setText(chooser.getSelectedFile().getAbsolutePath());
             }
@@ -118,6 +122,11 @@ public class CreatePostFrm extends JFrame implements ActionListener {
         Category cat = (Category) inCategory.getSelectedItem();
         if (title.isEmpty() || cat == null) {
             UiHelper.showError(this, "Vui lòng nhập tiêu đề và chọn danh mục.");
+            return;
+        }
+        String path = inImagePath.getText().trim();
+        if (path.isEmpty()) {
+            UiHelper.showError(this, "Bài đăng phải có ít nhất một ảnh.");
             return;
         }
         double price;
@@ -141,16 +150,9 @@ public class CreatePostFrm extends JFrame implements ActionListener {
 
         try {
             List<String> sources = new ArrayList<>();
-            String path = inImagePath.getText().trim();
-            if (!path.isEmpty()) {
-                sources.add(path);
-            }
+            sources.add(path);
             List<String> urls = imageDAO.uploadImages(sources);
-            if (urls.isEmpty()) {
-                urls.add("uploads/default.png");
-            }
-            postDAO.createPost(post);
-            imageDAO.saveImages(post.getId(), urls);
+            postDAO.createPost(post, urls);
             UiHelper.showInfo(this, "Đăng bài thành công!");
             dispose();
             if (onSaved != null) onSaved.run();

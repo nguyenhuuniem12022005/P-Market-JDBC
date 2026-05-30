@@ -3,6 +3,7 @@ package view.report;
 import view.user.UiHelper;
 
 import dao.AccountDAO;
+import dao.ImageDAO;
 import dao.PostDAO;
 import dao.ReportDAO;
 import dao.ReportEvidenceDAO;
@@ -12,6 +13,7 @@ import model.Report;
 import model.SessionManager;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +34,7 @@ public class ReportFormFrm extends JDialog implements ActionListener {
     });
     private final JTextArea inDetail = new JTextArea(4, 28);
     private final JTextField inEvidence = new JTextField(20);
+    private final ImageDAO imageDAO = new ImageDAO();
     private final ReportDAO reportDAO = new ReportDAO();
     private final ReportEvidenceDAO reportEvidenceDAO = new ReportEvidenceDAO();
     private final PostDAO postDAO = new PostDAO();
@@ -53,6 +56,7 @@ public class ReportFormFrm extends JDialog implements ActionListener {
         this.targetAccount = targetAccount;
         setSize(440, 360);
         setLocationRelativeTo(null);
+        inEvidence.setEditable(false);
 
         JPanel p = new JPanel(new BorderLayout(8, 8));
         p.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
@@ -80,6 +84,8 @@ public class ReportFormFrm extends JDialog implements ActionListener {
         JButton btnBrowse = new JButton("Chọn");
         btnBrowse.addActionListener(e -> {
             JFileChooser ch = new JFileChooser();
+            ch.setFileFilter(new FileNameExtensionFilter(
+                    "Ảnh (*.png, *.jpg, *.jpeg, *.gif)", "png", "jpg", "jpeg", "gif"));
             if (ch.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 inEvidence.setText(ch.getSelectedFile().getAbsolutePath());
             }
@@ -111,7 +117,8 @@ public class ReportFormFrm extends JDialog implements ActionListener {
             r.setReporter(me);
             r.setReporterId(me.getId());
             r.setReason((String) inReason.getSelectedItem());
-            r.setStatus("PENDING");
+            r.setDetail(inDetail.getText().trim());
+            r.setStatus(Report.STATUS_PENDING);
 
             if (targetPost != null) {
                 if (postDAO.findActivePostById(targetPost.getId()) == null) {
@@ -120,6 +127,10 @@ public class ReportFormFrm extends JDialog implements ActionListener {
                 }
                 r.setPostId(targetPost.getId());
                 r.setAccountId(null);
+                if (reportDAO.hasPendingDuplicate(me.getId(), r.getPostId(), null)) {
+                    UiHelper.showError(this, "Bạn đã báo cáo bài đăng này và đang chờ xử lý.");
+                    return;
+                }
             } else {
                 if (targetAccount.getId() == me.getId()) {
                     UiHelper.showError(this, "Không thể tự báo cáo tài khoản của mình.");
@@ -132,6 +143,10 @@ public class ReportFormFrm extends JDialog implements ActionListener {
                 r.setPostId(null);
                 r.setAccountId(targetAccount.getId());
                 r.setAccount(targetAccount);
+                if (reportDAO.hasPendingDuplicate(me.getId(), null, r.getAccountId())) {
+                    UiHelper.showError(this, "Bạn đã báo cáo tài khoản này và đang chờ xử lý.");
+                    return;
+                }
             }
 
             int reportId = reportDAO.addReport(r);
@@ -139,9 +154,7 @@ public class ReportFormFrm extends JDialog implements ActionListener {
             List<String> evidence = new ArrayList<>();
             String ev = inEvidence.getText().trim();
             if (!ev.isEmpty()) {
-                evidence.add(ev);
-            } else {
-                evidence.add("uploads/evidence_user.png");
+                evidence.addAll(imageDAO.uploadImages(List.of(ev)));
             }
             reportEvidenceDAO.addEvidenceList(reportId, evidence);
 
