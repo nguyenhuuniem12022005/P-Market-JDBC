@@ -98,11 +98,11 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
         return String.format("""
                 Từ %s đến %s
                 Bài đăng mới: %d
-                Bài đã bán (tổng): %d
-                Tổng bài đăng: %d
+                Bài đã xóa (tổng): %d
+                Tổng bài đang hoạt động: %d
                 """,
                 s.getStartDate(), s.getEndDate(),
-                s.getNewPosts(), s.getSoldPosts(), s.getTotalPosts());
+                s.getNewPosts(), s.getDeletedPosts(), s.getTotalPosts());
     }
 
     @Override

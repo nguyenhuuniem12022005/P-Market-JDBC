@@ -77,7 +77,7 @@ public class ReportManageFrm extends JFrame implements ActionListener {
     private void loadTable() {
         try {
             reports = switch (inStatus.getSelectedIndex()) {
-                case 1 -> reportDAO.getReportsByStatus(Report.STATUS_PROCESSED);
+                case 1 -> reportDAO.getReportsByStatus(Report.STATUS_RESOLVED);
                 case 2 -> reportDAO.getReportsByStatus(Report.STATUS_REJECTED);
                 case 3 -> reportDAO.getAllReports();
                 default -> reportDAO.getPendingReports();

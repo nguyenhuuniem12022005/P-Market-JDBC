@@ -56,7 +56,8 @@ public class AccountManageFrm extends JFrame implements ActionListener {
             currentList = accountDAO.searchAccounts(keyword);
             tableModel.setRowCount(0);
             for (Account a : currentList) {
-                String action = "LOCKED".equalsIgnoreCase(a.getStatus()) ? "Mở khóa" : "Khóa tài khoản";
+                boolean banned = isBanned(a.getStatus());
+                String action = banned ? "Mở khóa" : "Khóa tài khoản";
                 tableModel.addRow(new Object[]{
                         a.getId(),
                         a.getFullName(),
@@ -80,7 +81,7 @@ public class AccountManageFrm extends JFrame implements ActionListener {
     private void handleRowAction(int row) {
         if (row < 0 || row >= currentList.size()) return;
         Account acc = currentList.get(row);
-        if ("LOCKED".equalsIgnoreCase(acc.getStatus())) {
+        if (isBanned(acc.getStatus())) {
             int ok = JOptionPane.showConfirmDialog(this,
                     "Mở khóa tài khoản " + acc.getFullName() + "?",
                     "Xác nhận", JOptionPane.YES_NO_OPTION);
@@ -126,5 +127,9 @@ public class AccountManageFrm extends JFrame implements ActionListener {
             ((JButton) editorComponent).setText(value.toString());
             return editorComponent;
         }
+    }
+
+    private boolean isBanned(String status) {
+        return Account.STATUS_BANNED.equalsIgnoreCase(status);
     }
 }

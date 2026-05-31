@@ -75,7 +75,7 @@ public class ExportReportFrm extends JFrame implements ActionListener {
                 + "Account,Bị khóa," + as.getBannedAccounts() + "\n"
                 + "Account,Tổng," + as.getTotalAccounts() + "\n"
                 + "Post,Bài mới," + ps.getNewPosts() + "\n"
-                + "Post,Đã bán," + ps.getSoldPosts() + "\n"
-                + "Post,Tổng," + ps.getTotalPosts() + "\n";
+                + "Post,Đã xóa," + ps.getDeletedPosts() + "\n"
+                + "Post,Đang hoạt động," + ps.getTotalPosts() + "\n";
     }
 }

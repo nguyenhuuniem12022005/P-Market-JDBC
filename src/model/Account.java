@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
+    public static final String STATUS_ACTIVE = "ACTIVE";
+    public static final String STATUS_BANNED = "BANNED";
+
     private int id;
     private String fullName;
     private String email;

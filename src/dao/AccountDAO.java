@@ -83,12 +83,14 @@ public class AccountDAO extends DAO {
 
     /** Module k */
     public List<Account> getAllStudentIds() throws SQLException {
-        String sql = "SELECT * FROM tblAccount WHERE role='student' AND status='ACTIVE'";
+        String sql = "SELECT * FROM tblAccount WHERE role='student' AND status=?";
         List<Account> list = new ArrayList<>();
-        try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapRow(rs));
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, Account.STATUS_ACTIVE);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
             }
         }
         return list;
@@ -156,9 +158,10 @@ public class AccountDAO extends DAO {
 
     /** Module g: kiem tra tai khoan con ton tai (con hoat dong) truoc khi tao bao cao */
     public Account findActiveAccountById(int id) throws SQLException {
-        String sql = "SELECT * FROM tblAccount WHERE id=? AND status='ACTIVE'";
+        String sql = "SELECT * FROM tblAccount WHERE id=? AND status=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
+            ps.setString(2, Account.STATUS_ACTIVE);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return mapRow(rs);
@@ -170,19 +173,21 @@ public class AccountDAO extends DAO {
 
     /** Module b: khoa tai khoan vi pham */
     public boolean lockAccount(int accountId, String banReason) throws SQLException {
-        String sql = "UPDATE tblAccount SET status='LOCKED', banReason=? WHERE id=?";
+        String sql = "UPDATE tblAccount SET status=?, banReason=? WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, banReason);
-            ps.setInt(2, accountId);
+            ps.setString(1, Account.STATUS_BANNED);
+            ps.setString(2, banReason);
+            ps.setInt(3, accountId);
             return ps.executeUpdate() > 0;
         }
     }
 
     /** Module b: mo khoa tai khoan */
     public boolean unlockAccount(int accountId) throws SQLException {
-        String sql = "UPDATE tblAccount SET status='ACTIVE', banReason=NULL WHERE id=?";
+        String sql = "UPDATE tblAccount SET status=?, banReason=NULL WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, accountId);
+            ps.setString(1, Account.STATUS_ACTIVE);
+            ps.setInt(2, accountId);
             return ps.executeUpdate() > 0;
         }
     }

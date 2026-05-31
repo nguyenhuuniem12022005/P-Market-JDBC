@@ -37,7 +37,7 @@ public class PostDaoTest {
 
         Post saved = postDAO.createPost(post);
         Assert.assertTrue(saved.getId() > 0);
-        Assert.assertEquals("AVAILABLE", saved.getStatus());
+        Assert.assertEquals(Post.STATUS_ACTIVE, saved.getStatus());
 
         Post detail = postDAO.getPostById(saved.getId());
         Assert.assertNotNull(detail);
@@ -83,7 +83,7 @@ public class PostDaoTest {
 
         Assert.assertTrue(postDAO.deletePost(post.getId()));
         Assert.assertNull(postDAO.findActivePostById(post.getId()));
-        Assert.assertEquals("DELETE", postDAO.getPostById(post.getId()).getStatus());
+        Assert.assertEquals(Post.STATUS_DELETED, postDAO.getPostById(post.getId()).getStatus());
     }
 
     @Test
@@ -92,21 +92,12 @@ public class PostDaoTest {
         int categoryId = DbTestUtil.firstCategoryId();
         Post post = postDAO.createPost(DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("JUnit lifecycle post")));
 
-        Assert.assertTrue(postDAO.markSold(post.getId()));
-        Assert.assertEquals(Post.STATUS_SOLD, postDAO.getPostById(post.getId()).getStatus());
-
-        Assert.assertTrue(postDAO.markAvailable(post.getId()));
-        Assert.assertEquals(Post.STATUS_AVAILABLE, postDAO.getPostById(post.getId()).getStatus());
-
-        Assert.assertTrue(postDAO.hidePost(post.getId()));
-        Assert.assertEquals(Post.STATUS_HIDDEN, postDAO.getPostById(post.getId()).getStatus());
-
-        Assert.assertTrue(postDAO.markAvailable(post.getId()));
+        Assert.assertEquals(Post.STATUS_ACTIVE, postDAO.getPostById(post.getId()).getStatus());
         Assert.assertTrue(postDAO.deletePost(post.getId()));
-        Assert.assertEquals(Post.STATUS_DELETE, postDAO.getPostById(post.getId()).getStatus());
+        Assert.assertEquals(Post.STATUS_DELETED, postDAO.getPostById(post.getId()).getStatus());
 
         try {
-            postDAO.markAvailable(post.getId());
+            postDAO.updateStatus(post.getId(), Post.STATUS_ACTIVE);
             Assert.fail("Expected deleted posts to be terminal");
         } catch (Exception ex) {
             Assert.assertTrue(ex.getMessage().contains("Khong the chuyen trang thai"));

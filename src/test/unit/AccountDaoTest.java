@@ -50,7 +50,7 @@ public class AccountDaoTest {
 
         Assert.assertTrue(accountDAO.lockAccount(accountId, "JUnit lock reason"));
         Account locked = accountDAO.findById(accountId);
-        Assert.assertEquals("LOCKED", locked.getStatus());
+        Assert.assertEquals(Account.STATUS_BANNED, locked.getStatus());
         Assert.assertEquals("JUnit lock reason", locked.getBanReason());
 
         Assert.assertTrue(accountDAO.unlockAccount(accountId));

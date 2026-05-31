@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS tblAccount (
     phone VARCHAR(50),
     address VARCHAR(500),
     role VARCHAR(20) NOT NULL,
-    status VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('ACTIVE', 'BANNED')),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     avatarUrl VARCHAR(500),
     banReason VARCHAR(500)
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS tblPost (
     quantity INT NOT NULL DEFAULT 1,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('AVAILABLE', 'SOLD', 'HIDDEN', 'DELETE')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('ACTIVE', 'DELETED')),
     FOREIGN KEY (accountId) REFERENCES tblAccount(id),
     FOREIGN KEY (categoryId) REFERENCES tblCategory(id)
 );
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS tblReport (
     accountId INT,
     reason VARCHAR(500) NOT NULL,
     detail CLOB,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'PROCESSED', 'REJECTED')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'RESOLVED', 'REJECTED')),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (reporterId) REFERENCES tblAccount(id),
     FOREIGN KEY (postId) REFERENCES tblPost(id),

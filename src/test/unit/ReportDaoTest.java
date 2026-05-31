@@ -18,7 +18,7 @@ public class ReportDaoTest {
     public void testAddReportForPost() throws Exception {
         int reporterId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("JUnit report post"), "AVAILABLE");
+        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("JUnit report post"), "ACTIVE");
 
         Report report = new Report();
         report.setReporterId(reporterId);
@@ -50,7 +50,7 @@ public class ReportDaoTest {
     public void testUpdateReportStatus() throws Exception {
         int reporterId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("JUnit process report post"), "AVAILABLE");
+        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("JUnit process report post"), "ACTIVE");
 
         Report report = new Report();
         report.setReporterId(reporterId);
@@ -58,12 +58,12 @@ public class ReportDaoTest {
         report.setReason("JUnit process reason");
         int reportId = reportDAO.createReport(report);
 
-        Assert.assertTrue(reportDAO.updateStatus(reportId, Report.STATUS_PROCESSED));
-        Assert.assertEquals(Report.STATUS_PROCESSED, reportDAO.getReportById(reportId).getStatus());
+        Assert.assertTrue(reportDAO.updateStatus(reportId, Report.STATUS_RESOLVED));
+        Assert.assertEquals(Report.STATUS_RESOLVED, reportDAO.getReportById(reportId).getStatus());
 
         try {
             reportDAO.updateStatus(reportId, Report.STATUS_REJECTED);
-            Assert.fail("Expected processed report status to be terminal");
+            Assert.fail("Expected resolved report status to be terminal");
         } catch (Exception ex) {
             Assert.assertTrue(ex.getMessage().contains("Khong the chuyen trang thai"));
         }
@@ -73,7 +73,7 @@ public class ReportDaoTest {
     public void testDuplicatePendingReportForPostIsRejected() throws Exception {
         int reporterId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("JUnit duplicate report post"), "AVAILABLE");
+        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("JUnit duplicate report post"), "ACTIVE");
 
         Report first = new Report();
         first.setReporterId(reporterId);
@@ -126,7 +126,7 @@ public class ReportDaoTest {
     public void testAddAndGetReportEvidence() throws Exception {
         int reporterId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("JUnit evidence report post"), "AVAILABLE");
+        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("JUnit evidence report post"), "ACTIVE");
 
         Report report = new Report();
         report.setReporterId(reporterId);

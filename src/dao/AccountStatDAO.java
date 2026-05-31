@@ -29,7 +29,7 @@ public class AccountStatDAO extends DAO {
             }
         }
 
-        String bannedSql = "SELECT COUNT(*) FROM tblAccount WHERE status='LOCKED'";
+        String bannedSql = "SELECT COUNT(*) FROM tblAccount WHERE status='BANNED'";
         try (PreparedStatement ps = con.prepareStatement(bannedSql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
