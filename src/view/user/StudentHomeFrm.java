@@ -4,7 +4,7 @@ import model.SessionManager;
 import view.chat.ListRoomFrm;
 import view.notification.StudentNotificationFrm;
 import view.post.ManagePostFrm;
-import view.post.SearchPostFrm;
+import view.post.PostListFrm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,7 @@ public class StudentHomeFrm extends JFrame implements ActionListener {
 
     private final JButton btnProfile = UiHelper.createMenuButton("Hồ sơ cá nhân");
     private final JButton btnManagePost = UiHelper.createMenuButton("Quản lý bài đăng");
-    private final JButton btnSearch = UiHelper.createMenuButton("Tìm kiếm bài đăng");
+    private final JButton btnSearch = UiHelper.createMenuButton("Danh sách bài đăng");
     private final JButton btnChat = UiHelper.createMenuButton("Nhắn tin");
     private final JButton btnNotifications = UiHelper.createMenuButton("Thông báo của tôi");
     private final JButton btnLogout = UiHelper.createMenuButton("Đăng xuất");
@@ -51,7 +51,7 @@ public class StudentHomeFrm extends JFrame implements ActionListener {
         } else if (e.getSource() == btnManagePost) {
             new ManagePostFrm().setVisible(true);
         } else if (e.getSource() == btnSearch) {
-            new SearchPostFrm(false).setVisible(true);
+            new PostListFrm(false).setVisible(true);
         } else if (e.getSource() == btnChat) {
             new ListRoomFrm().setVisible(true);
         } else if (e.getSource() == btnNotifications) {

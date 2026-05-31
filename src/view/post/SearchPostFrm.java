@@ -1,11 +1,11 @@
 package view.post;
 
+
 import view.user.UiHelper;
 import dao.CategoryDAO;
 import dao.PostDAO;
 import model.Category;
 import model.Post;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -15,9 +15,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-/** Module d — Tim kiem bai dang */
-public class SearchPostFrm extends JFrame implements ActionListener {
 
+
+/** Module d — Tim kiem bai dang */
+
+public class SearchPostFrm extends JFrame implements ActionListener {
     private final JTextField inKeyword = new JTextField(20);
     private final JComboBox<Category> inCategory = new JComboBox<>();
     private final JButton btnSearch = new JButton("Tìm kiếm");
@@ -34,7 +36,6 @@ public class SearchPostFrm extends JFrame implements ActionListener {
         setSize(750, 420);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
         tableModel = new DefaultTableModel(
                 new String[]{"ID", "Tiêu đề", "Giá", "Người bán", "Trạng thái"}, 0) {
             @Override
@@ -52,7 +53,6 @@ public class SearchPostFrm extends JFrame implements ActionListener {
                 }
             }
         });
-
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.add(new JLabel("Từ khóa:"));
         top.add(inKeyword);
@@ -63,7 +63,6 @@ public class SearchPostFrm extends JFrame implements ActionListener {
         btnSearch.addActionListener(this);
         top.add(btnSearch);
         top.add(new JLabel("(Double-click để xem chi tiết)"));
-
         add(top, BorderLayout.NORTH);
         add(new JScrollPane(tblPosts), BorderLayout.CENTER);
         doSearch();
@@ -77,24 +76,24 @@ public class SearchPostFrm extends JFrame implements ActionListener {
         } catch (Exception ignored) {
         }
     }
-
     private void doSearch() {
-        try {
-            Category cat = (Category) inCategory.getSelectedItem();
-            Integer catId = cat != null ? cat.getId() : null;
-            results = postDAO.searchPosts(inKeyword.getText(), catId);
-            tableModel.setRowCount(0);
-            for (Post p : results) {
-                String seller = p.getAccount() != null ? p.getAccount().getFullName() : "";
-                tableModel.addRow(new Object[]{
-                        p.getId(), p.getTitle(), String.format("%,.0f", p.getPrice()),
-                        seller, UiHelper.statusLabel(p.getStatus())
-                });
-            }
-        } catch (Exception ex) {
-            UiHelper.showError(this, ex.getMessage());
-        }
-    }
+
+         try {
+         Category cat = (Category) inCategory.getSelectedItem();
+         Integer catId = cat != null ? cat.getId() : null;
+         results = postDAO.searchPosts(inKeyword.getText(), catId);
+         tableModel.setRowCount(0);
+         for (Post p : results) {
+         String seller = p.getAccount() != null ? p.getAccount().getFullName() : "";
+         tableModel.addRow(new Object[]{
+         p.getId(), p.getTitle(), String.format("%,.0f", p.getPrice()),
+         seller, UiHelper.statusLabel(p.getStatus())
+         });
+         }
+         } catch (Exception ex) {
+         UiHelper.showError(this, ex.getMessage());
+         }
+         }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -103,3 +102,4 @@ public class SearchPostFrm extends JFrame implements ActionListener {
         }
     }
 }
+

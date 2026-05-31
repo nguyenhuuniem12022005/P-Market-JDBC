@@ -1,7 +1,6 @@
 package view.chat;
 
 import view.user.UiHelper;
-
 import dao.ChatRoomDAO;
 import model.Account;
 import model.ChatRoom;
@@ -26,8 +25,18 @@ public class ListRoomFrm extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        DefaultTableModel model = new DefaultTableModel(new String[]{"Phòng", "Đối tác"}, 0);
+        // 1. Tạo Model đã khóa chức năng sửa chữ
+        DefaultTableModel model = new DefaultTableModel(new String[]{"Phòng", "Đối tác"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        // 2. Tạo bảng từ Model
         JTable table = new JTable(model);
+
+        // 3. Gắn sự kiện nháy đúp chuột vào bảng
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -38,6 +47,7 @@ public class ListRoomFrm extends JFrame {
             }
         });
 
+        // 4. Lấy dữ liệu từ CSDL và đổ vào bảng
         try {
             int myId = SessionManager.getCurrentAccount().getId();
             rooms = chatRoomDAO.getRoomsByAccount(myId);
@@ -50,6 +60,7 @@ public class ListRoomFrm extends JFrame {
             UiHelper.showError(this, ex.getMessage());
         }
 
+        // 5. Gắn bảng và hướng dẫn lên giao diện
         add(new JScrollPane(table), BorderLayout.CENTER);
         JLabel hint = new JLabel("Double-click để mở phòng chat");
         hint.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));

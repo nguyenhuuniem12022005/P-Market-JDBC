@@ -66,12 +66,12 @@ public class PostDAO extends DAO {
     /** Module d: tim kiem */
     public List<Post> searchPosts(String keyword, Integer categoryId) throws SQLException {
         StringBuilder sql = new StringBuilder("""
-                SELECT p.*, a.fullName AS sellerName, a.email AS sellerEmail, c.name AS categoryName
-                FROM tblPost p
-                JOIN tblAccount a ON p.accountId = a.id
-                JOIN tblCategory c ON p.categoryId = c.id
-                WHERE p.status IN ('AVAILABLE','SOLD')
-                """);
+            SELECT p.*, a.fullName AS sellerName, a.email AS sellerEmail, c.name AS categoryName
+            FROM tblPost p
+            JOIN tblAccount a ON p.accountId = a.id
+            JOIN tblCategory c ON p.categoryId = c.id
+            WHERE p.status IN ('AVAILABLE','SOLD')
+            """);
         List<Object> params = new ArrayList<>();
         if (keyword != null && !keyword.isBlank()) {
             sql.append(" AND (LOWER(p.title) LIKE LOWER(?) OR LOWER(p.description) LIKE LOWER(?))");
@@ -99,6 +99,29 @@ public class PostDAO extends DAO {
                 while (rs.next()) {
                     list.add(mapRowWithJoin(rs));
                 }
+            }
+        }
+        return list;
+    }
+    /** Lấy danh sách toàn bộ bài đăng (Không có tính năng tìm kiếm) */
+    public List<Post> getAllPosts() throws SQLException {
+        String sql = """
+                SELECT p.*, a.fullName AS sellerName, a.email AS sellerEmail, c.name AS categoryName
+                FROM tblPost p
+                JOIN tblAccount a ON p.accountId = a.id
+                JOIN tblCategory c ON p.categoryId = c.id
+                WHERE p.status IN ('AVAILABLE', 'SOLD')
+                ORDER BY p.createdAt DESC
+                """;
+
+        List<Post> list = new ArrayList<>();
+
+        // Vì không có tham số (dấu ?) nào cần truyền, ta gộp luôn khai báo ResultSet vào try-with-resources
+        try (PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(mapRowWithJoin(rs));
             }
         }
         return list;
