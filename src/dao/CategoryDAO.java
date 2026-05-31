@@ -11,6 +11,10 @@ import java.util.List;
 
 public class CategoryDAO extends DAO {
 
+    public CategoryDAO() {
+        ensureDescriptionColumn();
+    }
+
     public List<Category> getAllCategories() throws SQLException {
         String sql = "SELECT * FROM tblCategory WHERE status='ACTIVE' ORDER BY name";
         List<Category> list = new ArrayList<>();
@@ -64,11 +68,12 @@ public class CategoryDAO extends DAO {
 
     /** Module d: them danh muc moi */
     public Category addCategory(Category category) throws SQLException {
-        String sql = "INSERT INTO tblCategory (parentId, name, status) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO tblCategory (parentId, name, description, status) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             setParentId(ps, 1, category);
             ps.setString(2, category.getName());
-            ps.setString(3, normalizeStatus(category.getStatus()));
+            ps.setString(3, category.getDescription());
+            ps.setString(4, normalizeStatus(category.getStatus()));
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
@@ -81,16 +86,17 @@ public class CategoryDAO extends DAO {
 
     /** Module d: cap nhat danh muc */
     public boolean updateCategory(Category category) throws SQLException {
-        String sql = "UPDATE tblCategory SET name=?, parentId=?, status=? WHERE id=?";
+        String sql = "UPDATE tblCategory SET name=?, description=?, parentId=?, status=? WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, category.getName());
+            ps.setString(2, category.getDescription());
             if (category.getParent() != null && category.getParent().getId() > 0) {
-                ps.setInt(2, category.getParent().getId());
+                ps.setInt(3, category.getParent().getId());
             } else {
-                ps.setNull(2, java.sql.Types.INTEGER);
+                ps.setNull(3, java.sql.Types.INTEGER);
             }
-            ps.setString(3, normalizeStatus(category.getStatus()));
-            ps.setInt(4, category.getId());
+            ps.setString(4, normalizeStatus(category.getStatus()));
+            ps.setInt(5, category.getId());
             return ps.executeUpdate() > 0;
         }
     }
@@ -116,6 +122,7 @@ public class CategoryDAO extends DAO {
         Category c = new Category();
         c.setId(rs.getInt("id"));
         c.setName(rs.getString("name"));
+        c.setDescription(rs.getString("description"));
         c.setStatus(rs.getString("status"));
         int parentId = rs.getInt("parentId");
         if (!rs.wasNull()) {
@@ -124,6 +131,16 @@ public class CategoryDAO extends DAO {
             c.setParent(parent);
         }
         return c;
+    }
+
+    private void ensureDescriptionColumn() {
+        String sql = "ALTER TABLE IF EXISTS tblCategory ADD COLUMN IF NOT EXISTS description CLOB";
+        try (Statement st = con.createStatement()) {
+            st.execute(sql);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Khong cap nhat duoc cot description cho tblCategory: "
+                    + ex.getMessage(), ex);
+        }
     }
 
     private String normalizeStatus(String status) {

@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS tblCategory (
     id INT AUTO_INCREMENT PRIMARY KEY,
     parentId INT,
     name VARCHAR(200) NOT NULL,
+    description CLOB,
     status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY (parentId) REFERENCES tblCategory(id)
 );

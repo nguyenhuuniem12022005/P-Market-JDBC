@@ -36,6 +36,7 @@ public class CategoryDaoTest {
         String name = DbTestUtil.unique("JUnit category");
         Category c = new Category();
         c.setName(name);
+        c.setDescription("JUnit category description");
         c.setStatus("ACTIVE");
 
         Category saved = categoryDAO.addCategory(c);
@@ -43,10 +44,12 @@ public class CategoryDaoTest {
         Assert.assertTrue(categoryDAO.existsByName(name));
 
         saved.setName(name + " updated");
+        saved.setDescription("Updated description");
         Assert.assertTrue(categoryDAO.updateCategory(saved));
 
         Category detail = categoryDAO.getCategoryDetail(saved.getId());
         Assert.assertEquals(name + " updated", detail.getName());
+        Assert.assertEquals("Updated description", detail.getDescription());
 
         Assert.assertTrue(categoryDAO.deleteCategory(saved.getId()));
         Assert.assertFalse(categoryDAO.existsByName(name + " updated"));
