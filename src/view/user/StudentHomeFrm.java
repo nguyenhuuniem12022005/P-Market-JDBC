@@ -4,7 +4,7 @@ import model.SessionManager;
 import view.chat.ListRoomFrm;
 import view.notification.StudentNotificationFrm;
 import view.post.ManagePostFrm;
-import view.post.SearchPostFrm;
+import view.post.PostListFrm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,7 +51,7 @@ public class StudentHomeFrm extends JFrame implements ActionListener {
         } else if (e.getSource() == btnManagePost) {
             new ManagePostFrm().setVisible(true);
         } else if (e.getSource() == btnSearch) {
-            new SearchPostFrm(false).setVisible(true);
+            new PostListFrm(false).setVisible(true);
         } else if (e.getSource() == btnChat) {
             new ListRoomFrm().setVisible(true);
         } else if (e.getSource() == btnNotifications) {
