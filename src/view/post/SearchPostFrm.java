@@ -15,7 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-/** Module d — Tim kiem bai dang */
+/** Module d — Danh sach bai dang */
 public class SearchPostFrm extends JFrame implements ActionListener {
 
     private final JTextField inKeyword = new JTextField(20);
@@ -29,7 +29,7 @@ public class SearchPostFrm extends JFrame implements ActionListener {
     private List<Post> results = List.of();
 
     public SearchPostFrm(boolean adminMode) {
-        super("Tìm kiếm bài đăng");
+        super("Danh sách bài đăng");
         this.adminMode = adminMode;
         setSize(750, 420);
         setLocationRelativeTo(null);

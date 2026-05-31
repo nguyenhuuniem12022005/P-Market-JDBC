@@ -16,7 +16,7 @@ public class StudentHomeFrm extends JFrame implements ActionListener {
 
     private final JButton btnProfile = UiHelper.createMenuButton("Hồ sơ cá nhân");
     private final JButton btnManagePost = UiHelper.createMenuButton("Quản lý bài đăng");
-    private final JButton btnSearch = UiHelper.createMenuButton("Tìm kiếm bài đăng");
+    private final JButton btnSearch = UiHelper.createMenuButton("Danh sách bài đăng");
     private final JButton btnChat = UiHelper.createMenuButton("Nhắn tin");
     private final JButton btnNotifications = UiHelper.createMenuButton("Thông báo của tôi");
     private final JButton btnLogout = UiHelper.createMenuButton("Đăng xuất");

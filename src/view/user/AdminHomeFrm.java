@@ -20,7 +20,7 @@ public class AdminHomeFrm extends JFrame implements ActionListener {
     private final JButton btnManageReport = UiHelper.createMenuButton("Duyệt báo cáo");
     private final JButton btnStats = UiHelper.createMenuButton("Xem thống kê");
     private final JButton btnNotification = UiHelper.createMenuButton("Gửi thông báo");
-    private final JButton btnSearch = UiHelper.createMenuButton("Tìm kiếm bài đăng");
+    private final JButton btnSearch = UiHelper.createMenuButton("Danh sách bài đăng");
     private final JButton btnLogout = UiHelper.createMenuButton("Đăng xuất");
 
     public AdminHomeFrm() {
