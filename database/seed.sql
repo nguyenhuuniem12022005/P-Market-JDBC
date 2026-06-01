@@ -16,7 +16,10 @@ INSERT INTO tblAccount (fullName, email, password, phone, address, role, status,
 ('Dang Quang Huy', 'huydq.b21at019@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000009', 'Vinh Phuc', 'student', 'ACTIVE', ''),
 ('Nguyen Bao Ngoc', 'ngocnb.b22cn130@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000010', 'Ha Nam', 'student', 'ACTIVE', ''),
 ('Pham Duc Long', 'longpd.b19cn088@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000011', 'Ha Noi', 'student', 'BANNED', ''),
-('Trinh Thanh Son', 'sontt.b23at071@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000012', 'Ninh Binh', 'student', 'ACTIVE', '');
+('Trinh Thanh Son', 'sontt.b23at071@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000012', 'Ninh Binh', 'student', 'ACTIVE', ''),
+('Mai Anh Tuan', 'tuanma.b24cn015@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000013', 'Ha Noi', 'student', 'ACTIVE', ''),
+('Ngo Phuong Linh', 'linhnp.b23at044@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000014', 'Bac Giang', 'student', 'ACTIVE', ''),
+('Dinh Quoc Viet', 'vietdq.b22cn118@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000015', 'Thanh Hoa', 'student', 'ACTIVE', '');
 
 UPDATE tblAccount SET banReason = 'Dang ban giao trinh gia mao' WHERE email = 'cuonglv.b21ce010@stu.ptit.edu.vn';
 UPDATE tblAccount SET banReason = 'Tai khoan co dau hieu lua dao' WHERE email = 'longpd.b19cn088@stu.ptit.edu.vn';
@@ -74,7 +77,13 @@ INSERT INTO tblPost (accountId, categoryId, title, description, price, quantity,
 (13, 2, 'Giao trinh Co so du lieu', 'Ban in mau, con moi', 90000, 1, 'ACTIVE'),
 (14, 7, 'Samsung Galaxy A52', 'May phu, man dep, pin on', 3300000, 1, 'ACTIVE'),
 (16, 10, 'Ao so mi trang size M', 'Ao di thuc tap, con moi', 120000, 1, 'ACTIVE'),
-(5, 6, 'Webcam Logitech C270', 'Hop online ro net, mic on', 260000, 1, 'ACTIVE');
+(5, 6, 'Webcam Logitech C270', 'Hop online ro net, mic on', 260000, 1, 'ACTIVE'),
+(17, 5, 'Laptop HP ProBook 440 G8', 'Core i5 gen 11, RAM 8GB, SSD 256GB, phu hop hoc lap trinh', 7600000, 1, 'ACTIVE'),
+(17, 3, 'But ve ky thuat set 6 cay', 'Set but di net, con moi 90%', 75000, 1, 'ACTIVE'),
+(18, 7, 'Dien thoai Xiaomi Redmi Note 12', 'May dung on, pin tot, tang op lung', 3600000, 1, 'ACTIVE'),
+(18, 14, 'Ca phe lon hoc dem', 'Combo 6 lon, han su dung con xa', 90000, 2, 'ACTIVE'),
+(19, 2, 'Giao trinh Kien truc may tinh', 'Sach co ghi chu, phu hop on thi giua ky', 65000, 1, 'ACTIVE'),
+(19, 6, 'Router WiFi TP-Link', 'Router 2 bang tan, dung tot cho phong tro', 300000, 1, 'ACTIVE');
 
 INSERT INTO tblImage (postId, imageUrl) VALUES
 (1, 'uploads/sample_book.png'),
@@ -112,7 +121,13 @@ INSERT INTO tblImage (postId, imageUrl) VALUES
 (33, 'uploads/database_book.png'),
 (34, 'uploads/samsung_a52.png'),
 (35, 'uploads/shirt_white.png'),
-(36, 'uploads/webcam.png');
+(36, 'uploads/webcam.png'),
+(37, 'uploads/hp_probook.png'),
+(38, 'uploads/technical_pens.png'),
+(39, 'uploads/redmi_note_12.png'),
+(40, 'uploads/coffee_combo.png'),
+(41, 'uploads/computer_architecture_book.png'),
+(42, 'uploads/tplink_router.png');
 
 INSERT INTO tblReport (reporterId, postId, accountId, reason, status) VALUES
 (2, 3, NULL, 'Noi dung cam', 'PENDING'),

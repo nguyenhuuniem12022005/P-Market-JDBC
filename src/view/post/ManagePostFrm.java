@@ -10,6 +10,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 /** Module b — Quan ly bai dang ca nhan */
@@ -18,6 +20,7 @@ public class ManagePostFrm extends JFrame implements ActionListener {
     private final PostDAO postDAO = new PostDAO();
     private final JTable table = new JTable();
     private final DefaultTableModel model;
+    private final JButton btnViewDetail = new JButton("Xem chi tiết");
     private final JButton btnCreate = new JButton("Tạo bài đăng");
     private final JButton btnEdit = new JButton("Sửa");
     private final JButton btnDelete = new JButton("Xóa");
@@ -35,14 +38,28 @@ public class ManagePostFrm extends JFrame implements ActionListener {
             public boolean isCellEditable(int r, int c) { return false; }
         };
         table.setModel(model);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setRowSelectionAllowed(true);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                if (row >= 0 && e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+                    table.setRowSelectionInterval(row, row);
+                    openSelectedPostDetail();
+                }
+            }
+        });
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         btnCreate.addActionListener(this);
         top.add(btnCreate);
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        btnViewDetail.addActionListener(this);
         btnEdit.addActionListener(this);
         btnDelete.addActionListener(this);
+        bottom.add(btnViewDetail);
         bottom.add(btnEdit);
         bottom.add(btnDelete);
 
@@ -72,17 +89,31 @@ public class ManagePostFrm extends JFrame implements ActionListener {
 
     private Post selectedPost() {
         int row = table.getSelectedRow();
-        if (row < 0 || row >= posts.size()) {
+        if (row < 0) {
             UiHelper.showError(this, "Vui lòng chọn một bài đăng.");
             return null;
         }
-        return posts.get(row);
+        int modelRow = table.convertRowIndexToModel(row);
+        if (modelRow < 0 || modelRow >= posts.size()) {
+            UiHelper.showError(this, "Khong mo duoc bai dang dang chon.");
+            return null;
+        }
+        return posts.get(modelRow);
+    }
+
+    private void openSelectedPostDetail() {
+        Post p = selectedPost();
+        if (p != null) {
+            new PostDetailFrm(p.getId(), false).setVisible(true);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnCreate) {
             new CreatePostFrm(this::reload).setVisible(true);
+        } else if (e.getSource() == btnViewDetail) {
+            openSelectedPostDetail();
         } else if (e.getSource() == btnEdit) {
             Post p = selectedPost();
             if (p != null) {

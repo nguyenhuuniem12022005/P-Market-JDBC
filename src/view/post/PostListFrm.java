@@ -11,6 +11,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 /** Module d - Danh sach bai dang. */
@@ -42,6 +44,18 @@ public class PostListFrm extends JFrame implements ActionListener {
             }
         };
         tblPosts.setModel(tableModel);
+        tblPosts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblPosts.setRowSelectionAllowed(true);
+        tblPosts.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = tblPosts.rowAtPoint(e.getPoint());
+                if (row >= 0 && e.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(e)) {
+                    tblPosts.setRowSelectionInterval(row, row);
+                    openSelectedPost();
+                }
+            }
+        });
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.add(new JLabel("Từ khóa:"));
@@ -90,11 +104,16 @@ public class PostListFrm extends JFrame implements ActionListener {
 
     private void openSelectedPost() {
         int row = tblPosts.getSelectedRow();
-        if (row < 0 || row >= results.size()) {
+        if (row < 0) {
             UiHelper.showError(this, "Vui lòng chọn một bài đăng.");
             return;
         }
-        new PostDetailFrm(results.get(row).getId(), adminMode).setVisible(true);
+        int modelRow = tblPosts.convertRowIndexToModel(row);
+        if (modelRow < 0 || modelRow >= results.size()) {
+            UiHelper.showError(this, "Khong mo duoc bai dang dang chon.");
+            return;
+        }
+        new PostDetailFrm(results.get(modelRow).getId(), adminMode).setVisible(true);
     }
 
     @Override
