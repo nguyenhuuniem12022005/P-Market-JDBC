@@ -108,6 +108,7 @@ public class ReportDetailFrm extends JDialog implements ActionListener {
         }
     }
 
+
     private void renderEvidenceImages() {
         evidencePanel.removeAll();
         JLabel title = new JLabel("Ảnh bằng chứng");

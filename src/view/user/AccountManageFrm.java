@@ -27,7 +27,7 @@ public class AccountManageFrm extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         tableModel = new DefaultTableModel(
-                new String[]{"ID", "Tên", "Email", "Trạng thái", "Hành động"}, 0) {
+                new String[] { "ID", "Tên", "Email", "Trạng thái", "Hành động" }, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 4;
@@ -58,7 +58,7 @@ public class AccountManageFrm extends JFrame implements ActionListener {
             for (Account a : currentList) {
                 boolean banned = isBanned(a.getStatus());
                 String action = banned ? "Mở khóa" : "Khóa tài khoản";
-                tableModel.addRow(new Object[]{
+                tableModel.addRow(new Object[] {
                         a.getId(),
                         a.getFullName(),
                         a.getEmail(),
@@ -78,8 +78,10 @@ public class AccountManageFrm extends JFrame implements ActionListener {
         }
     }
 
+    // Xử lý hành động trên dòng (khóa/mở khóa)
     private void handleRowAction(int row) {
-        if (row < 0 || row >= currentList.size()) return;
+        if (row < 0 || row >= currentList.size())
+            return;
         Account acc = currentList.get(row);
         if (isBanned(acc.getStatus())) {
             int ok = JOptionPane.showConfirmDialog(this,
@@ -100,7 +102,10 @@ public class AccountManageFrm extends JFrame implements ActionListener {
     }
 
     private class ButtonRenderer extends JButton implements javax.swing.table.TableCellRenderer {
-        ButtonRenderer() { setOpaque(true); }
+        ButtonRenderer() {
+            setOpaque(true);
+        }
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
@@ -111,6 +116,7 @@ public class AccountManageFrm extends JFrame implements ActionListener {
 
     private class ButtonEditor extends DefaultCellEditor {
         private int editingRow = -1;
+
         ButtonEditor(JCheckBox checkBox) {
             super(checkBox);
             JButton btn = new JButton();
@@ -120,6 +126,7 @@ public class AccountManageFrm extends JFrame implements ActionListener {
             });
             editorComponent = btn;
         }
+
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value,
                 boolean isSelected, int row, int column) {
