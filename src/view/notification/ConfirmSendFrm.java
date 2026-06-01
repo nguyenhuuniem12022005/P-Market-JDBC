@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-/** Module k — Xac nhan gui thong bao */
 public class ConfirmSendFrm extends JDialog implements ActionListener {
 
     private final Notification notification;
@@ -59,14 +58,13 @@ public class ConfirmSendFrm extends JDialog implements ActionListener {
             Notification saved = notificationDAO.createNotification(
                     notification.getTitle(), notification.getContent());
             List<Account> students = accountDAO.getAllStudentIds();
-            if (students.isEmpty()) {
-                UiHelper.showInfo(this, "Đã lưu thông báo nhưng chưa có sinh viên nhận.");
-            } else {
+            if (!students.isEmpty()) {
                 userNotificationDAO.broadcastToAll(saved.getId(), students);
-                UiHelper.showInfo(this, "Đã gửi thông báo thành công đến " + students.size() + " sinh viên.");
             }
+            UiHelper.showInfo(this, "Đã gửi thông báo thành công");
             dispose();
-            if (onSuccess != null) onSuccess.run();
+            if (onSuccess != null)
+                onSuccess.run();
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }

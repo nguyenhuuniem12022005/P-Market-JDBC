@@ -11,7 +11,6 @@ import java.util.List;
 
 public class UserNotificationDAO extends DAO {
 
-    /** Module k: broadcast */
     public boolean broadcastToAll(int notificationId, List<Account> students) throws SQLException {
         String sql = "INSERT INTO tblUserNotification (notificationId, accountId, isRead) VALUES (?, ?, FALSE)";
         try (PreparedStatement ps = con.prepareStatement(sql)) {

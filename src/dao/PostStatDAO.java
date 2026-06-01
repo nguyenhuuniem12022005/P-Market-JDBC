@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 public class PostStatDAO extends DAO {
 
-    /** Module i */
     public PostStat getPostStat(LocalDate startDate, LocalDate endDate) throws SQLException {
         PostStat stat = new PostStat();
         stat.setStartDate(startDate);
@@ -39,7 +38,7 @@ public class PostStatDAO extends DAO {
 
         String totalSql = "SELECT COUNT(*) FROM tblPost WHERE status='ACTIVE'";
         try (PreparedStatement ps = con.prepareStatement(totalSql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 stat.setTotalPosts(rs.getInt(1));
             }
