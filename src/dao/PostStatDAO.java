@@ -28,15 +28,15 @@ public class PostStatDAO extends DAO {
             }
         }
 
-        String deletedSql = "SELECT COUNT(*) FROM tblPost WHERE status='DELETE'";
+        String deletedSql = "SELECT COUNT(*) FROM tblPost WHERE status='DELETED'";
         try (PreparedStatement ps = con.prepareStatement(deletedSql);
-                ResultSet rs = ps.executeQuery()) {
+             ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 stat.setDeletedPosts(rs.getInt(1));
             }
         }
 
-        String totalSql = "SELECT COUNT(*) FROM tblPost WHERE status != 'DELETE'";
+        String totalSql = "SELECT COUNT(*) FROM tblPost WHERE status='ACTIVE'";
         try (PreparedStatement ps = con.prepareStatement(totalSql);
                 ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {

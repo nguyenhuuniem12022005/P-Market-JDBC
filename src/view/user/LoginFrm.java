@@ -80,7 +80,7 @@ public class LoginFrm extends JFrame implements ActionListener {
                 UiHelper.showError(this, "Sai email hoặc mật khẩu.");
                 return;
             }
-            if ("LOCKED".equalsIgnoreCase(account.getStatus())) {
+            if (Account.STATUS_BANNED.equalsIgnoreCase(account.getStatus())) {
                 UiHelper.showError(this, "Tài khoản bị khóa. Lý do: "
                         + (account.getBanReason() != null ? account.getBanReason() : ""));
                 return;

@@ -70,10 +70,16 @@ public class ReportDAO extends DAO {
 
     public List<Report> getReportsByStatus(String status) throws SQLException {
         String normalizedStatus = normalizeStatus(status);
-        String sql = baseReportQuery() + " WHERE r.status=? ORDER BY r.createdAt DESC";
+        String baseSql = baseReportQuery();
+        String sql = Report.STATUS_RESOLVED.equals(normalizedStatus)
+                ? baseSql + " WHERE r.status IN (?, ?) ORDER BY r.createdAt DESC"
+                : baseSql + " WHERE r.status=? ORDER BY r.createdAt DESC";
         List<Report> list = new ArrayList<>();
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, normalizedStatus);
+            if (Report.STATUS_RESOLVED.equals(normalizedStatus)) {
+                ps.setString(2, "PROCESSED");
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapRow(rs));
@@ -190,8 +196,11 @@ public class ReportDAO extends DAO {
             throw new SQLException("Trang thai bao cao khong hop le.");
         }
         String normalized = status.trim().toUpperCase();
+        if ("PROCESSED".equals(normalized)) {
+            return Report.STATUS_RESOLVED;
+        }
         return switch (normalized) {
-            case Report.STATUS_PENDING, Report.STATUS_PROCESSED, Report.STATUS_REJECTED -> normalized;
+            case Report.STATUS_PENDING, Report.STATUS_RESOLVED, Report.STATUS_REJECTED -> normalized;
             default -> throw new SQLException("Trang thai bao cao khong hop le: " + status);
         };
     }
@@ -202,8 +211,8 @@ public class ReportDAO extends DAO {
             return true;
         }
         return Report.STATUS_PENDING.equals(current)
-                && (Report.STATUS_PROCESSED.equals(newStatus)
-                || Report.STATUS_REJECTED.equals(newStatus));
+            && (Report.STATUS_RESOLVED.equals(newStatus)
+            || Report.STATUS_REJECTED.equals(newStatus));
     }
 
     private String baseReportQuery() {

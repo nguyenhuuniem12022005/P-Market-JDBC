@@ -29,7 +29,7 @@ public class PostDAO extends DAO {
             insertPost(post);
             saveImagesForPost(post.getId(), requiredImages);
             con.commit();
-            post.setStatus(Post.STATUS_AVAILABLE);
+            post.setStatus(Post.STATUS_ACTIVE);
             return post;
         } catch (Exception ex) {
             con.rollback();
@@ -45,7 +45,7 @@ public class PostDAO extends DAO {
     private void insertPost(Post post) throws SQLException {
         String sql = """
                 INSERT INTO tblPost (accountId, categoryId, title, description, price, quantity, status, updatedAt)
-                VALUES (?, ?, ?, ?, ?, ?, 'AVAILABLE', CURRENT_TIMESTAMP)
+                VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE', CURRENT_TIMESTAMP)
                 """;
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, post.getAccount().getId());
@@ -70,7 +70,7 @@ public class PostDAO extends DAO {
                 FROM tblPost p
                 JOIN tblAccount a ON p.accountId = a.id
                 JOIN tblCategory c ON p.categoryId = c.id
-                WHERE p.status IN ('AVAILABLE','SOLD')
+                WHERE p.status='ACTIVE'
                 """);
         List<Object> params = new ArrayList<>();
         if (keyword != null && !keyword.isBlank()) {
@@ -139,7 +139,7 @@ public class PostDAO extends DAO {
                 FROM tblPost p
                 JOIN tblAccount a ON p.accountId = a.id
                 JOIN tblCategory c ON p.categoryId = c.id
-                WHERE p.accountId=? AND p.status != 'DELETE'
+                WHERE p.accountId=? AND p.status='ACTIVE'
                 ORDER BY p.createdAt DESC
                 """;
         List<Post> list = new ArrayList<>();
@@ -158,9 +158,10 @@ public class PostDAO extends DAO {
 
     /** Module g: kiem tra bai dang con ton tai truoc khi tao bao cao */
     public Post findActivePostById(int id) throws SQLException {
-        String sql = "SELECT id FROM tblPost WHERE id=? AND status != 'DELETE'";
+        String sql = "SELECT id FROM tblPost WHERE id=? AND status=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
+            ps.setString(2, Post.STATUS_ACTIVE);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return getPostById(id);
@@ -175,7 +176,7 @@ public class PostDAO extends DAO {
         String sql = """
                 UPDATE tblPost
                 SET title=?, description=?, price=?, quantity=?, categoryId=?, updatedAt=CURRENT_TIMESTAMP
-                WHERE id=? AND status != 'DELETE'
+                WHERE id=? AND status='ACTIVE'
                 """;
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, post.getTitle());
@@ -190,14 +191,15 @@ public class PostDAO extends DAO {
 
     /** Module b & h: xoa bai dang (chuyen trang thai sang da xoa) */
     public boolean deletePost(int postId) throws SQLException {
-        return updateStatus(postId, Post.STATUS_DELETE);
+        return updateStatus(postId, Post.STATUS_DELETED);
     }
 
     /** Module d (quan ly danh muc): dem so bai dang thuoc mot danh muc */
     public int countPostByCategory(int categoryId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM tblPost WHERE categoryId=? AND status != 'DELETE'";
+        String sql = "SELECT COUNT(*) FROM tblPost WHERE categoryId=? AND status=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, categoryId);
+            ps.setString(2, Post.STATUS_ACTIVE);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -215,18 +217,6 @@ public class PostDAO extends DAO {
             ps.setInt(2, fromCategoryId);
             return ps.executeUpdate() >= 0;
         }
-    }
-
-    public boolean markSold(int postId) throws SQLException {
-        return updateStatus(postId, Post.STATUS_SOLD);
-    }
-
-    public boolean markAvailable(int postId) throws SQLException {
-        return updateStatus(postId, Post.STATUS_AVAILABLE);
-    }
-
-    public boolean hidePost(int postId) throws SQLException {
-        return updateStatus(postId, Post.STATUS_HIDDEN);
     }
 
     public boolean updateStatus(int postId, String newStatus) throws SQLException {
@@ -266,7 +256,7 @@ public class PostDAO extends DAO {
         }
         String normalized = status.trim().toUpperCase();
         return switch (normalized) {
-            case Post.STATUS_AVAILABLE, Post.STATUS_SOLD, Post.STATUS_HIDDEN, Post.STATUS_DELETE -> normalized;
+            case Post.STATUS_ACTIVE, Post.STATUS_DELETED -> normalized;
             default -> throw new SQLException("Trang thai bai dang khong hop le: " + status);
         };
     }
@@ -277,17 +267,8 @@ public class PostDAO extends DAO {
             return true;
         }
         return switch (current) {
-            case Post.STATUS_AVAILABLE ->
-                    Post.STATUS_SOLD.equals(newStatus)
-                            || Post.STATUS_HIDDEN.equals(newStatus)
-                            || Post.STATUS_DELETE.equals(newStatus);
-            case Post.STATUS_SOLD ->
-                    Post.STATUS_AVAILABLE.equals(newStatus)
-                            || Post.STATUS_DELETE.equals(newStatus);
-            case Post.STATUS_HIDDEN ->
-                    Post.STATUS_AVAILABLE.equals(newStatus)
-                            || Post.STATUS_DELETE.equals(newStatus);
-            case Post.STATUS_DELETE -> false;
+            case Post.STATUS_ACTIVE -> Post.STATUS_DELETED.equals(newStatus);
+            case Post.STATUS_DELETED -> false;
             default -> false;
         };
     }

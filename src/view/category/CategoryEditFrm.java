@@ -15,6 +15,7 @@ public class CategoryEditFrm extends JFrame implements ActionListener {
     private final Category editing;
     private final Runnable onSaved;
     private final JTextField inName = new JTextField(20);
+    private final JTextArea inDescription = new JTextArea(3, 20);
     private final JComboBox<Category> inParent = new JComboBox<>();
     private final JButton btnSave = new JButton("Lưu");
     private final JButton btnCancel = new JButton("Hủy");
@@ -25,7 +26,7 @@ public class CategoryEditFrm extends JFrame implements ActionListener {
         super(editing == null ? "Thêm danh mục mới" : "Sửa danh mục");
         this.editing = editing;
         this.onSaved = onSaved;
-        setSize(420, 200);
+        setSize(460, 280);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -38,6 +39,12 @@ public class CategoryEditFrm extends JFrame implements ActionListener {
         gbc.gridx = 1;
         form.add(inName, gbc);
         gbc.gridx = 0; gbc.gridy = 1;
+        form.add(new JLabel("Mô tả:"), gbc);
+        gbc.gridx = 1;
+        inDescription.setLineWrap(true);
+        inDescription.setWrapStyleWord(true);
+        form.add(new JScrollPane(inDescription), gbc);
+        gbc.gridx = 0; gbc.gridy = 2;
         form.add(new JLabel("Danh mục cha:"), gbc);
         gbc.gridx = 1;
         form.add(inParent, gbc);
@@ -64,6 +71,7 @@ public class CategoryEditFrm extends JFrame implements ActionListener {
             }
             if (editing != null) {
                 inName.setText(editing.getName());
+                inDescription.setText(editing.getDescription() == null ? "" : editing.getDescription());
                 if (editing.getParent() != null) {
                     for (int i = 0; i < inParent.getItemCount(); i++) {
                         Category item = inParent.getItemAt(i);
@@ -99,6 +107,7 @@ public class CategoryEditFrm extends JFrame implements ActionListener {
             Category parent = (Category) inParent.getSelectedItem();
             Category c = editing != null ? editing : new Category();
             c.setName(name);
+            c.setDescription(inDescription.getText().trim());
             c.setParent(parent);
             c.setStatus(editing == null ? "ACTIVE" : editing.getStatus());
             if (editing == null) {

@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Report {
     public static final String STATUS_PENDING = "PENDING";
-    public static final String STATUS_PROCESSED = "PROCESSED";
+    public static final String STATUS_RESOLVED = "RESOLVED";
     public static final String STATUS_REJECTED = "REJECTED";
 
     private int id;

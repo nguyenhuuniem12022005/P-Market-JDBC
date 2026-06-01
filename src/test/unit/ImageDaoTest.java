@@ -23,7 +23,7 @@ public class ImageDaoTest {
     public void testSaveAndGetImagesByPostId() throws Exception {
         int accountId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        int postId = DbTestUtil.insertPost(accountId, categoryId, DbTestUtil.unique("image_post"), "AVAILABLE");
+        int postId = DbTestUtil.insertPost(accountId, categoryId, DbTestUtil.unique("image_post"), "ACTIVE");
 
         Assert.assertTrue(imageDAO.saveImages(postId, List.of("uploads/junit_1.png", "uploads/junit_2.png")));
         List<Image> images = imageDAO.getImagesByPostId(postId);

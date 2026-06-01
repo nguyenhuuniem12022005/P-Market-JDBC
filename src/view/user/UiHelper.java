@@ -62,14 +62,9 @@ public final class UiHelper {
     public static String statusLabel(String status) {
         if (status == null) return "";
         return switch (status.toUpperCase()) {
-            case "ACTIVE" -> "Đang hoạt động";
-            case "LOCKED" -> "Đã khóa";
-            case "AVAILABLE" -> "Đang bán";
-            case "SOLD" -> "Đã bán";
-            case "HIDDEN" -> "Đã ẩn";
-            case "DELETE" -> "Đã xóa";
+            case "ACTIVE", "BANNED", "DELETED" -> status.toUpperCase();
             case "PENDING" -> "Chờ xử lý";
-            case "PROCESSED" -> "Đã xử lý";
+            case "RESOLVED", "PROCESSED" -> "Đã xử lý";
             case "REJECTED" -> "Bị bác bỏ";
             default -> status;
         };

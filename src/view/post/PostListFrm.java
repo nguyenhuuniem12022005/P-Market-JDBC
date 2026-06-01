@@ -1,26 +1,25 @@
 package view.post;
 
-import view.user.UiHelper;
 import dao.CategoryDAO;
 import dao.PostDAO;
 import model.Category;
 import model.Post;
+import view.user.UiHelper;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
-/** Module d — Tim kiem bai dang */
-public class SearchPostFrm extends JFrame implements ActionListener {
+/** Module d - Danh sach bai dang. */
+public class PostListFrm extends JFrame implements ActionListener {
 
     private final JTextField inKeyword = new JTextField(20);
     private final JComboBox<Category> inCategory = new JComboBox<>();
     private final JButton btnSearch = new JButton("Tìm kiếm");
+    private final JButton btnViewDetail = new JButton("Xem chi tiết");
     private final JTable tblPosts = new JTable();
     private final DefaultTableModel tableModel;
     private final PostDAO postDAO = new PostDAO();
@@ -28,8 +27,8 @@ public class SearchPostFrm extends JFrame implements ActionListener {
     private final boolean adminMode;
     private List<Post> results = List.of();
 
-    public SearchPostFrm(boolean adminMode) {
-        super("Tìm kiếm bài đăng");
+    public PostListFrm(boolean adminMode) {
+        super("Danh sách bài đăng");
         this.adminMode = adminMode;
         setSize(750, 420);
         setLocationRelativeTo(null);
@@ -38,20 +37,11 @@ public class SearchPostFrm extends JFrame implements ActionListener {
         tableModel = new DefaultTableModel(
                 new String[]{"ID", "Tiêu đề", "Giá", "Người bán", "Trạng thái"}, 0) {
             @Override
-            public boolean isCellEditable(int r, int c) { return false; }
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
         tblPosts.setModel(tableModel);
-        tblPosts.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    int row = tblPosts.getSelectedRow();
-                    if (row >= 0 && row < results.size()) {
-                        new PostDetailFrm(results.get(row).getId(), adminMode).setVisible(true);
-                    }
-                }
-            }
-        });
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.add(new JLabel("Từ khóa:"));
@@ -61,8 +51,10 @@ public class SearchPostFrm extends JFrame implements ActionListener {
         loadCategories();
         top.add(inCategory);
         btnSearch.addActionListener(this);
+        btnViewDetail.addActionListener(this);
         top.add(btnSearch);
-        top.add(new JLabel("(Double-click để xem chi tiết)"));
+        top.add(btnViewDetail);
+        top.add(new JLabel("(Chọn một dòng rồi bấm Xem chi tiết)"));
 
         add(top, BorderLayout.NORTH);
         add(new JScrollPane(tblPosts), BorderLayout.CENTER);
@@ -96,10 +88,21 @@ public class SearchPostFrm extends JFrame implements ActionListener {
         }
     }
 
+    private void openSelectedPost() {
+        int row = tblPosts.getSelectedRow();
+        if (row < 0 || row >= results.size()) {
+            UiHelper.showError(this, "Vui lòng chọn một bài đăng.");
+            return;
+        }
+        new PostDetailFrm(results.get(row).getId(), adminMode).setVisible(true);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnSearch) {
             doSearch();
+        } else if (e.getSource() == btnViewDetail) {
+            openSelectedPost();
         }
     }
 }

@@ -18,7 +18,7 @@ public class ReportEvidenceDaoTest {
     public void testAddEvidenceListAndGetEvidenceByReportId() throws Exception {
         int reporterId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("evidence_post"), "AVAILABLE");
+        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("evidence_post"), "ACTIVE");
 
         Report report = new Report();
         report.setReporterId(reporterId);
