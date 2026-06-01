@@ -83,12 +83,14 @@ public class ActionConfirmFrm extends JDialog implements ActionListener {
                 }
             }
             dispose();
-            if (onDone != null) onDone.run();
+            if (onDone != null)
+                onDone.run();
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }
     }
 
+    // Tìm accountID bị báo cáo
     private int resolveAccountId() {
         if (report.getAccountId() != null) {
             return report.getAccountId();
