@@ -11,20 +11,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
-/** Module i — Xem thong ke */
 public class StatDashboardFrm extends JFrame implements ActionListener {
 
-    private final JComboBox<String> inPeriod = new JComboBox<>(new String[]{
-            "7 ngày gần nhất", "30 ngày gần nhất", "Tất cả"
-    });
+    private final JTextField inStartDate = new JTextField(10);
+    private final JTextField inEndDate = new JTextField(10);
     private final JTextArea outAccount = new JTextArea(6, 40);
     private final JTextArea outPost = new JTextArea(6, 40);
-    private final JButton btnRefresh = new JButton("Cập nhật");
     private final JButton btnExport = new JButton("Xuất báo cáo");
     private final AccountStatDAO accountStatDAO = new AccountStatDAO();
     private final PostStatDAO postStatDAO = new PostStatDAO();
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public StatDashboardFrm() {
         super("Thống kê hệ thống");
@@ -35,14 +37,27 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
         outAccount.setEditable(false);
         outPost.setEditable(false);
 
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.add(new JLabel("Kỳ thống kê:"));
-        top.add(inPeriod);
-        btnRefresh.addActionListener(this);
+        inStartDate.setToolTipText("dd/MM/yyyy");
+        inEndDate.setToolTipText("dd/MM/yyyy");
+
+        FocusAdapter autoLoadOnBlur = new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                maybeLoadStats();
+            }
+        };
+        inStartDate.addFocusListener(autoLoadOnBlur);
+        inEndDate.addFocusListener(autoLoadOnBlur);
+        inStartDate.addActionListener(this);
+        inEndDate.addActionListener(this);
         btnExport.addActionListener(this);
-        top.add(btnRefresh);
+
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        top.add(new JLabel("Ngày bắt đầu:"));
+        top.add(inStartDate);
+        top.add(new JLabel("Ngày kết thúc:"));
+        top.add(inEndDate);
         top.add(btnExport);
-        inPeriod.addActionListener(this);
 
         JPanel center = new JPanel(new GridLayout(2, 1, 8, 8));
         center.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
@@ -51,7 +66,7 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
 
         add(top, BorderLayout.NORTH);
         add(center, BorderLayout.CENTER);
-        loadStats();
+        maybeLoadStats();
     }
 
     private JPanel titled(String title, JComponent c) {
@@ -62,25 +77,47 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
     }
 
     private LocalDate[] getDateRange() {
-        LocalDate end = LocalDate.now();
-        LocalDate start = switch (inPeriod.getSelectedIndex()) {
-            case 0 -> end.minusDays(7);
-            case 1 -> end.minusDays(30);
-            default -> end.minusYears(10);
-        };
-        return new LocalDate[]{start, end};
+        String startText = inStartDate.getText().trim();
+        String endText = inEndDate.getText().trim();
+        if (startText.isEmpty() || endText.isEmpty()) {
+            return null;
+        }
+        if (startText.length() < 10 || endText.length() < 10) {
+            return null;
+        }
+        try {
+            LocalDate start = LocalDate.parse(startText, dateFormatter);
+            LocalDate end = LocalDate.parse(endText, dateFormatter);
+            if (start.isAfter(end)) {
+                UiHelper.showError(this, "Ngày bắt đầu không được sau ngày kết thúc.");
+                return null;
+            }
+            return new LocalDate[] { start, end };
+        } catch (DateTimeParseException ex) {
+            UiHelper.showError(this, "Ngày không đúng định dạng (dd/MM/yyyy).");
+            return null;
+        }
     }
 
-    private void loadStats() {
+    private void loadStats(LocalDate start, LocalDate end) {
         try {
-            LocalDate[] range = getDateRange();
-            AccountStat as = accountStatDAO.getAccountStat(range[0], range[1]);
-            PostStat ps = postStatDAO.getPostStat(range[0], range[1]);
+            AccountStat as = accountStatDAO.getAccountStat(start, end);
+            PostStat ps = postStatDAO.getPostStat(start, end);
             outAccount.setText(formatAccountStat(as));
             outPost.setText(formatPostStat(ps));
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }
+    }
+
+    private void maybeLoadStats() {
+        LocalDate[] range = getDateRange();
+        if (range == null) {
+            outAccount.setText("");
+            outPost.setText("");
+            return;
+        }
+        loadStats(range[0], range[1]);
     }
 
     private String formatAccountStat(AccountStat s) {
@@ -90,7 +127,7 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
                 Tài khoản bị khóa (tổng): %d
                 Tổng sinh viên: %d
                 """,
-                s.getStartDate(), s.getEndDate(),
+                s.getStartDate().format(dateFormatter), s.getEndDate().format(dateFormatter),
                 s.getNewAccounts(), s.getBannedAccounts(), s.getTotalAccounts());
     }
 
@@ -98,17 +135,17 @@ public class StatDashboardFrm extends JFrame implements ActionListener {
         return String.format("""
                 Từ %s đến %s
                 Bài đăng mới: %d
-                Bài đã bán (tổng): %d
+                Bài đã xoá (tổng): %d
                 Tổng bài đăng: %d
                 """,
-                s.getStartDate(), s.getEndDate(),
-                s.getNewPosts(), s.getSoldPosts(), s.getTotalPosts());
+                s.getStartDate().format(dateFormatter), s.getEndDate().format(dateFormatter),
+                s.getNewPosts(), s.getDeletedPosts(), s.getTotalPosts());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnRefresh || e.getSource() == inPeriod) {
-            loadStats();
+        if (e.getSource() == inStartDate || e.getSource() == inEndDate) {
+            maybeLoadStats();
         } else if (e.getSource() == btnExport) {
             new ExportReportFrm().setVisible(true);
         }

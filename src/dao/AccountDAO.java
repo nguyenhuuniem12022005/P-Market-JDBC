@@ -39,7 +39,7 @@ public class AccountDAO extends DAO {
         List<Integer> accountIds = new ArrayList<>();
         List<String> passwordHashes = new ArrayList<>();
         try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String storedPassword = rs.getString("password");
                 if (storedPassword != null && !PasswordUtil.isHashed(storedPassword)) {
@@ -58,7 +58,7 @@ public class AccountDAO extends DAO {
     public List<Account> searchAccounts(String keyword) throws SQLException {
         String sql = """
                 SELECT * FROM tblAccount
-                WHERE role='student' AND (
+                WHERE role='member' AND (
                     LOWER(fullName) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?)
                 )
                 ORDER BY id
@@ -81,12 +81,11 @@ public class AccountDAO extends DAO {
         return searchAccounts("");
     }
 
-    /** Module k */
     public List<Account> getAllStudentIds() throws SQLException {
-        String sql = "SELECT * FROM tblAccount WHERE role='student' AND status='ACTIVE'";
+        String sql = "SELECT * FROM tblAccount WHERE role='member' AND status='ACTIVE'";
         List<Account> list = new ArrayList<>();
         try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(mapRow(rs));
             }
@@ -154,7 +153,10 @@ public class AccountDAO extends DAO {
         return findById(id);
     }
 
-    /** Module g: kiem tra tai khoan con ton tai (con hoat dong) truoc khi tao bao cao */
+    /**
+     * Module g: kiem tra tai khoan con ton tai (con hoat dong) truoc khi tao bao
+     * cao
+     */
     public Account findActiveAccountById(int id) throws SQLException {
         String sql = "SELECT * FROM tblAccount WHERE id=? AND status='ACTIVE'";
         try (PreparedStatement ps = con.prepareStatement(sql)) {

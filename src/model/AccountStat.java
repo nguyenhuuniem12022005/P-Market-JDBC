@@ -2,7 +2,6 @@ package model;
 
 import java.time.LocalDate;
 
-/** Ket xuat tu Account — module i */
 public class AccountStat {
     private LocalDate startDate;
     private LocalDate endDate;

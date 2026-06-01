@@ -18,8 +18,8 @@ public class AdminHomeFrm extends JFrame implements ActionListener {
     private final JButton btnManageAccount = UiHelper.createMenuButton("Quản lý tài khoản");
     private final JButton btnManageCategory = UiHelper.createMenuButton("Quản lý danh mục");
     private final JButton btnManageReport = UiHelper.createMenuButton("Duyệt báo cáo");
-    private final JButton btnStats = UiHelper.createMenuButton("Xem thống kê");
-    private final JButton btnNotification = UiHelper.createMenuButton("Gửi thông báo");
+    private final JButton btnStats = UiHelper.createMenuButton("Thống kê");
+    private final JButton btnNotification = UiHelper.createMenuButton("Thông báo hệ thống");
     private final JButton btnSearch = UiHelper.createMenuButton("Tìm kiếm bài đăng");
     private final JButton btnLogout = UiHelper.createMenuButton("Đăng xuất");
 
@@ -36,8 +36,8 @@ public class AdminHomeFrm extends JFrame implements ActionListener {
 
         JPanel menu = new JPanel(new GridLayout(0, 1, 10, 10));
         menu.setBorder(BorderFactory.createEmptyBorder(18, 48, 24, 48));
-        for (JButton b : new JButton[]{btnManageAccount, btnManageCategory, btnManageReport,
-                btnStats, btnNotification, btnSearch, btnLogout}) {
+        for (JButton b : new JButton[] { btnManageAccount, btnManageCategory, btnManageReport,
+                btnStats, btnNotification, btnSearch, btnLogout }) {
             b.addActionListener(this);
             menu.add(b);
         }

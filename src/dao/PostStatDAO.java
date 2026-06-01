@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 public class PostStatDAO extends DAO {
 
-    /** Module i */
     public PostStat getPostStat(LocalDate startDate, LocalDate endDate) throws SQLException {
         PostStat stat = new PostStat();
         stat.setStartDate(startDate);
@@ -29,17 +28,17 @@ public class PostStatDAO extends DAO {
             }
         }
 
-        String soldSql = "SELECT COUNT(*) FROM tblPost WHERE status='SOLD'";
-        try (PreparedStatement ps = con.prepareStatement(soldSql);
-             ResultSet rs = ps.executeQuery()) {
+        String deletedSql = "SELECT COUNT(*) FROM tblPost WHERE status='DELETE'";
+        try (PreparedStatement ps = con.prepareStatement(deletedSql);
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
-                stat.setSoldPosts(rs.getInt(1));
+                stat.setDeletedPosts(rs.getInt(1));
             }
         }
 
         String totalSql = "SELECT COUNT(*) FROM tblPost WHERE status != 'DELETE'";
         try (PreparedStatement ps = con.prepareStatement(totalSql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 stat.setTotalPosts(rs.getInt(1));
             }

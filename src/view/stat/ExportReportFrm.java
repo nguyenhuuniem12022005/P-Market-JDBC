@@ -15,12 +15,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
-/** Module i — Xuat bao cao CSV */
 public class ExportReportFrm extends JFrame implements ActionListener {
 
-    private final JTextField inStart = new JTextField("2026-01-01", 12);
-    private final JTextField inEnd = new JTextField(LocalDate.now().toString(), 12);
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final JTextField inStart = new JTextField(12);
+    private final JTextField inEnd = new JTextField(12);
     private final JButton btnDownload = new JButton("Tải về (CSV)");
     private final JButton btnCancel = new JButton("Hủy");
     private final AccountStatDAO accountStatDAO = new AccountStatDAO();
@@ -32,9 +34,12 @@ public class ExportReportFrm extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        inStart.setToolTipText("dd/MM/yyyy");
+        inEnd.setToolTipText("dd/MM/yyyy");
+
         JPanel form = new JPanel(new GridLayout(3, 2, 8, 8));
         form.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
-        form.add(new JLabel("Từ ngày (yyyy-MM-dd):"));
+        form.add(new JLabel("Từ ngày (dd/MM/yyyy):"));
         form.add(inStart);
         form.add(new JLabel("Đến ngày:"));
         form.add(inEnd);
@@ -52,8 +57,12 @@ public class ExportReportFrm extends JFrame implements ActionListener {
             return;
         }
         try {
-            LocalDate start = LocalDate.parse(inStart.getText().trim());
-            LocalDate end = LocalDate.parse(inEnd.getText().trim());
+            LocalDate start = LocalDate.parse(inStart.getText().trim(), dateFormatter);
+            LocalDate end = LocalDate.parse(inEnd.getText().trim(), dateFormatter);
+            if (start.isAfter(end)) {
+                UiHelper.showError(this, "Ngày bắt đầu không được sau ngày kết thúc.");
+                return;
+            }
             AccountStat as = accountStatDAO.exportReport(start, end);
             PostStat ps = postStatDAO.exportReport(start, end);
             String csv = buildCsv(as, ps);
@@ -62,6 +71,8 @@ public class ExportReportFrm extends JFrame implements ActionListener {
             Files.writeString(file, csv);
             UiHelper.showInfo(this, "Đã xuất file: " + file.toAbsolutePath());
             dispose();
+        } catch (DateTimeParseException ex) {
+            UiHelper.showError(this, "Ngày không đúng định dạng (dd/MM/yyyy).");
         } catch (Exception ex) {
             UiHelper.showError(this, "Lỗi xuất báo cáo: " + ex.getMessage());
         }
@@ -69,13 +80,13 @@ public class ExportReportFrm extends JFrame implements ActionListener {
 
     private String buildCsv(AccountStat as, PostStat ps) {
         return "Loại,Chỉ số,Giá trị\n"
-                + "Account,Từ ngày," + as.getStartDate() + "\n"
-                + "Account,Đến ngày," + as.getEndDate() + "\n"
+                + "Account,Từ ngày," + as.getStartDate().format(dateFormatter) + "\n"
+                + "Account,Đến ngày," + as.getEndDate().format(dateFormatter) + "\n"
                 + "Account,Tài khoản mới," + as.getNewAccounts() + "\n"
                 + "Account,Bị khóa," + as.getBannedAccounts() + "\n"
                 + "Account,Tổng," + as.getTotalAccounts() + "\n"
                 + "Post,Bài mới," + ps.getNewPosts() + "\n"
-                + "Post,Đã bán," + ps.getSoldPosts() + "\n"
+                + "Post,Đã xoá," + ps.getDeletedPosts() + "\n"
                 + "Post,Tổng," + ps.getTotalPosts() + "\n";
     }
 }

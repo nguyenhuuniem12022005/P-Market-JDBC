@@ -15,7 +15,7 @@ public class PostStatDaoTest {
         Assert.assertNotNull(stat);
         Assert.assertTrue(stat.getTotalPosts() > 0);
         Assert.assertTrue(stat.getNewPosts() >= 0);
-        Assert.assertTrue(stat.getSoldPosts() >= 0);
+        Assert.assertTrue(stat.getDeletedPosts() >= 0);
     }
 
     @Test

@@ -13,7 +13,8 @@ import java.sql.SQLException;
 
 final class DbTestUtil {
 
-    private DbTestUtil() {}
+    private DbTestUtil() {
+    }
 
     static String unique(String prefix) {
         return prefix + "_" + System.currentTimeMillis() + "_" + Math.abs((int) System.nanoTime());
@@ -26,10 +27,10 @@ final class DbTestUtil {
     static int insertStudent(String token) throws SQLException {
         String sql = """
                 INSERT INTO tblAccount (fullName, email, password, phone, address, role, status, avatarUrl)
-                VALUES (?, ?, 'student123', '0999999999', 'JUnit', 'student', 'ACTIVE', '')
+                VALUES (?, ?, 'student123', '0999999999', 'JUnit', 'member', 'ACTIVE', '')
                 """;
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, "JUnit " + token);
             ps.setString(2, token + "@stu.ptit.edu.vn");
             ps.executeUpdate();
@@ -43,7 +44,7 @@ final class DbTestUtil {
     static int insertCategory(String name, Integer parentId) throws SQLException {
         String sql = "INSERT INTO tblCategory (parentId, name, status) VALUES (?, ?, 'ACTIVE')";
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             if (parentId == null) {
                 ps.setNull(1, java.sql.Types.INTEGER);
             } else {
@@ -64,7 +65,7 @@ final class DbTestUtil {
                 VALUES (?, ?, ?, ?, 100000, 1, ?)
                 """;
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, accountId);
             ps.setInt(2, categoryId);
             ps.setString(3, title);
@@ -79,7 +80,7 @@ final class DbTestUtil {
     }
 
     static int firstActiveStudentId() throws SQLException {
-        return scalarInt("SELECT id FROM tblAccount WHERE role='student' AND status='ACTIVE' ORDER BY id LIMIT 1");
+        return scalarInt("SELECT id FROM tblAccount WHERE role='member' AND status='ACTIVE' ORDER BY id LIMIT 1");
     }
 
     static int firstCategoryId() throws SQLException {
@@ -88,8 +89,8 @@ final class DbTestUtil {
 
     static int scalarInt(String sql) throws SQLException {
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }

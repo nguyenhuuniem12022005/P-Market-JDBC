@@ -2,21 +2,22 @@
 
 INSERT INTO tblAccount (fullName, email, password, phone, address, role, status, avatarUrl) VALUES
 ('Quan tri vien', 'admin@ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldGFkbWluMjAyNg==$ty8LVtBu8Ga3DIpup00nJYZKthuX5FLf4yB2eudw2a4=', '0900000001', 'PTIT', 'admin', 'ACTIVE', ''),
-('Nguyen Van Anh', 'anhnv.b21ce009@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0912345678', 'Ha Noi', 'student', 'ACTIVE', ''),
-('Tran Thi Binh', 'binhtt.b22ce001@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0923456789', 'Ha Noi', 'student', 'ACTIVE', ''),
-('Le Van Cuong', 'cuonglv.b21ce010@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0934567890', 'Hai Phong', 'student', 'LOCKED', ''),
-('Pham Mai Phuong', 'phuongpm.b22cn101@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000001', 'Ha Noi', 'student', 'ACTIVE', ''),
-('Do Minh Khang', 'khangdm.b21at012@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000002', 'Bac Ninh', 'student', 'ACTIVE', ''),
-('Vu Hoang Nam', 'namvh.b20cn045@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000003', 'Nam Dinh', 'student', 'ACTIVE', ''),
-('Nguyen Thu Ha', 'hant.b23cn090@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000004', 'Ha Noi', 'student', 'ACTIVE', ''),
-('Tran Gia Bao', 'baotg.b22at033@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000005', 'Thai Binh', 'student', 'ACTIVE', ''),
-('Le Minh Chau', 'chaulm.b21cn066@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000006', 'Hung Yen', 'student', 'ACTIVE', ''),
-('Hoang Duc Anh', 'anhhd.b23cn122@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000007', 'Hai Duong', 'student', 'ACTIVE', ''),
-('Bui Khanh Linh', 'linhbk.b20cn052@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000008', 'Ha Noi', 'student', 'ACTIVE', ''),
-('Dang Quang Huy', 'huydq.b21at019@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000009', 'Vinh Phuc', 'student', 'ACTIVE', ''),
-('Nguyen Bao Ngoc', 'ngocnb.b22cn130@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000010', 'Ha Nam', 'student', 'ACTIVE', ''),
-('Pham Duc Long', 'longpd.b19cn088@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000011', 'Ha Noi', 'student', 'LOCKED', ''),
-('Trinh Thanh Son', 'sontt.b23at071@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000012', 'Ninh Binh', 'student', 'ACTIVE', '');
+('Nguoi dung thuong', 'user01@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0900000002', 'Ha Noi', 'member', 'ACTIVE', ''),
+('Nguyen Van Anh', 'anhnv.b21ce009@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0912345678', 'Ha Noi', 'member', 'ACTIVE', ''),
+('Tran Thi Binh', 'binhtt.b22ce001@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0923456789', 'Ha Noi', 'member', 'ACTIVE', ''),
+('Le Van Cuong', 'cuonglv.b21ce010@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0934567890', 'Hai Phong', 'member', 'LOCKED', ''),
+('Pham Mai Phuong', 'phuongpm.b22cn101@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000001', 'Ha Noi', 'member', 'ACTIVE', ''),
+('Do Minh Khang', 'khangdm.b21at012@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000002', 'Bac Ninh', 'member', 'ACTIVE', ''),
+('Vu Hoang Nam', 'namvh.b20cn045@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000003', 'Nam Dinh', 'member', 'ACTIVE', ''),
+('Nguyen Thu Ha', 'hant.b23cn090@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000004', 'Ha Noi', 'member', 'ACTIVE', ''),
+('Tran Gia Bao', 'baotg.b22at033@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000005', 'Thai Binh', 'member', 'ACTIVE', ''),
+('Le Minh Chau', 'chaulm.b21cn066@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000006', 'Hung Yen', 'member', 'ACTIVE', ''),
+('Hoang Duc Anh', 'anhhd.b23cn122@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000007', 'Hai Duong', 'member', 'ACTIVE', ''),
+('Bui Khanh Linh', 'linhbk.b20cn052@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000008', 'Ha Noi', 'member', 'ACTIVE', ''),
+('Dang Quang Huy', 'huydq.b21at019@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000009', 'Vinh Phuc', 'member', 'ACTIVE', ''),
+('Nguyen Bao Ngoc', 'ngocnb.b22cn130@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000010', 'Ha Nam', 'member', 'ACTIVE', ''),
+('Pham Duc Long', 'longpd.b19cn088@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000011', 'Ha Noi', 'member', 'LOCKED', ''),
+('Trinh Thanh Son', 'sontt.b23at071@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0941000012', 'Ninh Binh', 'member', 'ACTIVE', '');
 
 UPDATE tblAccount SET banReason = 'Dang ban giao trinh gia mao' WHERE email = 'cuonglv.b21ce010@stu.ptit.edu.vn';
 UPDATE tblAccount SET banReason = 'Tai khoan co dau hieu lua dao' WHERE email = 'longpd.b19cn088@stu.ptit.edu.vn';

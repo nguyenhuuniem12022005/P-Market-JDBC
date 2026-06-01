@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/** Module k — Gui thong bao */
 public class NotificationFrm extends JFrame implements ActionListener {
 
     private final JTextField inTitle = new JTextField(30);
@@ -30,7 +29,7 @@ public class NotificationFrm extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        historyModel = new DefaultTableModel(new String[]{"ID", "Tiêu đề", "Thời gian"}, 0);
+        historyModel = new DefaultTableModel(new String[] { "ID", "Tiêu đề", "Thời gian" }, 0);
         tblHistory.setModel(historyModel);
 
         JPanel compose = new JPanel(new GridBagLayout());
@@ -38,15 +37,19 @@ public class NotificationFrm extends JFrame implements ActionListener {
         gbc.insets = new Insets(4, 4, 4, 4);
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         compose.add(new JLabel("Tiêu đề:"), gbc);
         gbc.gridx = 1;
         compose.add(inTitle, gbc);
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         compose.add(new JLabel("Nội dung:"), gbc);
         gbc.gridx = 1;
         compose.add(new JScrollPane(inContent), gbc);
-        gbc.gridy = 2; gbc.gridx = 0; gbc.gridwidth = 2;
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.LEFT));
         btnSend.addActionListener(this);
         btnHistory.addActionListener(this);
@@ -72,7 +75,6 @@ public class NotificationFrm extends JFrame implements ActionListener {
             new ConfirmSendFrm(this, n, () -> {
                 inTitle.setText("");
                 inContent.setText("");
-                loadHistory();
             }).setVisible(true);
         } else if (e.getSource() == btnHistory) {
             loadHistory();
@@ -86,7 +88,7 @@ public class NotificationFrm extends JFrame implements ActionListener {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             for (Notification n : list) {
                 String time = n.getCreatedAt() != null ? n.getCreatedAt().format(fmt) : "";
-                historyModel.addRow(new Object[]{n.getId(), n.getTitle(), time});
+                historyModel.addRow(new Object[] { n.getId(), n.getTitle(), time });
             }
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());

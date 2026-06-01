@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS tblPost (
     quantity INT NOT NULL DEFAULT 1,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('AVAILABLE', 'SOLD', 'HIDDEN', 'DELETE')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('ACTIVE', 'DELETE')),
     FOREIGN KEY (accountId) REFERENCES tblAccount(id),
     FOREIGN KEY (categoryId) REFERENCES tblCategory(id)
 );

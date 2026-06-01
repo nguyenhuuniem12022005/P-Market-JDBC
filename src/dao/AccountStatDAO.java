@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 public class AccountStatDAO extends DAO {
 
-    /** Module i */
     public AccountStat getAccountStat(LocalDate startDate, LocalDate endDate) throws SQLException {
         AccountStat stat = new AccountStat();
         stat.setStartDate(startDate);
@@ -17,7 +16,7 @@ public class AccountStatDAO extends DAO {
 
         String newSql = """
                 SELECT COUNT(*) FROM tblAccount
-                WHERE role='student' AND createdAt >= ? AND createdAt < ?
+                WHERE role='member' AND createdAt >= ? AND createdAt < ?
                 """;
         try (PreparedStatement ps = con.prepareStatement(newSql)) {
             ps.setDate(1, java.sql.Date.valueOf(startDate));
@@ -31,15 +30,15 @@ public class AccountStatDAO extends DAO {
 
         String bannedSql = "SELECT COUNT(*) FROM tblAccount WHERE status='LOCKED'";
         try (PreparedStatement ps = con.prepareStatement(bannedSql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 stat.setBannedAccounts(rs.getInt(1));
             }
         }
 
-        String totalSql = "SELECT COUNT(*) FROM tblAccount WHERE role='student'";
+        String totalSql = "SELECT COUNT(*) FROM tblAccount WHERE role='member'";
         try (PreparedStatement ps = con.prepareStatement(totalSql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 stat.setTotalAccounts(rs.getInt(1));
             }

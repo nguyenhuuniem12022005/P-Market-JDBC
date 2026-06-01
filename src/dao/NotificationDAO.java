@@ -11,7 +11,6 @@ import java.util.List;
 
 public class NotificationDAO extends DAO {
 
-    /** Module k */
     public Notification createNotification(String title, String content) throws SQLException {
         String sql = "INSERT INTO tblNotification (title, content) VALUES (?, ?)";
         Notification n = new Notification(title, content);
