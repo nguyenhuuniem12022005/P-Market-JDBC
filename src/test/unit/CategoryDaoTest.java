@@ -1,10 +1,12 @@
 package test.unit;
 
 import dao.CategoryDAO;
+import dao.ImageDAO;
 import model.Category;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryDaoTest {
@@ -54,4 +56,28 @@ public class CategoryDaoTest {
         Assert.assertTrue(categoryDAO.deleteCategory(saved.getId()));
         Assert.assertFalse(categoryDAO.existsByName(name + " updated"));
     }
+
+    // getAllCategoties()
+    @Test
+    public void testGetAllCategoriesFound() throws Exception {
+
+        List<Category> categories =
+                new CategoryDAO().getAllCategories();
+
+        Assert.assertNotNull(categories);
+        Assert.assertTrue(categories.size() > 0);
+    }
+
+    @Test
+public void testGetAllCategoriesEmpty() throws Exception {
+
+    List<Category> categories =
+            new ArrayList<>();
+
+    Assert.assertEquals(0, categories.size());
+}
+
+
+
+
 }

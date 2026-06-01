@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public final class DatabaseUtil {
 
     private static final String DB_DIR = "data";
-    private static final String DB_URL =
+   private static final String DB_URL =
             "jdbc:h2:file:./" + DB_DIR + "/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH";
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "";

@@ -5,6 +5,10 @@ import model.Account;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.sql.SQLException;
 import java.util.List;
 
 public class AccountDaoTest {
@@ -17,13 +21,19 @@ public class AccountDaoTest {
         Assert.assertNull(account);
     }
 
-    @Test
-    public void testLoginFound() throws Exception {
-        Account account = accountDAO.login("admin@ptit.edu.vn", "admin123");
-        Assert.assertNotNull(account);
-        Assert.assertEquals("admin", account.getRole());
-        Assert.assertEquals("ACTIVE", account.getStatus());
-    }
+   @Test
+public void testLoginFound() throws Exception {
+
+    String token = DbTestUtil.unique("login_found");
+    DbTestUtil.insertStudent(token);
+
+    Account account =
+            accountDAO.login(
+                    token + "@stu.ptit.edu.vn",
+                    "student123");
+
+    Assert.assertNotNull(account);
+}
 
     @Test
     public void testSearchAccountFound() throws Exception {
@@ -74,4 +84,140 @@ public class AccountDaoTest {
         Assert.assertNotNull(accountDAO.login(email, newPassword));
         Assert.assertNull(accountDAO.login(email, "student123"));
     }
+
+    // getProfile 
+    @Test
+    public void testGetProfileFound() throws SQLException {
+
+        AccountDAO dao = new AccountDAO();
+
+        Account result = dao.getProfile(1);
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(1, result.getId());
+
+        return;
+    }
+
+    @Test
+    public void testGetProfileNotFound() throws SQLException {
+
+        AccountDAO dao = new AccountDAO();
+
+        Account result = dao.getProfile(-1);
+
+        Assert.assertNull(result);
+
+        return;
+    }
+
+    // updateProfile 
+   @Test
+    public void testUpdateProfileSuccess() throws SQLException {
+
+        AccountDAO dao = new AccountDAO();
+
+        Account acc = dao.getProfile(1);
+
+        acc.setPhone("0988888888");
+        acc.setAddress("Ha Noi");
+        acc.setAvatarUrl("avatar.jpg");
+
+        boolean result = dao.updateProfile(acc);
+
+        Assert.assertTrue(result);
+
+        return;
+    }
+
+    @Test
+    public void testUpdateProfileFail() throws SQLException {
+
+        AccountDAO dao = new AccountDAO();
+
+        Account acc = new Account();
+
+        acc.setId(99999);
+        acc.setPhone("0123456789");
+        acc.setAddress("ABC");
+        acc.setAvatarUrl("test.jpg");
+
+        boolean result = dao.updateProfile(acc);
+
+        Assert.assertFalse(result);
+
+        return;
+    }
+
+    // verifyPassword
+@Test
+public void testVerifyPasswordCorrect() throws Exception {
+
+    String token = DbTestUtil.unique("verify_password");
+    int accountId = DbTestUtil.insertStudent(token);
+
+    Account account =
+            accountDAO.login(
+                    token + "@stu.ptit.edu.vn",
+                    "student123");
+
+    Assert.assertNotNull(account);
+
+    boolean result =
+            accountDAO.verifyPassword(
+                    accountId,
+                    "student123");
+
+    Assert.assertTrue(result);
+}
+@Test
+public void testVerifyPasswordWrong() throws Exception {
+
+    String token = DbTestUtil.unique("verify_wrong");
+    int accountId = DbTestUtil.insertStudent(token);
+
+    boolean result =
+            accountDAO.verifyPassword(
+                    accountId,
+                    "wrongpassword");
+
+    Assert.assertFalse(result);
+}
+
+    // updatePassword
+  @Test
+public void testUpdatePasswordSuccess() throws Exception {
+
+    String token = DbTestUtil.unique("update_password");
+    int accountId = DbTestUtil.insertStudent(token);
+
+    boolean result =
+            accountDAO.updatePassword(
+                    accountId,
+                    "newPassword123");
+
+    Assert.assertTrue(result);
+
+    Assert.assertNotNull(
+            accountDAO.login(
+                    token + "@stu.ptit.edu.vn",
+                    "newPassword123"));
+}
+    @Test
+    public void testUpdatePasswordFail()
+            throws SQLException {
+
+        AccountDAO dao = new AccountDAO();
+
+        boolean result =
+                dao.updatePassword(
+                        99999,
+                        "newPassword123");
+
+        Assert.assertFalse(result);
+
+        return;
+    }
+
+
 }

@@ -8,7 +8,6 @@ import model.Category;
 import model.Post;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,20 +26,22 @@ public class EditPostFrm extends JFrame implements ActionListener {
     private final JTextField inQuantity = new JTextField(5);
     private final JComboBox<Category> inCategory = new JComboBox<>();
     private final JTextField inImagePath = new JTextField(25);
-    private final JButton btnBrowse = new JButton("Chọn ảnh");
-    private final JButton btnSave = new JButton("Lưu thay đổi");
+    private final JButton btnBrowse = new JButton("Chon anh");
+    private final JButton btnSave = new JButton("Luu thay doi");
+     private final JButton btnCancel = new JButton("Huy");
     private final PostDAO postDAO = new PostDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
     private final ImageDAO imageDAO = new ImageDAO();
+    private final List<String> selectedImages =
+        new ArrayList<>();
 
     public EditPostFrm(int postId, Runnable onSaved) {
-        super("Sửa bài đăng #" + postId);
+        super("Sua bai dang #" + postId);
         this.postId = postId;
         this.onSaved = onSaved;
         setSize(520, 440);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        inImagePath.setEditable(false);
 
         JPanel form = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -49,21 +50,21 @@ public class EditPostFrm extends JFrame implements ActionListener {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         int row = 0;
-        addRow(form, gbc, row++, "Tiêu đề:", inTitle);
+        addRow(form, gbc, row++, "Tieu de:", inTitle);
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 1;
-        form.add(new JLabel("Mô tả:"), gbc);
+        form.add(new JLabel("Mo ta:"), gbc);
         gbc.gridx = 1;
         form.add(new JScrollPane(inDescription), gbc);
         row++;
-        addRow(form, gbc, row++, "Giá (VND):", inPrice);
-        addRow(form, gbc, row++, "Số lượng:", inQuantity);
-        addRow(form, gbc, row++, "Danh mục:", inCategory);
+        addRow(form, gbc, row++, "Gia (VND):", inPrice);
+        addRow(form, gbc, row++, "So luong:", inQuantity);
+        addRow(form, gbc, row++, "Danh muc:", inCategory);
 
         gbc.gridy = row;
         gbc.gridx = 0;
-        form.add(new JLabel("Ảnh mới:"), gbc);
+        form.add(new JLabel("Anh:"), gbc);
         JPanel imgPanel = new JPanel(new BorderLayout());
         imgPanel.add(inImagePath, BorderLayout.CENTER);
         btnBrowse.addActionListener(this);
@@ -71,13 +72,26 @@ public class EditPostFrm extends JFrame implements ActionListener {
         gbc.gridx = 1;
         form.add(imgPanel, gbc);
         row++;
+        btnSave.addActionListener(this);
+        btnCancel.addActionListener(this); 
+        
+       JPanel buttonPanel =
+        new JPanel(
+                new FlowLayout(
+                        FlowLayout.CENTER
+                )
+        );
+        buttonPanel.add(btnSave);
+        buttonPanel.add(btnCancel);
 
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
-        btnSave.addActionListener(this);
-        form.add(btnSave, gbc);
 
+        form.add(
+                buttonPanel,
+                gbc
+        );
         add(form, BorderLayout.CENTER);
         loadData();
     }
@@ -98,7 +112,7 @@ public class EditPostFrm extends JFrame implements ActionListener {
             }
             post = postDAO.getPostDetails(postId);
             if (post == null) {
-                UiHelper.showError(this, "Không tìm thấy bài đăng.");
+                UiHelper.showError(this, "Khong tim thay bai dang.");
                 dispose();
                 return;
             }
@@ -114,6 +128,14 @@ public class EditPostFrm extends JFrame implements ActionListener {
                     }
                 }
             }
+            if (post.getListImage() != null && !post.getListImage().isEmpty()) {
+            inImagePath.setText(
+            post.getListImage()
+                .get(0)
+                .getImageUrl()   
+    );
+}
+
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }
@@ -122,26 +144,33 @@ public class EditPostFrm extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnBrowse) {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setFileFilter(new FileNameExtensionFilter(
-                    "Ảnh (*.png, *.jpg, *.jpeg, *.gif)", "png", "jpg", "jpeg", "gif"));
-            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                inImagePath.setText(chooser.getSelectedFile().getAbsolutePath());
+            JFileChooser chooser =
+                    new JFileChooser();
+            chooser.setMultiSelectionEnabled(true);
+            if (chooser.showOpenDialog(this)
+                    == JFileChooser.APPROVE_OPTION) {
+                selectedImages.clear();
+                StringBuilder sb =
+                        new StringBuilder();
+                for (java.io.File file :
+                        chooser.getSelectedFiles()) {
+                    selectedImages.add(
+                            file.getAbsolutePath()
+                    );
+                    sb.append(file.getName())
+                    .append("; ");
+                }
+                inImagePath.setText(
+                        sb.toString()
+                );
             }
             return;
         }
         if (e.getSource() != btnSave) return;
-
         String title = inTitle.getText().trim();
         Category cat = (Category) inCategory.getSelectedItem();
         if (title.isEmpty() || cat == null) {
-            UiHelper.showError(this, "Vui lòng nhập tiêu đề và chọn danh mục.");
-            return;
-        }
-        String path = inImagePath.getText().trim();
-        boolean hasExistingImage = post.getListImage() != null && !post.getListImage().isEmpty();
-        if (!hasExistingImage && path.isEmpty()) {
-            UiHelper.showError(this, "Bài đăng phải có ít nhất một ảnh.");
+            UiHelper.showError(this, "Vui long nhap tieu de va chon danh muc.");
             return;
         }
         try {
@@ -152,18 +181,26 @@ public class EditPostFrm extends JFrame implements ActionListener {
             post.setCategory(cat);
 
             postDAO.updatePost(post);
+            if (selectedImages.isEmpty()) {
 
+            UiHelper.showError(
+                    this,
+                    "Vui long tai len it nhat mot anh moi."
+            );
+            return;
+        }
+            String path = inImagePath.getText().trim();
             if (!path.isEmpty()) {
                 List<String> sources = new ArrayList<>();
                 sources.add(path);
                 List<String> urls = imageDAO.uploadImages(sources);
                 imageDAO.saveImages(postId, urls);
             }
-            UiHelper.showInfo(this, "Cập nhật bài đăng thành công.");
+            UiHelper.showInfo(this, "Cap nhat bai dang thanh cong");
             dispose();
             if (onSaved != null) onSaved.run();
         } catch (NumberFormatException ex) {
-            UiHelper.showError(this, "Giá và số lượng phải là số hợp lệ.");
+            UiHelper.showError(this, "Gia va so luong phai la so hop le.");
         } catch (Exception ex) {
             UiHelper.showError(this, ex.getMessage());
         }
