@@ -87,6 +87,13 @@ public class PostDaoTest {
     }
 
     @Test
+    public void testDeletePostNotFound() throws Exception {
+        int fakePostId = -999;
+        boolean isDeleted = postDAO.deletePost(fakePostId);
+        Assert.assertFalse("Kỳ vọng trả về false khi xóa bài đăng không tồn tại", isDeleted);
+    }
+
+    @Test
     public void testPostStatusLifecycle() throws Exception {
         int accountId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
