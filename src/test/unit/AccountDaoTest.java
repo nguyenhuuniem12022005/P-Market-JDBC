@@ -121,7 +121,6 @@ public void testLoginFound() throws Exception {
 
         acc.setPhone("0988888888");
         acc.setAddress("Ha Noi");
-        acc.setAvatarUrl("avatar.jpg");
 
         boolean result = dao.updateProfile(acc);
 
@@ -140,7 +139,6 @@ public void testLoginFound() throws Exception {
         acc.setId(99999);
         acc.setPhone("0123456789");
         acc.setAddress("ABC");
-        acc.setAvatarUrl("test.jpg");
 
         boolean result = dao.updateProfile(acc);
 
