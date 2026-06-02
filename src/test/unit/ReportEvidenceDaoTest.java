@@ -18,12 +18,12 @@ public class ReportEvidenceDaoTest {
     public void testAddEvidenceListAndGetEvidenceByReportId() throws Exception {
         int reporterId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("evidence_post"), "ACTIVE");
+        int postId = DbTestUtil.insertPost(reporterId, categoryId, DbTestUtil.unique("bai_dang_bang_chung"), "ACTIVE");
 
         Report report = new Report();
         report.setReporterId(reporterId);
         report.setPostId(postId);
-        report.setReason("JUnit evidence");
+        report.setReason("Bằng chứng kiểm thử");
         int reportId = reportDAO.addReport(report);
 
         Assert.assertTrue(evidenceDAO.addEvidenceList(reportId, List.of("uploads/evidence_a.png", "uploads/evidence_b.png")));

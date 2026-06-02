@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Module d — Them / sua danh muc */
+/** Module d — Thêm / sửa danh mục */
 public class CategoryEditFrm extends JFrame implements ActionListener {
 
     private final Category editing;
@@ -21,7 +21,7 @@ public class CategoryEditFrm extends JFrame implements ActionListener {
     private final JButton btnCancel = new JButton("Hủy");
     private final CategoryDAO categoryDAO = new CategoryDAO();
 
-    /** Them moi: editing = null. Sua: truyen category co du lieu. */
+    /** Them moi: editing = null. Sửa: truyen category co du lieu. */
     public CategoryEditFrm(Category editing, Runnable onSaved) {
         super(editing == null ? "Thêm danh mục mới" : "Sửa danh mục");
         this.editing = editing;

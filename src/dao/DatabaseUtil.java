@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Ket noi CSDL H2 file. DAO chi mo connection toi database da duoc tao bang
+ * Kết nối CSDL H2 file. DAO chỉ mở connection tới database đã được tạo bằng
  * database/schema.sql va database/seed.sql.
  */
 public final class DatabaseUtil {

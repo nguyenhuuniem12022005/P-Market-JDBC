@@ -71,18 +71,18 @@ case "${1:-}" in
     fi
     ;;
   initdb)
-    echo "Resetting H2 database from SQL files..."
+    echo "Đang khởi tạo lại cơ sở dữ liệu H2 từ SQL..."
     rm -rf data
     mkdir -p data
-    java -cp "$H2_JAR" org.h2.tools.RunScript \
+    java -Dfile.encoding=UTF-8 -cp "$H2_JAR" org.h2.tools.RunScript \
       -url "jdbc:h2:file:./data/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH" \
       -user sa \
       -script "database/schema.sql"
-    java -cp "$H2_JAR" org.h2.tools.RunScript \
+    java -Dfile.encoding=UTF-8 -cp "$H2_JAR" org.h2.tools.RunScript \
       -url "jdbc:h2:file:./data/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH" \
       -user sa \
       -script "database/seed.sql"
-    echo "Database initialized successfully."
+    echo "Đã khởi tạo cơ sở dữ liệu thành công."
     exit 0
     ;;
 esac
@@ -93,10 +93,10 @@ mkdir -p "$BUILD_DIR"
 
 find src -name "*.java" | sort > "$SOURCES_FILE"
 
-echo "Compiling source..."
+echo "Đang biên dịch mã nguồn..."
 javac -encoding UTF-8 \
   -d "$BUILD_DIR" \
   -cp "$H2_JAR:$JUNIT_JAR:$HAMCREST_JAR" \
   @"$SOURCES_FILE"
 
-java -cp "$BUILD_DIR:$H2_JAR:$JUNIT_JAR:$HAMCREST_JAR" "$MAIN_CLASS" "${MAIN_ARGS[@]}"
+java -Dfile.encoding=UTF-8 -cp "$BUILD_DIR:$H2_JAR:$JUNIT_JAR:$HAMCREST_JAR" "$MAIN_CLASS" "${MAIN_ARGS[@]}"

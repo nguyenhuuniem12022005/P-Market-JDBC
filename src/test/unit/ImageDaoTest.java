@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class ImageDaoTest {
 public void testUploadImagesSuccess() throws Exception {
 
     File file = File.createTempFile("junit", ".jpg");
+    Files.write(file.toPath(), new byte[] { 1 });
 
     List<String> paths = new ArrayList<>();
     paths.add(file.getAbsolutePath());
@@ -62,7 +64,7 @@ public void testUploadImagesFail() throws Exception {
         Assert.fail();
     } catch (SQLException ex) {
         Assert.assertTrue(
-                ex.getMessage().contains("Khong tim thay file anh"));
+                ex.getMessage().contains("Không tìm thấy file ảnh"));
     }
 }
 

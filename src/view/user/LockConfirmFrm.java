@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Module b — Xac nhan khoa tai khoan (LockConfirmFrm) */
+/** Module b — Xác nhận khóa tài khoản (LockConfirmFrm) */
 public class LockConfirmFrm extends JDialog implements ActionListener {
 
     private final Account account;

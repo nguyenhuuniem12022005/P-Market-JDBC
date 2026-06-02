@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Module d — Quan ly danh muc (danh sach) */
+/** Module d — Quản lý danh mục (danh sách) */
 public class CategoryListFrm extends JFrame implements ActionListener {
 
     private final CategoryDAO categoryDAO = new CategoryDAO();

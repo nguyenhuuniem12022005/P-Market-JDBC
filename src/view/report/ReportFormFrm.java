@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Module g — Bao cao vi pham (ReportFormFrm: bao cao bai dang hoac tai khoan) */
+/** Module g — Báo cáo vi phạm (ReportFormFrm: báo cáo bài đăng hoặc tài khoản) */
 public class ReportFormFrm extends JDialog implements ActionListener {
 
     private final Post targetPost;
@@ -40,12 +40,12 @@ public class ReportFormFrm extends JDialog implements ActionListener {
     private final PostDAO postDAO = new PostDAO();
     private final AccountDAO accountDAO = new AccountDAO();
 
-    /** Bao cao mot bai dang */
+    /** Báo cáo một bài đăng */
     public ReportFormFrm(Post targetPost) {
         this(targetPost, null, "Báo cáo bài: " + targetPost.getTitle());
     }
 
-    /** Bao cao mot tai khoan */
+    /** Báo cáo một tài khoản */
     public ReportFormFrm(Account targetAccount) {
         this(null, targetAccount, "Báo cáo tài khoản: " + targetAccount.getFullName());
     }

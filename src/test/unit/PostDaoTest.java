@@ -33,7 +33,7 @@ public class PostDaoTest {
     public void testCreatePost() throws Exception {
         int accountId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        Post post = DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("JUnit create post"));
+        Post post = DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("Kiểm thử tạo bài đăng"));
 
         Post saved = postDAO.createPost(post);
         Assert.assertTrue(saved.getId() > 0);
@@ -49,12 +49,12 @@ public class PostDaoTest {
     public void testCreatePostRequiresImage() throws Exception {
         int accountId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        Post post = DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("JUnit no image post"));
+        Post post = DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("Kiểm thử thiếu ảnh bài đăng"));
         post.getListImage().clear();
 
         try {
             postDAO.createPost(post);
-            Assert.fail("Expected createPost to reject a post without images");
+            Assert.fail("Kỳ vọng từ chối bài đăng không có ảnh");
         } catch (Exception ex) {
             Assert.assertTrue(ex.getMessage().contains("anh"));
         }
@@ -64,7 +64,7 @@ public class PostDaoTest {
     public void testUpdatePostExists() throws Exception {
         int accountId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        Post post = postDAO.createPost(DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("JUnit update post")));
+        Post post = postDAO.createPost(DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("Kiểm thử cập nhật bài đăng")));
 
         post.setTitle(post.getTitle() + " updated");
         post.setPrice(456000);
@@ -85,7 +85,7 @@ public void testUpdatePostFail() throws Exception {
             DbTestUtil.postFixture(
                     accountId,
                     categoryId,
-                    "JUnit Update Fail");
+                    "Kiểm thử cập nhật lỗi");
 
     post.setId(-1); // id không tồn tại
 
@@ -99,7 +99,7 @@ public void testUpdatePostFail() throws Exception {
     public void testDeletePost() throws Exception {
         int accountId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        Post post = postDAO.createPost(DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("JUnit delete post")));
+        Post post = postDAO.createPost(DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("Kiểm thử xóa bài đăng")));
 
         Assert.assertTrue(postDAO.deletePost(post.getId()));
         Assert.assertNull(postDAO.findActivePostById(post.getId()));
@@ -117,7 +117,7 @@ public void testUpdatePostFail() throws Exception {
     public void testPostStatusLifecycle() throws Exception {
         int accountId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
-        Post post = postDAO.createPost(DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("JUnit lifecycle post")));
+        Post post = postDAO.createPost(DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("Kiểm thử vòng đời bài đăng")));
 
         Assert.assertEquals(Post.STATUS_ACTIVE, postDAO.getPostById(post.getId()).getStatus());
         Assert.assertTrue(postDAO.deletePost(post.getId()));
@@ -125,18 +125,18 @@ public void testUpdatePostFail() throws Exception {
 
         try {
             postDAO.updateStatus(post.getId(), Post.STATUS_ACTIVE);
-            Assert.fail("Expected deleted posts to be terminal");
+            Assert.fail("Kỳ vọng bài đăng đã xóa không được đổi trạng thái");
         } catch (Exception ex) {
-            Assert.assertTrue(ex.getMessage().contains("Khong the chuyen trang thai"));
+            Assert.assertTrue(ex.getMessage().contains("Không thể chuyển trạng thái"));
         }
     }
 
     @Test
     public void testCountAndTransferPostByCategory() throws Exception {
         int accountId = DbTestUtil.firstActiveStudentId();
-        int fromCategoryId = DbTestUtil.insertCategory(DbTestUtil.unique("JUnit from category"), null);
-        int toCategoryId = DbTestUtil.insertCategory(DbTestUtil.unique("JUnit to category"), null);
-        postDAO.createPost(DbTestUtil.postFixture(accountId, fromCategoryId, DbTestUtil.unique("JUnit transfer post")));
+        int fromCategoryId = DbTestUtil.insertCategory(DbTestUtil.unique("Kiểm thử danh mục nguồn"), null);
+        int toCategoryId = DbTestUtil.insertCategory(DbTestUtil.unique("Kiểm thử danh mục đích"), null);
+        postDAO.createPost(DbTestUtil.postFixture(accountId, fromCategoryId, DbTestUtil.unique("Kiểm thử chuyển danh mục bài đăng")));
 
         Assert.assertEquals(1, postDAO.countPostByCategory(fromCategoryId));
         Assert.assertTrue(postDAO.transferPostsToCategory(fromCategoryId, toCategoryId));
@@ -155,7 +155,7 @@ public void testGetPostsByAccountFound() throws Exception {
         DbTestUtil.postFixture(
             accountId,
             categoryId,
-            DbTestUtil.unique("Account Posts")));
+            DbTestUtil.unique("Bài đăng tài khoản")));
 
     List<Post> posts =
             postDAO.getPostsByAccount(accountId);
@@ -189,7 +189,7 @@ public void testGetPostDetailsFound() throws Exception {
                     DbTestUtil.postFixture(
                             accountId,
                             categoryId,
-                            DbTestUtil.unique("Detail Post")));
+                            DbTestUtil.unique("Chi tiết bài đăng")));
 
     Post result =
             postDAO.getPostById(

@@ -14,25 +14,25 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-/** Module b — Quan ly bai dang ca nhan */
+/** Module b — Quản lý bài đăng cá nhân */
 public class ManagePostFrm extends JFrame implements ActionListener {
 
     private final PostDAO postDAO = new PostDAO();
     private final JTable table = new JTable();
     private final DefaultTableModel model;
-    private final JButton btnCreate = new JButton("Tao bai dang");
-    private final JButton btnEdit = new JButton("Sua");
-    private final JButton btnDelete = new JButton("Xoa");
+    private final JButton btnCreate = new JButton("Tạo bài đăng");
+    private final JButton btnEdit = new JButton("Sửa");
+    private final JButton btnDelete = new JButton("Xóa");
     private List<Post> posts = List.of();
 
     public ManagePostFrm() {
-        super("Quan ly bai dang cua toi");
+        super("Quản lý bài đăng của tôi");
         setSize(720, 420);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         model = new DefaultTableModel(
-                new String[]{"ID", "Tieu de", "Gia", "So luong", "Danh muc","Ảnh", "Trang thai"}, 0) {
+                new String[]{"ID", "Tiêu đề", "Giá", "Số lượng", "Danh mục","Ảnh", "Trạng thái"}, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
         };
@@ -96,12 +96,12 @@ public class ManagePostFrm extends JFrame implements ActionListener {
     private Post selectedPost() {
         int row = table.getSelectedRow();
         if (row < 0 || row >= posts.size()) {
-            UiHelper.showError(this, "Vui long chon mot bai dang.");
+            UiHelper.showError(this, "Vui lòng chọn một bài đăng.");
             return null;
         }
         int modelRow = table.convertRowIndexToModel(row);
         if (modelRow < 0 || modelRow >= posts.size()) {
-            UiHelper.showError(this, "Khong mo duoc bai dang dang chon.");
+            UiHelper.showError(this, "Không mở được bài đăng đang chọn.");
             return null;
         }
         return posts.get(modelRow);
@@ -127,12 +127,12 @@ public class ManagePostFrm extends JFrame implements ActionListener {
             Post p = selectedPost();
             if (p == null) return;
             int ok = JOptionPane.showConfirmDialog(this,
-                    "Ban co chac chan muon xoa bai dang nay?",
-                    "Xac nhan", JOptionPane.YES_NO_OPTION);
+                    "Bạn có chắc chắn muốn xóa bài đăng này?",
+                    "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.YES_OPTION) {
                 try {
                     postDAO.deletePost(p.getId());
-                    UiHelper.showInfo(this, "Xoa thanh cong");
+                    UiHelper.showInfo(this, "Xóa thanh cong");
                     reload();
                 } catch (Exception ex) {
                     UiHelper.showError(this, ex.getMessage());

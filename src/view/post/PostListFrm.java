@@ -11,7 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-/** Module d — Hien thi tat ca bai dang (Khong tim kiem) */
+/** Module d — Hiển thị tất cả bài đăng (không tìm kiếm) */
 public class PostListFrm extends JFrame { // Nên đổi tên class này thành AllPostFrm
 
     private final JTable tblPosts = new JTable();

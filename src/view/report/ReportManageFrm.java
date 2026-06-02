@@ -14,7 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-/** Module h - Duyet bao cao (danh sach) - ReportManageFrm */
+/** Module h - Duyệt báo cáo (danh sách) - ReportManageFrm */
 public class ReportManageFrm extends JFrame implements ActionListener {
 
     private final ReportDAO reportDAO = new ReportDAO();

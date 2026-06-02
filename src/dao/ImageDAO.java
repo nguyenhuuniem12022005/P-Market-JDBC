@@ -43,9 +43,14 @@ public class ImageDAO extends DAO {
                 }
                 Path source = Paths.get(src);
                 if (!Files.exists(source)) {
-    throw new SQLException(
-            "Khong tim thay file anh: " + src);
-}
+                    throw new SQLException("Không tìm thấy file ảnh: " + src);
+                }
+                if (!Files.isRegularFile(source)) {
+                    throw new SQLException("Đường dẫn không phải file ảnh: " + src);
+                }
+                if (Files.size(source) == 0) {
+                    throw new SQLException("File ảnh đang rỗng: " + src);
+                }
 
         String name =
                 System.currentTimeMillis()
@@ -62,12 +67,12 @@ public class ImageDAO extends DAO {
         urls.add("uploads/" + name);
                     }
                 } catch (Exception ex) {
-                    throw new SQLException("Khong tai duoc anh: " + ex.getMessage(), ex);
+                    throw new SQLException("Không tải được ảnh: " + ex.getMessage(), ex);
                 }
                 return urls;
             }
 
-    /** Module c: luu URL anh lien ket voi bai dang */
+    /** Module c: lưu URL ảnh liên kết với bài đăng */
     public boolean saveImages(int postId, List<String> imageUrls)
         throws SQLException {
 

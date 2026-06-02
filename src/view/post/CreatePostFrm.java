@@ -17,7 +17,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Module c — Dang bai */
+/** Module c — Đăng bài */
 public class CreatePostFrm extends JFrame implements ActionListener {
     private final JTextField inTitle = new JTextField(30);
     private final JTextArea inDescription = new JTextArea(5, 30);
@@ -25,9 +25,9 @@ public class CreatePostFrm extends JFrame implements ActionListener {
     private final JTextField inQuantity = new JTextField(5);
     private final JComboBox<Category> inCategory = new JComboBox<>();
     private final JTextField inImagePath = new JTextField(25);
-    private final JButton btnBrowse = new JButton("Chon anh");
-    private final JButton btnSubmit = new JButton("Dang bai");
-    private final JButton btnCancel = new JButton("Huy");
+    private final JButton btnBrowse = new JButton("Chọn ảnh");
+    private final JButton btnSubmit = new JButton("Đăng bài");
+    private final JButton btnCancel = new JButton("Hủy");
     private final PostDAO postDAO = new PostDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
     private final ImageDAO imageDAO = new ImageDAO();
@@ -39,7 +39,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
     public CreatePostFrm(
             Runnable onSaved
     ) {
-        super("Dang bai ban hang");
+        super("Đăng bài bán hàng");
         this.onSaved = onSaved;
         setSize(550, 450);
         setLocationRelativeTo(null);
@@ -67,7 +67,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
                 form,
                 gbc,
                 row++,
-                "Tieu de:",
+                "Tiêu đề:",
                 inTitle
         );
 
@@ -75,7 +75,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
         gbc.gridx = 0;
 
         form.add(
-                new JLabel("Mo ta:"),
+                new JLabel("Mô tả:"),
                 gbc
         );
 
@@ -94,7 +94,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
                 form,
                 gbc,
                 row++,
-                "Gia (VND):",
+                "Giá (VND):",
                 inPrice
         );
 
@@ -102,7 +102,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
                 form,
                 gbc,
                 row++,
-                "So luong:",
+                "Số lượng:",
                 inQuantity
         );
 
@@ -112,7 +112,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
                 form,
                 gbc,
                 row++,
-                "Danh muc:",
+                "Danh mục:",
                 inCategory
         );
 
@@ -278,7 +278,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
         if (selectedImages.isEmpty()) {
         UiHelper.showError(
             this,
-            "Vui long tai len it nhat mot anh san pham."
+            "Vui lòng tải lên ít nhất một ảnh sản phẩm."
         );
 
     return;
@@ -292,7 +292,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
 
             UiHelper.showError(
                     this,
-                    "Vui long nhap day du thong tin."
+                    "Vui lòng nhập đầy đủ thông tin."
             );
 
             return;
@@ -323,7 +323,7 @@ public class CreatePostFrm extends JFrame implements ActionListener {
 
             UiHelper.showError(
                     this,
-                    "Gia va so luong phai la so hop le."
+                    "Giá và số lượng phải là số hợp lệ."
             );
 
             return;
@@ -351,15 +351,12 @@ public class CreatePostFrm extends JFrame implements ActionListener {
                 selectedImages
         );
             postDAO.createPost(
-                    post
-            );
-            imageDAO.saveImages(
-                    post.getId(),
+                    post,
                     urls
             );
             UiHelper.showInfo(
                     this,
-                    "Dang bai thanh cong!"
+                    "Đăng bài thành công!"
             );
             dispose();
 

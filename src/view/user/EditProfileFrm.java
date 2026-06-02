@@ -16,8 +16,8 @@ public class EditProfileFrm extends JFrame implements ActionListener {
     private final Runnable onSaved;
     private final JTextField inPhone = new JTextField(20);
     private final JTextField inAddress = new JTextField(20);
-    private final JButton btnSave = new JButton("Luu thay doi");
-    private final JButton btnCancel = new JButton("Huy");
+    private final JButton btnSave = new JButton("Lưu thay đổi");
+    private final JButton btnCancel = new JButton("Hủy");
     private final AccountDAO accountDAO = new AccountDAO();
 
     public EditProfileFrm(Account account, Runnable onSaved) {
@@ -58,7 +58,7 @@ public class EditProfileFrm extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String phone = inPhone.getText().trim();
         if (phone.isEmpty()) {
-            UiHelper.showError(this, "Vui long nhap so dien thoai.");
+            UiHelper.showError(this, "Vui lòng nhập số điện thoại.");
             return;
         }
         try {
@@ -66,7 +66,7 @@ public class EditProfileFrm extends JFrame implements ActionListener {
             account.setAddress(inAddress.getText().trim());
             accountDAO.updateProfile(account);
             SessionManager.setCurrentAccount(account);
-            UiHelper.showInfo(this, "Cap nhat ho so thanh cong");
+            UiHelper.showInfo(this, "Cập nhật hồ sơ thành công");
             dispose();
             if (onSaved != null) onSaved.run();
         } catch (Exception ex) {

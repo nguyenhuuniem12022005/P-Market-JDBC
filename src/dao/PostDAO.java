@@ -37,7 +37,7 @@ public class PostDAO extends DAO {
             if (ex instanceof SQLException sqlEx) {
                 throw sqlEx;
             }
-            throw new SQLException("Khong tao duoc bai dang: " + ex.getMessage(), ex);
+            throw new SQLException("Không tạo được bài đăng: " + ex.getMessage(), ex);
         } finally {
             con.setAutoCommit(oldAutoCommit);
         }
@@ -151,7 +151,7 @@ public class PostDAO extends DAO {
         return null;
     }
 
-    /** Module e: chi tiet bai dang (alias getPostById) */
+    /** Module e: chi tiết bài đăng (alias getPostById) */
     public Post getPostDetails(int id) throws SQLException {
         return getPostById(id);
     }
@@ -180,7 +180,7 @@ public class PostDAO extends DAO {
         return list;
     }
 
-    /** Module g: kiem tra bai dang con ton tai truoc khi tao bao cao */
+    /** Module g: kiểm tra bài đăng còn tồn tại trước khi tạo báo cáo */
     public Post findActivePostById(int id) throws SQLException {
         String sql = "SELECT id FROM tblPost WHERE id=? AND status=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -195,7 +195,7 @@ public class PostDAO extends DAO {
         return null;
     }
 
-    /** Module b: cap nhat bai dang */
+    /** Module b: cập nhật bài đăng */
     public boolean updatePost(Post post) throws SQLException {
         String sql = """
                 UPDATE tblPost
@@ -213,12 +213,12 @@ public class PostDAO extends DAO {
         }
     }
 
-    /** Module b & h: xoa bai dang (chuyen trang thai sang da xoa) */
+    /** Module b & h: xóa bài đăng (chuyển trạng thái sang đã xóa) */
     public boolean deletePost(int postId) throws SQLException {
         return updateStatus(postId, Post.STATUS_DELETED);
     }
 
-    /** Module d (quan ly danh muc): dem so bai dang thuoc mot danh muc */
+    /** Module d (quản lý danh mục): đếm số bài đăng thuộc một danh mục */
     public int countPostByCategory(int categoryId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM tblPost WHERE categoryId=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -232,7 +232,7 @@ public class PostDAO extends DAO {
         return 0;
     }
 
-    /** Module d (quan ly danh muc): chuyen bai dang sang danh muc khac khi xoa danh muc */
+    /** Module d (quản lý danh mục): chuyển bài đăng sang danh mục khác khi xóa danh mục */
     public boolean transferPostsToCategory(int fromCategoryId, int toCategoryId) throws SQLException {
         String sql = "UPDATE tblPost SET categoryId=? WHERE categoryId=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -242,7 +242,7 @@ public class PostDAO extends DAO {
         }
     }
 
-    /** Alias theo ten trong kich ban quan ly danh muc. */
+    /** Alias theo ten trong kich ban quản lý danh mục. */
     public boolean transferPosts(int fromCategoryId, int toCategoryId) throws SQLException {
         return transferPostsToCategory(fromCategoryId, toCategoryId);
     }
@@ -254,7 +254,7 @@ public class PostDAO extends DAO {
         }
         String normalizedStatus = normalizeStatus(newStatus);
         if (!canTransition(currentStatus, normalizedStatus)) {
-            throw new SQLException("Khong the chuyen trang thai bai dang tu "
+            throw new SQLException("Không thể chuyển trạng thái bài đăng từ "
                     + currentStatus + " sang " + normalizedStatus + ".");
         }
         String sql = "UPDATE tblPost SET status=?, updatedAt=CURRENT_TIMESTAMP WHERE id=?";
@@ -280,12 +280,12 @@ public class PostDAO extends DAO {
 
     private String normalizeStatus(String status) throws SQLException {
         if (status == null || status.isBlank()) {
-            throw new SQLException("Trang thai bai dang khong hop le.");
+            throw new SQLException("Trạng thái bài đăng không hợp lệ.");
         }
         String normalized = status.trim().toUpperCase();
         return switch (normalized) {
             case Post.STATUS_ACTIVE, Post.STATUS_DELETED -> normalized;
-            default -> throw new SQLException("Trang thai bai dang khong hop le: " + status);
+            default -> throw new SQLException("Trạng thái bài đăng không hợp lệ: " + status);
         };
     }
 
@@ -324,7 +324,7 @@ public class PostDAO extends DAO {
             }
         }
         if (cleaned.isEmpty()) {
-            throw new SQLException("Bai dang phai co it nhat mot anh.");
+            throw new SQLException("Bài đăng phải có ít nhất một ảnh.");
         }
         return cleaned;
     }

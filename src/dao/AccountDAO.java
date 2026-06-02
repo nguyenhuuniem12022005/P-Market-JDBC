@@ -33,7 +33,7 @@ public class AccountDAO extends DAO {
         return null;
     }
 
-    /** Hash cac mat khau plain text con ton tai trong CSDL cu. */
+    /** Hash các mật khẩu plain text còn tồn tại trong CSDL cũ. */
     public int upgradeLegacyPlainTextPasswords() throws SQLException {
         String sql = "SELECT id, password FROM tblAccount";
         List<Integer> accountIds = new ArrayList<>();
@@ -123,7 +123,7 @@ public class AccountDAO extends DAO {
         }
     }
 
-    /** Module a: doi mat khau */
+    /** Module a: đổi mật khẩu */
     public boolean updatePassword(int id, String newPassword) throws SQLException {
         return updatePasswordHash(id, PasswordUtil.hash(newPassword));
     }
@@ -171,7 +171,7 @@ public class AccountDAO extends DAO {
         return null;
     }
 
-    /** Module b: khoa tai khoan vi pham */
+    /** Module b: khóa tài khoản vi phạm */
     public boolean lockAccount(int accountId, String banReason) throws SQLException {
         String sql = "UPDATE tblAccount SET status=?, banReason=? WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -182,7 +182,7 @@ public class AccountDAO extends DAO {
         }
     }
 
-    /** Module b: mo khoa tai khoan */
+    /** Module b: mo khóa tài khoản */
     public boolean unlockAccount(int accountId) throws SQLException {
         String sql = "UPDATE tblAccount SET status=?, banReason=NULL WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {

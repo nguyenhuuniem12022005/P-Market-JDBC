@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 setlocal EnableDelayedExpansion
 cd /d "%~dp0"
 
@@ -46,14 +47,14 @@ if not exist "%HAMCREST_JAR%" (
 )
 
 if /I "%~1"=="initdb" (
-  echo Resetting H2 database from SQL files...
+  echo Đang khởi tạo lại cơ sở dữ liệu H2 từ SQL...
   if exist "data" rmdir /s /q "data"
   mkdir "data"
-  java -cp "%H2_JAR%" org.h2.tools.RunScript -url "jdbc:h2:file:./data/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH" -user sa -script "database/schema.sql"
+  java -Dfile.encoding=UTF-8 -cp "%H2_JAR%" org.h2.tools.RunScript -url "jdbc:h2:file:./data/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH" -user sa -script "database/schema.sql"
   if errorlevel 1 exit /b 1
-  java -cp "%H2_JAR%" org.h2.tools.RunScript -url "jdbc:h2:file:./data/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH" -user sa -script "database/seed.sql"
+  java -Dfile.encoding=UTF-8 -cp "%H2_JAR%" org.h2.tools.RunScript -url "jdbc:h2:file:./data/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH" -user sa -script "database/seed.sql"
   if errorlevel 1 exit /b 1
-  echo Database initialized successfully.
+  echo Đã khởi tạo cơ sở dữ liệu thành công.
   exit /b 0
 )
 
@@ -64,8 +65,8 @@ mkdir "%BUILD_DIR%"
 if exist "%SOURCES_FILE%" del "%SOURCES_FILE%"
 for /r "src" %%f in (*.java) do echo %%f>>"%SOURCES_FILE%"
 
-echo Compiling source...
+echo Đang biên dịch mã nguồn...
 javac -encoding UTF-8 -d "%BUILD_DIR%" -cp "%H2_JAR%;%JUNIT_JAR%;%HAMCREST_JAR%" @"%SOURCES_FILE%"
 if errorlevel 1 exit /b 1
 
-java -cp "%BUILD_DIR%;%H2_JAR%;%JUNIT_JAR%;%HAMCREST_JAR%" %MAIN_CLASS% %MAIN_ARGS%
+java -Dfile.encoding=UTF-8 -cp "%BUILD_DIR%;%H2_JAR%;%JUNIT_JAR%;%HAMCREST_JAR%" %MAIN_CLASS% %MAIN_ARGS%

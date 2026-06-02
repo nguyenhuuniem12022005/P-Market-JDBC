@@ -9,16 +9,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Module a — Hien thi ho so ca nhan */
+/** Module a — Hiển thị hồ sơ cá nhân */
 public class ProfileFrm extends JFrame implements ActionListener {
 
     private final JTextArea outInfo = new JTextArea();
     private final JButton btnEdit = new JButton("Chinh sua");
-    private final JButton btnChangePassword = new JButton("Doi mat khau");
+    private final JButton btnChangePassword = new JButton("Đổi mật khẩu");
     private final AccountDAO accountDAO = new AccountDAO();
 
     public ProfileFrm() {
-        super("Ho so ca nhan");
+        super("Hồ sơ cá nhân");
         setSize(460, 360);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -49,7 +49,7 @@ public class ProfileFrm extends JFrame implements ActionListener {
                     So dien thoai : %s
                     Dia chi  : %s
                     Vai tro  : %s
-                    Trang thai : %s
+                    Trạng thái : %s
                     """,
                     me.getFullName(), me.getEmail(),
                     nv(me.getPhone()), nv(me.getAddress()),

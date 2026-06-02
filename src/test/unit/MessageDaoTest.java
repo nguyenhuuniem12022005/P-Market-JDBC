@@ -19,7 +19,7 @@ public class MessageDaoTest {
         int accountId1 = DbTestUtil.insertStudent(DbTestUtil.unique("message_a"));
         int accountId2 = DbTestUtil.insertStudent(DbTestUtil.unique("message_b"));
         ChatRoom room = chatRoomDAO.getOrCreateRoom(accountId1, accountId2);
-        String content = DbTestUtil.unique("Noi dung tin nhan");
+        String content = DbTestUtil.unique("Nội dung tin nhắn");
 
         Message sent = messageDAO.sendMessage(room.getId(), accountId1, content, null);
         Assert.assertEquals(content, sent.getContent());

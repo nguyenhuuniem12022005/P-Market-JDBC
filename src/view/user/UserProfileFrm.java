@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Module g — Ho so nguoi dung khac (co the bao cao tai khoan) */
+/** Module g — Hồ sơ người dùng khác (có thể báo cáo tài khoản) */
 public class UserProfileFrm extends JFrame implements ActionListener {
 
     private final int accountId;

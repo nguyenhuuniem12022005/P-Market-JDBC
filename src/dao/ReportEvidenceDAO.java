@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ReportEvidenceDAO extends DAO {
 
-    /** Module g: luu danh sach anh bang chung cho mot bao cao */
+    /** Module g: lưu danh sách ảnh bằng chứng cho một báo cáo */
     public boolean addEvidenceList(int reportId, List<String> imageUrls) throws SQLException {
         if (imageUrls == null || imageUrls.isEmpty()) {
             return true;
@@ -27,7 +27,7 @@ public class ReportEvidenceDAO extends DAO {
         return true;
     }
 
-    /** Module h: lay danh sach anh bang chung theo bao cao */
+    /** Module h: lấy danh sách ảnh bằng chứng theo báo cáo */
     public List<ReportEvidence> getEvidenceByReportId(int reportId) throws SQLException {
         String sql = "SELECT * FROM tblReportEvidence WHERE reportId=?";
         List<ReportEvidence> list = new ArrayList<>();

@@ -14,7 +14,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Module e — Xem chi tiet bai dang (+ mo chat/bao cao cho SV) */
+/** Module e — Xem chi tiết bài đăng (+ mở chat/báo cáo cho SV) */
 public class PostDetailFrm extends JFrame implements ActionListener {
 
     private final int postId;

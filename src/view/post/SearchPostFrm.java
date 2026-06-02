@@ -17,7 +17,7 @@ import java.util.List;
 
 
 
-/** Module d — Tim kiem bai dang */
+/** Module d — Tìm kiếm bài đăng */
 
 public class SearchPostFrm extends JFrame implements ActionListener {
     private final JTextField inKeyword = new JTextField(20);

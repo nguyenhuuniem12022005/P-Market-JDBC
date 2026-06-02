@@ -58,10 +58,10 @@ public void testLoginFound() throws Exception {
         String token = DbTestUtil.unique("lock_account");
         int accountId = DbTestUtil.insertStudent(token);
 
-        Assert.assertTrue(accountDAO.lockAccount(accountId, "JUnit lock reason"));
+        Assert.assertTrue(accountDAO.lockAccount(accountId, "Kiểm thử lock reason"));
         Account locked = accountDAO.findById(accountId);
         Assert.assertEquals(Account.STATUS_BANNED, locked.getStatus());
-        Assert.assertEquals("JUnit lock reason", locked.getBanReason());
+        Assert.assertEquals("Kiểm thử lock reason", locked.getBanReason());
 
         Assert.assertTrue(accountDAO.unlockAccount(accountId));
         Account active = accountDAO.findById(accountId);
@@ -120,7 +120,7 @@ public void testLoginFound() throws Exception {
         Account acc = dao.getProfile(1);
 
         acc.setPhone("0988888888");
-        acc.setAddress("Ha Noi");
+        acc.setAddress("Hà Nội");
 
         boolean result = dao.updateProfile(acc);
 

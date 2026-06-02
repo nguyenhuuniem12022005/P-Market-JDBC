@@ -14,8 +14,8 @@ public class NotificationDaoTest {
 
     @Test
     public void testCreateNotificationAndHistory() throws Exception {
-        String title = DbTestUtil.unique("JUnit notification");
-        Notification n = notificationDAO.createNotification(title, "Noi dung test");
+        String title = DbTestUtil.unique("Kiểm thử notification");
+        Notification n = notificationDAO.createNotification(title, "Nội dung kiểm thử");
 
         Assert.assertTrue(n.getId() > 0);
         List<Notification> history = notificationDAO.getNotificationHistory();

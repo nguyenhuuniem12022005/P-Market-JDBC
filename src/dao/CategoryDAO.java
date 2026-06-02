@@ -27,12 +27,12 @@ public class CategoryDAO extends DAO {
         return list;
     }
 
-    /** Module d: lay danh sach danh muc (alias getAllCategories) */
+    /** Module d: lấy danh sách danh mục (alias getAllCategories) */
     public List<Category> getCategories() throws SQLException {
         return getAllCategories();
     }
 
-    /** Module d: lay chi tiet mot danh muc */
+    /** Module d: lấy chi tiết một danh mục */
     public Category getCategoryDetail(int id) throws SQLException {
         String sql = "SELECT * FROM tblCategory WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -46,12 +46,12 @@ public class CategoryDAO extends DAO {
         return null;
     }
 
-    /** Module d: kiem tra ten danh muc da ton tai */
+    /** Module d: kiểm tra tên danh mục đã tồn tại */
     public boolean existsByName(String name) throws SQLException {
         return existsByName(name, -1);
     }
 
-    /** Module d: kiem tra trung ten (bo qua chinh danh muc dang sua) */
+    /** Module d: kiểm tra trùng tên (bỏ qua chính danh mục đang sửa) */
     public boolean existsByName(String name, int excludeId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM tblCategory WHERE LOWER(name)=LOWER(?) AND id<>? AND status='ACTIVE'";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -66,7 +66,7 @@ public class CategoryDAO extends DAO {
         return false;
     }
 
-    /** Module d: them danh muc moi */
+    /** Module d: thêm danh mục mới */
     public Category addCategory(Category category) throws SQLException {
         validateCategory(category, -1);
         String sql = "INSERT INTO tblCategory (parentId, name, description, status) VALUES (?, ?, ?, ?)";
@@ -85,7 +85,7 @@ public class CategoryDAO extends DAO {
         return category;
     }
 
-    /** Module d: cap nhat danh muc */
+    /** Module d: cập nhật danh mục */
     public boolean updateCategory(Category category) throws SQLException {
         validateCategory(category, category != null ? category.getId() : -1);
         String sql = "UPDATE tblCategory SET name=?, description=?, parentId=?, status=? WHERE id=?";
@@ -103,7 +103,7 @@ public class CategoryDAO extends DAO {
         }
     }
 
-    /** Module d: xoa danh muc */
+    /** Module d: xóa danh mục */
     public boolean deleteCategory(int id) throws SQLException {
         Category deleting = getCategoryDetail(id);
         if (deleting == null) {
@@ -181,7 +181,7 @@ public class CategoryDAO extends DAO {
         try (Statement st = con.createStatement()) {
             st.execute(sql);
         } catch (SQLException ex) {
-            throw new RuntimeException("Khong cap nhat duoc cot description cho tblCategory: "
+            throw new RuntimeException("Không cập nhật được cột description cho tblCategory: "
                     + ex.getMessage(), ex);
         }
     }
@@ -192,20 +192,20 @@ public class CategoryDAO extends DAO {
 
     private void validateCategory(Category category, int excludeId) throws SQLException {
         if (category == null) {
-            throw new SQLException("Danh muc khong hop le.");
+            throw new SQLException("Danh mục khong hop le.");
         }
         String name = category.getName();
         if (name == null || name.trim().isEmpty()) {
-            throw new SQLException("Ten danh muc khong duoc rong.");
+            throw new SQLException("Tên danh mục không được rỗng.");
         }
         category.setName(name.trim());
         if (existsByName(category.getName(), excludeId)) {
-            throw new SQLException("Ten danh muc da ton tai.");
+            throw new SQLException("Tên danh mục đã tồn tại.");
         }
         Category parent = category.getParent();
         if (parent != null && parent.getId() > 0 && excludeId > 0) {
             if (parent.getId() == excludeId || isDescendant(excludeId, parent.getId())) {
-                throw new SQLException("Danh muc cha khong hop le.");
+                throw new SQLException("Danh mục cha khong hop le.");
             }
         }
     }

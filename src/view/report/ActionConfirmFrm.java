@@ -12,7 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Module h — Xac nhan quyet dinh xu ly bao cao (ActionConfirmFrm) */
+/** Module h — Xác nhận quyết định xử lý báo cáo (ActionConfirmFrm) */
 public class ActionConfirmFrm extends JDialog implements ActionListener {
 
     public static final String DELETE_POST = "DELETE_POST";

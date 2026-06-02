@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-/** Module h — Chi tiet va xu ly bao cao */
+/** Module h — Chi tiết và xử lý báo cáo */
 public class ReportDetailFrm extends JDialog implements ActionListener {
 
     private final int reportId;

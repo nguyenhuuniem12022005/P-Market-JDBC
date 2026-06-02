@@ -25,7 +25,7 @@ public class CategoryDaoTest {
 
     @Test
     public void testExistsByNameFound() throws Exception {
-        Assert.assertTrue(categoryDAO.existsByName("Hoc tap"));
+        Assert.assertTrue(categoryDAO.existsByName("Học tập"));
     }
 
     @Test
@@ -35,10 +35,10 @@ public class CategoryDaoTest {
 
     @Test
     public void testAddUpdateDeleteCategory() throws Exception {
-        String name = DbTestUtil.unique("JUnit category");
+        String name = DbTestUtil.unique("Kiểm thử category");
         Category c = new Category();
         c.setName(name);
-        c.setDescription("JUnit category description");
+        c.setDescription("Kiểm thử category description");
         c.setStatus("ACTIVE");
 
         Category saved = categoryDAO.addCategory(c);
@@ -59,14 +59,14 @@ public class CategoryDaoTest {
 
     @Test
     public void testDeleteCategoryWithChildReparentsChild() throws Exception {
-        String parentName = DbTestUtil.unique("JUnit parent category");
+        String parentName = DbTestUtil.unique("Kiểm thử parent category");
         Category parent = new Category();
         parent.setName(parentName);
         parent.setStatus("ACTIVE");
         parent = categoryDAO.addCategory(parent);
 
         Category child = new Category();
-        child.setName(DbTestUtil.unique("JUnit child category"));
+        child.setName(DbTestUtil.unique("Kiểm thử child category"));
         child.setStatus("ACTIVE");
         child.setParent(parent);
         child = categoryDAO.addCategory(child);
@@ -84,12 +84,12 @@ public class CategoryDaoTest {
     @Test
     public void testUpdateCategoryRejectsDescendantParent() throws Exception {
         Category parent = new Category();
-        parent.setName(DbTestUtil.unique("JUnit cycle parent"));
+        parent.setName(DbTestUtil.unique("Kiểm thử cycle parent"));
         parent.setStatus("ACTIVE");
         parent = categoryDAO.addCategory(parent);
 
         Category child = new Category();
-        child.setName(DbTestUtil.unique("JUnit cycle child"));
+        child.setName(DbTestUtil.unique("Kiểm thử cycle child"));
         child.setStatus("ACTIVE");
         child.setParent(parent);
         child = categoryDAO.addCategory(child);
@@ -99,7 +99,7 @@ public class CategoryDaoTest {
             categoryDAO.updateCategory(parent);
             Assert.fail("Expected category parent cycle to be rejected");
         } catch (Exception ex) {
-            Assert.assertTrue(ex.getMessage().contains("Danh muc cha khong hop le"));
+            Assert.assertTrue(ex.getMessage().contains("Danh mục cha khong hop le"));
         }
 
         Assert.assertTrue(categoryDAO.deleteCategory(parent.getId()));

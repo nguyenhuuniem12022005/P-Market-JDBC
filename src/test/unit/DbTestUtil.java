@@ -31,7 +31,7 @@ final class DbTestUtil {
                 """;
         try (Connection con = getConnection();
                 PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, "JUnit " + token);
+            ps.setString(1, "Kiểm thử " + token);
             ps.setString(2, token + "@stu.ptit.edu.vn");
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -69,7 +69,7 @@ final class DbTestUtil {
             ps.setInt(1, accountId);
             ps.setInt(2, categoryId);
             ps.setString(3, title);
-            ps.setString(4, "Mo ta test " + title);
+            ps.setString(4, "Mô tả test " + title);
             ps.setString(5, status);
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -115,7 +115,7 @@ final class DbTestUtil {
         p.setAccount(accountRef(accountId));
         p.setCategory(categoryRef(categoryId));
         p.setTitle(title);
-        p.setDescription("Mo ta test " + title);
+        p.setDescription("Mô tả test " + title);
         p.setPrice(123000);
         p.setQuantity(2);
         Image image = new Image();

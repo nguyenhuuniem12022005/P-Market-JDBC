@@ -19,11 +19,11 @@ public class ReportDAO extends DAO {
         ensureDetailColumn();
     }
 
-    /** Module g: luu bao cao vao CSDL, tra ve reportId vua tao */
+    /** Module g: lưu báo cáo vào CSDL, trả về reportId vừa tạo */
     public int addReport(Report report) throws SQLException {
         validateNewReport(report);
         if (hasPendingDuplicate(report.getReporterId(), report.getPostId(), report.getAccountId())) {
-            throw new SQLException("Ban da gui bao cao cho doi tuong nay va dang cho xu ly.");
+            throw new SQLException("Bạn đã gửi báo cáo cho đối tượng này và đang chờ xử lý.");
         }
         String sql = """
                 INSERT INTO tblReport (reporterId, postId, accountId, reason, detail, status)
@@ -113,7 +113,7 @@ public class ReportDAO extends DAO {
         }
         String normalizedStatus = normalizeStatus(status);
         if (!canTransition(currentStatus, normalizedStatus)) {
-            throw new SQLException("Khong the chuyen trang thai bao cao tu "
+            throw new SQLException("Không thể chuyển trạng thái báo cáo từ "
                     + currentStatus + " sang " + normalizedStatus + ".");
         }
         String sql = "UPDATE tblReport SET status=? WHERE id=?";
@@ -154,18 +154,18 @@ public class ReportDAO extends DAO {
 
     private void validateNewReport(Report report) throws SQLException {
         if (report == null) {
-            throw new SQLException("Bao cao khong hop le.");
+            throw new SQLException("Báo cáo không hợp lệ.");
         }
         boolean hasPost = report.getPostId() != null;
         boolean hasAccount = report.getAccountId() != null;
         if (hasPost == hasAccount) {
-            throw new SQLException("Bao cao phai gan voi dung mot bai dang hoac mot tai khoan.");
+            throw new SQLException("Báo cáo phải gắn với đúng một bài đăng hoặc một tài khoản.");
         }
         if (report.getReporterId() <= 0) {
-            throw new SQLException("Nguoi gui bao cao khong hop le.");
+            throw new SQLException("Người gửi báo cáo không hợp lệ.");
         }
         if (report.getReason() == null || report.getReason().isBlank()) {
-            throw new SQLException("Ly do bao cao khong duoc rong.");
+            throw new SQLException("Lý do báo cáo không được rỗng.");
         }
     }
 
@@ -187,13 +187,13 @@ public class ReportDAO extends DAO {
         try (Statement st = con.createStatement()) {
             st.execute(sql);
         } catch (SQLException ex) {
-            throw new RuntimeException("Khong cap nhat duoc cot detail cho tblReport: " + ex.getMessage(), ex);
+            throw new RuntimeException("Không cập nhật được cột detail cho tblReport: " + ex.getMessage(), ex);
         }
     }
 
     private String normalizeStatus(String status) throws SQLException {
         if (status == null || status.isBlank()) {
-            throw new SQLException("Trang thai bao cao khong hop le.");
+            throw new SQLException("Trạng thái báo cáo không hợp lệ.");
         }
         String normalized = status.trim().toUpperCase();
         if ("PROCESSED".equals(normalized)) {
@@ -201,7 +201,7 @@ public class ReportDAO extends DAO {
         }
         return switch (normalized) {
             case Report.STATUS_PENDING, Report.STATUS_RESOLVED, Report.STATUS_REJECTED -> normalized;
-            default -> throw new SQLException("Trang thai bao cao khong hop le: " + status);
+            default -> throw new SQLException("Trạng thái báo cáo không hợp lệ: " + status);
         };
     }
 

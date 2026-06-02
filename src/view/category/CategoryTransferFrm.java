@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Module d — Chon danh muc thay the khi xoa danh muc con bai dang */
+/** Module d — Chọn danh mục thay thế khi xóa danh mục còn bài đăng */
 public class CategoryTransferFrm extends JDialog implements ActionListener {
 
     private final Category deleting;

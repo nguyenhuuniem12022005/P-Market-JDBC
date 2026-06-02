@@ -15,14 +15,14 @@ public class ChangePasswordFrm extends JFrame implements ActionListener {
     private final JPasswordField txtNewPassword = new JPasswordField(20);
 
     private final JButton btnOk = new JButton("OK");
-    private final JButton btnCancel = new JButton("Cancel");
+    private final JButton btnCancel = new JButton("Hủy");
 
     private final AccountDAO accountDAO = new AccountDAO();
     private final Account account;
     private final Runnable onSuccess;
 
     public ChangePasswordFrm(Account account, Runnable onSuccess) {
-        super("Doi mat khau");
+        super("Đổi mật khẩu");
 
         this.account = account;
         this.onSuccess = onSuccess;
@@ -91,14 +91,14 @@ public void actionPerformed(ActionEvent e) {
 
             if (!success) {
                 UiHelper.showError(this,
-                        "Doi mat khau that bai.");
+                        "Đổi mật khẩu that bai.");
                 return;
             }
 
             account.setPassword(newPassword);
 
             UiHelper.showInfo(this,
-                    "Doi mat khau thanh cong.");
+                    "Đổi mật khẩu thanh cong.");
 
             if (onSuccess != null) {
                 onSuccess.run();

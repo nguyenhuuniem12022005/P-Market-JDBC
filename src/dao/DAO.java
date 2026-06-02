@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- * Lop DAO chung — khoi tao ket noi CSDL (theo giao trinh CNPM).
+ * Lớp DAO chung — khởi tạo kết nối CSDL (theo giao trinh CNPM).
  */
 public class DAO {
 
@@ -18,7 +18,7 @@ public class DAO {
         try {
             this.con = DatabaseUtil.getConnection();
         } catch (SQLException e) {
-            throw new RuntimeException("Khong ket noi duoc CSDL: " + e.getMessage(), e);
+            throw new RuntimeException("Không kết nối được CSDL: " + e.getMessage(), e);
         }
     }
 

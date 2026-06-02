@@ -19,7 +19,7 @@ public class UserNotificationDaoTest {
 
     @Test
     public void testBroadcastToAllAndGetByAccount() throws Exception {
-        Notification n = notificationDAO.createNotification(DbTestUtil.unique("JUnit broadcast"), "Noi dung broadcast");
+        Notification n = notificationDAO.createNotification(DbTestUtil.unique("Kiểm thử broadcast"), "Nội dung broadcast");
         List<Account> students = accountDAO.getAllStudentIds();
         Assert.assertTrue(students.size() > 0);
 
@@ -32,7 +32,7 @@ public class UserNotificationDaoTest {
 
     @Test
     public void testMarkAsRead() throws Exception {
-        Notification n = notificationDAO.createNotification(DbTestUtil.unique("JUnit read"), "Noi dung read");
+        Notification n = notificationDAO.createNotification(DbTestUtil.unique("Kiểm thử read"), "Nội dung read");
         List<Account> students = accountDAO.getAllStudentIds();
         userNotificationDAO.broadcastToAll(n.getId(), List.of(students.get(0)));
 

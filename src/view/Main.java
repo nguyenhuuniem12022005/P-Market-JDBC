@@ -13,8 +13,8 @@ public class Main {
             new AccountDAO().upgradeLegacyPlainTextPasswords();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,
-                    "Khong the nang cap mat khau cu: " + ex.getMessage(),
-                    "Loi", JOptionPane.ERROR_MESSAGE);
+                    "Không thể nâng cấp mật khẩu cũ: " + ex.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
         SwingUtilities.invokeLater(() -> {
             LoginFrm login = new LoginFrm();
