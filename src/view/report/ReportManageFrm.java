@@ -20,7 +20,7 @@ public class ReportManageFrm extends JFrame implements ActionListener {
     private final ReportDAO reportDAO = new ReportDAO();
     private final DefaultTableModel model;
     private final JTable table;
-    private final JComboBox<String> inStatus = new JComboBox<>(new String[]{
+    private final JComboBox<String> inStatus = new JComboBox<>(new String[] {
             "Chờ xử lý", "Đã xử lý", "Bị bác bỏ", "Tất cả"
     });
     private final JButton btnDetail = new JButton("Xem chi tiết");
@@ -33,7 +33,7 @@ public class ReportManageFrm extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         model = new DefaultTableModel(
-                new String[]{"ID", "Người gửi", "Loại", "Đối tượng ID", "Lý do", "Trạng thái"}, 0) {
+                new String[] { "ID", "Người gửi", "Loại", "Đối tượng ID", "Lý do", "Trạng thái" }, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -74,6 +74,7 @@ public class ReportManageFrm extends JFrame implements ActionListener {
         }
     }
 
+    // Load danh sách báo cáo 
     private void loadTable() {
         try {
             reports = switch (inStatus.getSelectedIndex()) {
@@ -84,7 +85,7 @@ public class ReportManageFrm extends JFrame implements ActionListener {
             };
             model.setRowCount(0);
             for (Report r : reports) {
-                model.addRow(new Object[]{
+                model.addRow(new Object[] {
                         r.getId(),
                         r.getReporter() != null ? r.getReporter().getFullName() : "",
                         r.getPostId() != null ? "Bài đăng" : "Tài khoản",
@@ -98,6 +99,7 @@ public class ReportManageFrm extends JFrame implements ActionListener {
         }
     }
 
+    // Mở báo cáo được chọn
     private void openSelectedReport() {
         int row = table.getSelectedRow();
         if (row < 0 || row >= reports.size()) {
