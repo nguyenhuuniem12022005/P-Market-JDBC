@@ -71,7 +71,7 @@ public class PostDAO extends DAO {
             FROM tblPost p
             JOIN tblAccount a ON p.accountId = a.id
             JOIN tblCategory c ON p.categoryId = c.id
-            WHERE p.status IN ('AVAILABLE','SOLD')
+            WHERE p.status='ACTIVE'
             """);
         List<Object> params = new ArrayList<>();
         if (keyword != null && !keyword.isBlank()) {
@@ -111,7 +111,7 @@ public class PostDAO extends DAO {
                 FROM tblPost p
                 JOIN tblAccount a ON p.accountId = a.id
                 JOIN tblCategory c ON p.categoryId = c.id
-                WHERE p.status IN ('AVAILABLE', 'SOLD')
+                WHERE p.status='ACTIVE'
                 ORDER BY p.createdAt DESC
                 """;
 

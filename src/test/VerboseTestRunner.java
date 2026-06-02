@@ -5,6 +5,9 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class VerboseTestRunner {
 
     public static void main(String[] args) throws Exception {
@@ -14,21 +17,30 @@ public class VerboseTestRunner {
         }
 
         JUnitCore core = new JUnitCore();
+        Set<String> failedTests = new HashSet<>();
+        Set<String> skippedTests = new HashSet<>();
         core.addListener(new RunListener() {
             @Override
             public void testFinished(org.junit.runner.Description description) {
-                System.out.println("PASS " + testName(description));
+                String name = testName(description);
+                if (!failedTests.contains(name) && !skippedTests.contains(name)) {
+                    System.out.println("PASS " + name);
+                }
             }
 
             @Override
             public void testFailure(Failure failure) {
-                System.out.println("FAIL " + testName(failure.getDescription()));
+                String name = testName(failure.getDescription());
+                failedTests.add(name);
+                System.out.println("FAIL " + name);
                 System.out.println("     " + failure.getMessage());
             }
 
             @Override
             public void testAssumptionFailure(Failure failure) {
-                System.out.println("SKIP " + testName(failure.getDescription()));
+                String name = testName(failure.getDescription());
+                skippedTests.add(name);
+                System.out.println("SKIP " + name);
                 System.out.println("     " + failure.getMessage());
             }
         });
