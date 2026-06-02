@@ -7,6 +7,7 @@ import model.Message;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class MessageDaoTest {
@@ -53,9 +54,10 @@ public class MessageDaoTest {
             messageDAO.sendMessage(room.getId(), accountId1, "", null);
             Assert.fail("Kỳ vọng hàm sendMessage phải chặn lại và ném ra lỗi");
 
-        } catch (Exception ex) {
-            Assert.assertTrue("Thông báo lỗi chưa chính xác",
-                    ex.getMessage().contains("Tin nhan phai co noi dung hoac anh"));
+        } catch (SQLException ex) {
+            Assert.assertNotNull("Ngoại lệ ném ra bị thiếu message", ex.getMessage());
+            Assert.assertTrue("Thông báo lỗi chưa chính xác. Thực tế nhận được: " + ex.getMessage(),
+                    ex.getMessage().contains("Tin nhắn phải có nội dung hoặc ảnh"));
         }
     }
 }

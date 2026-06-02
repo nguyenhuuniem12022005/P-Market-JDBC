@@ -5,6 +5,7 @@ import model.Post;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class PostDaoTest {
@@ -50,13 +51,16 @@ public class PostDaoTest {
         int accountId = DbTestUtil.firstActiveStudentId();
         int categoryId = DbTestUtil.firstCategoryId();
         Post post = DbTestUtil.postFixture(accountId, categoryId, DbTestUtil.unique("Kiểm thử thiếu ảnh bài đăng"));
+
         post.getListImage().clear();
 
         try {
             postDAO.createPost(post);
-            Assert.fail("Kỳ vọng từ chối bài đăng không có ảnh");
-        } catch (Exception ex) {
-            Assert.assertTrue(ex.getMessage().contains("anh"));
+            Assert.fail("Kỳ vọng hệ thống phải từ chối bài đăng không có ảnh và ném ra lỗi");
+        } catch (SQLException ex) {
+            Assert.assertNotNull("Ngoại lệ ném ra bị thiếu message", ex.getMessage());
+            Assert.assertTrue("Thông báo lỗi chưa chính xác. Thực tế nhận được: " + ex.getMessage(),
+                    ex.getMessage().contains("Bài đăng phải có ít nhất một ảnh"));
         }
     }
 
