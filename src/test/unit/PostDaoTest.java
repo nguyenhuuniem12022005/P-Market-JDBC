@@ -75,6 +75,26 @@ public class PostDaoTest {
         Assert.assertEquals(456000, updated.getPrice(), 0.001);
     }
 
+@Test
+public void testUpdatePostFail() throws Exception {
+
+    int accountId = DbTestUtil.firstActiveStudentId();
+    int categoryId = DbTestUtil.firstCategoryId();
+
+    Post post =
+            DbTestUtil.postFixture(
+                    accountId,
+                    categoryId,
+                    "JUnit Update Fail");
+
+    post.setId(-1); // id không tồn tại
+
+    boolean result =
+            postDAO.updatePost(post);
+
+    Assert.assertFalse(result);
+}
+
     @Test
     public void testDeletePost() throws Exception {
         int accountId = DbTestUtil.firstActiveStudentId();
@@ -123,4 +143,74 @@ public class PostDaoTest {
         Assert.assertEquals(0, postDAO.countPostByCategory(fromCategoryId));
         Assert.assertEquals(1, postDAO.countPostByCategory(toCategoryId));
     }
+
+    // getPosstByAccount
+    @Test
+public void testGetPostsByAccountFound() throws Exception {
+
+    int accountId = DbTestUtil.firstActiveStudentId();
+    int categoryId = DbTestUtil.firstCategoryId();
+
+    postDAO.createPost(
+        DbTestUtil.postFixture(
+            accountId,
+            categoryId,
+            DbTestUtil.unique("Account Posts")));
+
+    List<Post> posts =
+            postDAO.getPostsByAccount(accountId);
+
+    Assert.assertNotNull(posts);
+    Assert.assertTrue(posts.size() > 0);
+}
+
+@Test
+public void testGetPostsByAccountNotFound() throws Exception {
+
+    String token = DbTestUtil.unique("student_no_post");
+    int accountId = DbTestUtil.insertStudent(token);
+
+    List<Post> posts =
+            postDAO.getPostsByAccount(accountId);
+
+    Assert.assertNotNull(posts);
+    Assert.assertEquals(0, posts.size());
+}
+
+    // getPostById
+    @Test
+public void testGetPostDetailsFound() throws Exception {
+
+    int accountId = DbTestUtil.firstActiveStudentId();
+    int categoryId = DbTestUtil.firstCategoryId();
+
+    Post created =
+            postDAO.createPost(
+                    DbTestUtil.postFixture(
+                            accountId,
+                            categoryId,
+                            DbTestUtil.unique("Detail Post")));
+
+    Post result =
+            postDAO.getPostById(
+                    created.getId());
+
+    Assert.assertNotNull(result);
+    Assert.assertEquals(
+            created.getId(),
+            result.getId());
+}
+@Test
+public void testGetPostDetailsNotFound()
+        throws Exception {
+
+    Post result =
+            postDAO.getPostById(
+                    -1);
+
+    Assert.assertNull(result);
+}
+
+
+
 }

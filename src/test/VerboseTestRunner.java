@@ -1,4 +1,4 @@
-package test.unit;
+package test;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -51,7 +51,7 @@ public class VerboseTestRunner {
     }
 
     private static String testName(org.junit.runner.Description description) {
-        return description.getClassName().replace("test.unit.", "")
+        return description.getClassName().replace("test.", "")
                 + "." + description.getMethodName();
     }
 }

@@ -17,7 +17,6 @@ public class Account {
     private String role;
     private String status;
     private LocalDateTime createdAt;
-    private String avatarUrl;
     private String banReason;
     private List<Post> listPost = new ArrayList<>();
 
@@ -41,8 +40,6 @@ public class Account {
     public void setStatus(String status) { this.status = status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public String getAvatarUrl() { return avatarUrl; }
-    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
     public String getBanReason() { return banReason; }
     public void setBanReason(String banReason) { this.banReason = banReason; }
     public List<Post> getListPost() { return listPost; }

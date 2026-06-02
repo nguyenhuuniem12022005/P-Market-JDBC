@@ -12,11 +12,11 @@ set "MAIN_ARGS="
 set "JUNIT_TESTS=test.unit.AccountDaoTest test.unit.AccountStatDaoTest test.unit.CategoryDaoTest test.unit.ChatRoomDaoTest test.unit.ChatRoomMemberDaoTest test.unit.ImageDaoTest test.unit.MessageDaoTest test.unit.NotificationDaoTest test.unit.PostDaoTest test.unit.PostStatDaoTest test.unit.ReportDaoTest test.unit.ReportEvidenceDaoTest test.unit.UserNotificationDaoTest"
 
 if /I "%~1"=="test" (
-  set "MAIN_CLASS=test.unit.VerboseTestRunner"
+  set "MAIN_CLASS=test.VerboseTestRunner"
   set "MAIN_ARGS=%JUNIT_TESTS%"
 )
 if /I "%~1"=="junit" (
-  set "MAIN_CLASS=test.unit.VerboseTestRunner"
+  set "MAIN_CLASS=test.VerboseTestRunner"
   set "MAIN_ARGS=%JUNIT_TESTS%"
   if not "%~2"=="" (
     set "TEST_NAME=%~2"

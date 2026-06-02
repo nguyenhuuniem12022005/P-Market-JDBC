@@ -113,12 +113,12 @@ public class AccountDAO extends DAO {
 
     /** Module a: cap nhat ho so ca nhan (so dien thoai, dia chi, avatar) */
     public boolean updateProfile(Account account) throws SQLException {
-        String sql = "UPDATE tblAccount SET phone=?, address=?, avatarUrl=? WHERE id=?";
+        String sql = "UPDATE tblAccount SET phone=?, address=? WHERE id=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, account.getPhone());
             ps.setString(2, account.getAddress());
-            ps.setString(3, account.getAvatarUrl());
-            ps.setInt(4, account.getId());
+          
+            ps.setInt(3, account.getId());
             return ps.executeUpdate() > 0;
         }
     }
@@ -203,7 +203,6 @@ public class AccountDAO extends DAO {
         a.setRole(rs.getString("role"));
         a.setStatus(rs.getString("status"));
         a.setCreatedAt(toLocalDateTime(rs.getTimestamp("createdAt")));
-        a.setAvatarUrl(rs.getString("avatarUrl"));
         a.setBanReason(rs.getString("banReason"));
         return a;
     }
