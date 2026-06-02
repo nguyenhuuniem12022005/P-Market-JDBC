@@ -57,6 +57,55 @@ public class CategoryDaoTest {
         Assert.assertFalse(categoryDAO.existsByName(name + " updated"));
     }
 
+    @Test
+    public void testDeleteCategoryWithChildReparentsChild() throws Exception {
+        String parentName = DbTestUtil.unique("JUnit parent category");
+        Category parent = new Category();
+        parent.setName(parentName);
+        parent.setStatus("ACTIVE");
+        parent = categoryDAO.addCategory(parent);
+
+        Category child = new Category();
+        child.setName(DbTestUtil.unique("JUnit child category"));
+        child.setStatus("ACTIVE");
+        child.setParent(parent);
+        child = categoryDAO.addCategory(child);
+
+        Assert.assertEquals(1, categoryDAO.countChildCategories(parent.getId()));
+        Assert.assertTrue(categoryDAO.deleteCategory(parent.getId()));
+
+        Category childDetail = categoryDAO.getCategoryDetail(child.getId());
+        Assert.assertNotNull(childDetail);
+        Assert.assertNull(childDetail.getParent());
+
+        Assert.assertTrue(categoryDAO.deleteCategory(child.getId()));
+    }
+
+    @Test
+    public void testUpdateCategoryRejectsDescendantParent() throws Exception {
+        Category parent = new Category();
+        parent.setName(DbTestUtil.unique("JUnit cycle parent"));
+        parent.setStatus("ACTIVE");
+        parent = categoryDAO.addCategory(parent);
+
+        Category child = new Category();
+        child.setName(DbTestUtil.unique("JUnit cycle child"));
+        child.setStatus("ACTIVE");
+        child.setParent(parent);
+        child = categoryDAO.addCategory(child);
+
+        parent.setParent(child);
+        try {
+            categoryDAO.updateCategory(parent);
+            Assert.fail("Expected category parent cycle to be rejected");
+        } catch (Exception ex) {
+            Assert.assertTrue(ex.getMessage().contains("Danh muc cha khong hop le"));
+        }
+
+        Assert.assertTrue(categoryDAO.deleteCategory(parent.getId()));
+        Assert.assertTrue(categoryDAO.deleteCategory(child.getId()));
+    }
+
     // getAllCategoties()
     @Test
     public void testGetAllCategoriesFound() throws Exception {

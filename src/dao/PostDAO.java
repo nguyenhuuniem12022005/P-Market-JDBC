@@ -220,10 +220,9 @@ public class PostDAO extends DAO {
 
     /** Module d (quan ly danh muc): dem so bai dang thuoc mot danh muc */
     public int countPostByCategory(int categoryId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM tblPost WHERE categoryId=? AND status=?";
+        String sql = "SELECT COUNT(*) FROM tblPost WHERE categoryId=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, categoryId);
-            ps.setString(2, Post.STATUS_ACTIVE);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -241,6 +240,11 @@ public class PostDAO extends DAO {
             ps.setInt(2, fromCategoryId);
             return ps.executeUpdate() >= 0;
         }
+    }
+
+    /** Alias theo ten trong kich ban quan ly danh muc. */
+    public boolean transferPosts(int fromCategoryId, int toCategoryId) throws SQLException {
+        return transferPostsToCategory(fromCategoryId, toCategoryId);
     }
 
     public boolean updateStatus(int postId, String newStatus) throws SQLException {

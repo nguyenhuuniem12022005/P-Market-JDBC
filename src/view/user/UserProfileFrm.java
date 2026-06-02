@@ -31,7 +31,8 @@ public class UserProfileFrm extends JFrame implements ActionListener {
         outInfo.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
 
         JPanel actions = new JPanel(new FlowLayout());
-        if (SessionManager.isStudent()) {
+        if (SessionManager.getCurrentAccount() != null
+                && "member".equalsIgnoreCase(SessionManager.getCurrentAccount().getRole())) {
             btnReport.addActionListener(this);
             actions.add(btnReport);
         }

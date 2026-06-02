@@ -3,7 +3,7 @@ package view.user;
 import model.SessionManager;
 import view.category.CategoryListFrm;
 import view.notification.NotificationFrm;
-import view.post.PostListFrm;
+import view.post.SearchPostFrm;
 import view.report.ReportManageFrm;
 import view.stat.StatDashboardFrm;
 
@@ -61,7 +61,7 @@ public class AdminHomeFrm extends JFrame implements ActionListener {
         } else if (src == btnNotification) {
             new NotificationFrm().setVisible(true);
         } else if (src == btnSearch) {
-            new PostListFrm(true).setVisible(true);
+            new SearchPostFrm(true).setVisible(true);
         } else if (src == btnLogout) {
             SessionManager.clear();
             dispose();

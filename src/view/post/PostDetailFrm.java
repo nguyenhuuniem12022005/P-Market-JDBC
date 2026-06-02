@@ -40,7 +40,8 @@ public class PostDetailFrm extends JFrame implements ActionListener {
         outDetail.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
 
         JPanel actions = new JPanel(new FlowLayout());
-        if (!adminMode && SessionManager.isStudent()) {
+        if (!adminMode && SessionManager.getCurrentAccount() != null
+                && "member".equalsIgnoreCase(SessionManager.getCurrentAccount().getRole())) {
             btnChat.addActionListener(this);
             btnSellerProfile.addActionListener(this);
             btnReport.addActionListener(this);

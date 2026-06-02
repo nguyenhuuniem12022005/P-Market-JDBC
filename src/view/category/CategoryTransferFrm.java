@@ -49,7 +49,8 @@ public class CategoryTransferFrm extends JDialog implements ActionListener {
     private void loadTargets() {
         try {
             for (Category c : categoryDAO.getCategories()) {
-                if (c.getId() != deleting.getId()) {
+                if (c.getId() != deleting.getId()
+                        && !categoryDAO.isDescendant(deleting.getId(), c.getId())) {
                     inTarget.addItem(c);
                 }
             }
@@ -66,7 +67,7 @@ public class CategoryTransferFrm extends JDialog implements ActionListener {
             return;
         }
         try {
-            postDAO.transferPostsToCategory(deleting.getId(), target.getId());
+            postDAO.transferPosts(deleting.getId(), target.getId());
             categoryDAO.deleteCategory(deleting.getId());
             UiHelper.showInfo(this, "Xóa danh mục thành công.");
             dispose();
