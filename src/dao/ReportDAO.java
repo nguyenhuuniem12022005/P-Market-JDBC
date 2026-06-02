@@ -23,7 +23,7 @@ public class ReportDAO extends DAO {
     public int addReport(Report report) throws SQLException {
         validateNewReport(report);
         if (hasPendingDuplicate(report.getReporterId(), report.getPostId(), report.getAccountId())) {
-            throw new SQLException("Bạn đã gửi báo cáo cho đối tượng này và đang chờ xử lý.");
+            throw new SQLException("Bao cao dang cho xu ly.");
         }
         String sql = """
                 INSERT INTO tblReport (reporterId, postId, accountId, reason, detail, status)

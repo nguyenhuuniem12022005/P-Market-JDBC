@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,13 +54,18 @@ public class CategoryDAO extends DAO {
 
     /** Module d: kiểm tra trùng tên (bỏ qua chính danh mục đang sửa) */
     public boolean existsByName(String name, int excludeId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM tblCategory WHERE LOWER(name)=LOWER(?) AND id<>? AND status='ACTIVE'";
+        String normalizedInput = normalizeName(name);
+        if (normalizedInput.isEmpty()) {
+            return false;
+        }
+        String sql = "SELECT name FROM tblCategory WHERE id<>? AND status='ACTIVE'";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, name == null ? "" : name.trim());
-            ps.setInt(2, excludeId);
+            ps.setInt(1, excludeId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
+                while (rs.next()) {
+                    if (normalizeName(rs.getString("name")).equals(normalizedInput)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -235,5 +241,18 @@ public class CategoryDAO extends DAO {
             }
         }
         return null;
+    }
+
+    private String normalizeName(String name) {
+        if (name == null) {
+            return "";
+        }
+        String trimmed = name.trim();
+        if (trimmed.isEmpty()) {
+            return "";
+        }
+        String normalized = Normalizer.normalize(trimmed, Normalizer.Form.NFD);
+        String withoutMarks = normalized.replaceAll("\\p{M}", "");
+        return withoutMarks.replace('\u0111', 'd').replace('\u0110', 'd').toLowerCase();
     }
 }

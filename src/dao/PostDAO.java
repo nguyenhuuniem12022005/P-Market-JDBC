@@ -324,7 +324,7 @@ public class PostDAO extends DAO {
             }
         }
         if (cleaned.isEmpty()) {
-            throw new SQLException("Bài đăng phải có ít nhất một ảnh.");
+            throw new SQLException("Bai dang phai co it nhat mot anh.");
         }
         return cleaned;
     }

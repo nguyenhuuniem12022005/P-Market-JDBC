@@ -17,7 +17,7 @@ public class MessageDAO extends DAO {
         boolean hasContent = content != null && !content.isBlank();
         boolean hasImage = imageUrl != null && !imageUrl.isBlank();
         if (!hasContent && !hasImage) {
-            throw new SQLException("Tin nhắn phải có nội dung hoặc ảnh đính kèm.");
+            throw new SQLException("Tin nhan phai co noi dung hoac anh.");
         }
         String sql = "INSERT INTO tblMessage (chatRoomId, accountId, content, imageUrl) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
