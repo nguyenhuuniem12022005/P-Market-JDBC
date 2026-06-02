@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-cd "$(dirname "$0")"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$PROJECT_DIR"
 
 H2_JAR="lib/h2.jar"
 JUNIT_JAR="lib/junit-4.13.2.jar"
 HAMCREST_JAR="lib/hamcrest-core-1.3.jar"
 BUILD_DIR="build/classes"
 SOURCES_FILE="build/sources.txt"
+DB_URL="jdbc:h2:file:${PROJECT_DIR}/data/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH"
 MAIN_CLASS="Main"
 MAIN_ARGS=()
 JUNIT_TESTS=(
@@ -55,11 +57,11 @@ fi
 
 case "${1:-}" in
   test)
-    MAIN_CLASS="test.unit.VerboseTestRunner"
+    MAIN_CLASS="test.VerboseTestRunner"
     MAIN_ARGS=("${JUNIT_TESTS[@]}")
     ;;
   junit)
-    MAIN_CLASS="test.unit.VerboseTestRunner"
+    MAIN_CLASS="test.VerboseTestRunner"
     if [[ -n "${2:-}" ]]; then
       if [[ "$2" == *.* ]]; then
         MAIN_ARGS=("$2")
@@ -75,11 +77,11 @@ case "${1:-}" in
     rm -rf data
     mkdir -p data
     java -Dfile.encoding=UTF-8 -cp "$H2_JAR" org.h2.tools.RunScript \
-      -url "jdbc:h2:file:./data/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH" \
+      -url "$DB_URL" \
       -user sa \
       -script "database/schema.sql"
     java -Dfile.encoding=UTF-8 -cp "$H2_JAR" org.h2.tools.RunScript \
-      -url "jdbc:h2:file:./data/pmarket;MODE=MySQL;DEFAULT_NULL_ORDERING=HIGH" \
+      -url "$DB_URL" \
       -user sa \
       -script "database/seed.sql"
     echo "Đã khởi tạo cơ sở dữ liệu thành công."
