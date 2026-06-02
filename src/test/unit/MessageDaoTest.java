@@ -42,4 +42,22 @@ public class MessageDaoTest {
         List<Message> messages = messageDAO.getMessagesByRoom(room.getId());
         Assert.assertTrue(messages.stream().anyMatch(m -> imageUrl.equals(m.getImageUrl())));
     }
+
+    @Test
+    public void testSendEmptyMessage() throws Exception {
+        int accountId1 = DbTestUtil.insertStudent(DbTestUtil.unique("msg_empty_a"));
+        int accountId2 = DbTestUtil.insertStudent(DbTestUtil.unique("msg_empty_b"));
+        ChatRoom room = chatRoomDAO.getOrCreateRoom(accountId1, accountId2);
+
+        try {
+            messageDAO.sendMessage(room.getId(), accountId1, "", null);
+            Assert.fail("Kỳ vọng hàm sendMessage phải chặn lại và ném ra lỗi");
+
+        } catch (Exception ex) {
+            Assert.assertTrue("Thông báo lỗi chưa chính xác",
+                    ex.getMessage().contains("Tin nhan phai co noi dung hoac anh"));
+        }
+    }
 }
+
+
