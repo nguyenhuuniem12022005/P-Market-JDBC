@@ -1,5 +1,3 @@
--- P-Market CSDL theo CONTEXT_FOR_AI.md (H2 compatible)
-
 CREATE TABLE IF NOT EXISTS tblAccount (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fullName VARCHAR(200) NOT NULL,
