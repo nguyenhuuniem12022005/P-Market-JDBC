@@ -1,5 +1,3 @@
--- Dữ liệu mẫu để kiểm thử các module a -> k
-
 INSERT INTO tblAccount (fullName, email, password, phone, address, role, status, avatarUrl) VALUES
 ('Quản trị viên', 'admin@ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldGFkbWluMjAyNg==$ty8LVtBu8Ga3DIpup00nJYZKthuX5FLf4yB2eudw2a4=', '0900000001', 'PTIT', 'admin', 'ACTIVE', ''),
 ('Nguyễn Văn Anh', 'anhnv.b21ce009@stu.ptit.edu.vn', 'pbkdf2$65536$cG1hcmtldHN0dWRlbnQyNg==$8eK8eC/i/fnPKuTm6e/omMuNy/ZjWsgL7r6GEgb/6ec=', '0912345678', 'Hà Nội', 'member', 'ACTIVE', ''),
