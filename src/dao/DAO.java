@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- * Lớp DAO chung — khởi tạo kết nối CSDL (theo giao trinh CNPM).
+ * Lớp DAO chung — khởi tạo kết nối CSDL
  */
 public class DAO {
 
