@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS tblAccount (
     role VARCHAR(20) NOT NULL,
     status VARCHAR(20) NOT NULL CHECK (status IN ('ACTIVE', 'BANNED')),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    avatarUrl VARCHAR(500),
     banReason VARCHAR(500)
 );
 
